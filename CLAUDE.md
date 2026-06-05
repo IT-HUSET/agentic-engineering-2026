@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-The **participant repository** for a hands-on lab on **structured agentic software engineering** — the end-to-end workflow for getting reliable results from AI coding agents. You'll run the loop using **[AndThen](https://github.com/IT-HUSET/andthen)**, with spec-driven development as its backbone: from a fuzzy feature idea, to clarified requirements, to a spec, to a verified implementation, to a review.
+The **participant repository** for a hands-on lab on **structured agentic software engineering** – the end-to-end workflow for getting reliable results from AI coding agents. You'll run the loop using **[AndThen](https://github.com/IT-HUSET/andthen)**, with spec-driven development as its backbone: from a fuzzy feature idea, to clarified requirements, to a spec, to a verified implementation, to a review.
 
 This repo is for **learning by doing**. Follow the lab steps; the goal is the workflow and the judgment to right-size it, not just the code.
 
@@ -17,21 +17,21 @@ Install AndThen as a Claude Code plugin:
 /plugin install andthen
 ```
 
-Then, when unsure where to start, run `/andthen:now-what` — it inspects the project and routes you to the right skill.
+Then, when unsure where to start, run `/andthen:now-what` – it inspects the project and routes you to the right skill.
 
 ## The workflow you'll practice
 
 > idea → **`/andthen:clarify`** → **`/andthen:spec`** → **`/andthen:exec-spec`** → **`/andthen:review`** → ship.
 
 - **`clarify`** turns a vague idea into solid requirements by probing gaps and edge cases.
-- **`spec`** produces a **Feature Implementation Specification (FIS)** — the contract: what to build, how to verify it, when it's done. No code changes here.
+- **`spec`** produces a **Feature Implementation Specification (FIS)** – the contract: what to build, how to verify it, when it's done. No code changes here.
 - **`exec-spec`** implements against the FIS and attests each acceptance scenario.
 - **`review`** gives a focused pass (code / gap / security) before you ship.
 
-For bigger scope, the path extends through `prd` → `plan` → `exec-plan`. Every skill also works standalone — part of the skill is choosing *how much structure* a piece of work deserves (a one-line fix doesn't need a spec; a payments flow does).
+For bigger scope, the path extends through `prd` → `plan` → `exec-plan`. Every skill also works standalone – part of the skill is choosing *how much structure* a piece of work deserves (a one-line fix doesn't need a spec; a payments flow does).
 
 ## Working conventions
 
-- Let the spec lead. Resist jumping straight to code — the lab's whole point is that a spec first produces more reliable, verifiable results.
+- Let the spec lead. Resist jumping straight to code – the lab's whole point is that a spec first produces more reliable, verifiable results.
 - Verify before claiming done: run the real build/tests; "it works" is only true if you checked.
-- Describe symptoms, not fixes, when something's wrong — better input produces better agent output.
+- Describe symptoms, not fixes, when something's wrong – better input produces better agent output.

@@ -1,6 +1,6 @@
-# Agentic Software Engineering 2026 — Lab
+# Agentic Software Engineering 2026 – Lab
 
-Hands-on lab for practicing the **end-to-end workflow for structured use of AI coding agents** — with spec-driven development (via **[AndThen](https://github.com/IT-HUSET/andthen)**) as the backbone.
+Hands-on lab for practicing the **end-to-end workflow for structured use of AI coding agents** – with spec-driven development (via **[AndThen](https://github.com/IT-HUSET/andthen)**) as the backbone.
 
 ## Prerequisites
 
@@ -17,6 +17,8 @@ Hands-on lab for practicing the **end-to-end workflow for structured use of AI c
 2. Read [CLAUDE.md](CLAUDE.md) for the workflow you'll practice.
 3. Follow the lab steps your facilitator provides (exercises land here as the lab is built out).
 
+The [`todo-app/`](todo-app/) directory is the lab's brownfield base – an existing FastAPI app you'll evolve by running the loop on a real feature.
+
 ## The one idea
 
-The differentiator in AI-assisted development isn't the model or the tool — it's the **workflow you run it through.** Most AI coding goes straight from idea to code; fine for small fixes, but complex features drift and miss requirements. The fix is a repeatable loop — clarify, spec, implement, verify, review — and the judgment to right-size it. This lab is where that clicks.
+The differentiator in AI-assisted development isn't the model or the tool – it's the **workflow you run it through.** Most AI coding goes straight from idea to code; fine for small fixes, but complex features drift and miss requirements. The fix is a repeatable loop – clarify, spec, implement, verify, review – and the judgment to right-size it. This lab is where that clicks.
