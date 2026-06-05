@@ -52,6 +52,8 @@ Now compare against your hand-written questions:
 - Did it ask things you missed (or did you ask things it didn't)?
 - Look at **Out of Scope** and **MVP Boundary** – notice what got parked on purpose so the first slice stays small.
 
+> 🎨 **UI/UX track (gated):** If your feature has a UI surface, this is also where you'd clarify the *flows* – `/andthen:ui-ux-design --mode research` (journeys, information architecture). No UI surface? Skip it. Full track: [`track-ui-ux-design.md`](track-ui-ux-design.md).
+
 ## Step 4 – Verify the clarification (the real skill)
 
 A clarification you can't act on isn't done. Check the doc against this gate:

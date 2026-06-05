@@ -52,6 +52,8 @@ Now compare the report to your hand hunt:
 - Look at the **gap findings** – they also *confirm* the scenarios that genuinely pass, and correctly **dismiss** Non-Goals (no "you forgot editor roles" – that's out of scope on purpose).
 - Note each finding's `Routing: Fix | Note` tag – that's what the next step reads.
 
+> 🎨 **UI/UX track (gated):** If your feature has a UI surface, add the UI lens here – `/andthen:ui-ux-design --mode review` plus `/andthen:visual-validation`, which screenshots the built screens and checks them against your wireframes across breakpoints (the UI half of "tests pass ≠ it works"). No UI surface? Skip it. Full track: [`track-ui-ux-design.md`](track-ui-ux-design.md).
+
 ## Step 4 – Remediate, then verify (the real skill)
 
 Hand the report to remediation:

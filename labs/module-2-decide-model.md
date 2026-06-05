@@ -67,6 +67,8 @@ Now compare what they produced to your hand version:
 - Look at the ADR's **Alternatives Considered** – the rejected options and *why*. A generic "pick a sharing model" prompt gives you the pick, not the *why* that survives later argument.
 - Look at the glossary's **Avoid** column – it bans the synonyms ("collaborator", "guest") that would otherwise drift into the spec.
 
+> 🎨 **UI/UX track (gated):** If your feature has a UI surface, wireframe the screens here too – `/andthen:ui-ux-design --mode wireframes`. The low-fi screens become a FIS input in Module 3, exactly like the ADR. No UI surface? Skip it. Full track: [`track-ui-ux-design.md`](track-ui-ux-design.md).
+
 ## Step 4 – Verify the ADR + glossary (the real skill)
 
 A decision you can't justify isn't decided; a term nobody uses isn't ubiquitous. Check both against this gate:
