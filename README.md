@@ -1,6 +1,6 @@
-# SDD Lab — Spec-Driven Development with AI Agents
+# Agentic Software Engineering 2026 — Lab
 
-Hands-on lab for practicing **spec-driven development** with AI coding agents, using **[AndThen](https://github.com/IT-HUSET/andthen)**.
+Hands-on lab for practicing the **end-to-end workflow for structured use of AI coding agents** — with spec-driven development (via **[AndThen](https://github.com/IT-HUSET/andthen)**) as the backbone.
 
 ## Prerequisites
 
@@ -19,4 +19,4 @@ Hands-on lab for practicing **spec-driven development** with AI coding agents, u
 
 ## The one idea
 
-Most AI coding goes straight from idea to code — fine for small fixes, but complex features drift and miss requirements. SDD adds one step: **write a spec first, then implement against it.** The spec is the contract. This lab is where that clicks.
+The differentiator in AI-assisted development isn't the model or the tool — it's the **workflow you run it through.** Most AI coding goes straight from idea to code; fine for small fixes, but complex features drift and miss requirements. The fix is a repeatable loop — clarify, spec, implement, verify, review — and the judgment to right-size it. This lab is where that clicks.

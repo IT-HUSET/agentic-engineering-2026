@@ -4,9 +4,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-The **participant repository** for a hands-on lab on **spec-driven development (SDD)** with AI coding agents. You'll practice the SDD workflow using **[AndThen](https://github.com/IT-HUSET/andthen)** — going from a fuzzy feature idea to a spec, then to a verified implementation, then a review.
+The **participant repository** for a hands-on lab on **structured agentic software engineering** — the end-to-end workflow for getting reliable results from AI coding agents. You'll run the loop using **[AndThen](https://github.com/IT-HUSET/andthen)**, with spec-driven development as its backbone: from a fuzzy feature idea, to clarified requirements, to a spec, to a verified implementation, to a review.
 
-This repo is for **learning by doing**. Follow the lab steps; the goal is the workflow, not just the code.
+This repo is for **learning by doing**. Follow the lab steps; the goal is the workflow and the judgment to right-size it, not just the code.
 
 ## Setup
 
@@ -19,7 +19,7 @@ Install AndThen as a Claude Code plugin:
 
 Then, when unsure where to start, run `/andthen:now-what` — it inspects the project and routes you to the right skill.
 
-## The SDD workflow you'll practice
+## The workflow you'll practice
 
 > idea → **`/andthen:clarify`** → **`/andthen:spec`** → **`/andthen:exec-spec`** → **`/andthen:review`** → ship.
 
@@ -28,7 +28,7 @@ Then, when unsure where to start, run `/andthen:now-what` — it inspects the pr
 - **`exec-spec`** implements against the FIS and attests each acceptance scenario.
 - **`review`** gives a focused pass (code / gap / security) before you ship.
 
-For bigger scope, the path extends through `prd` → `plan` → `exec-plan`. Every skill also works standalone — you don't have to run the whole pipeline.
+For bigger scope, the path extends through `prd` → `plan` → `exec-plan`. Every skill also works standalone — part of the skill is choosing *how much structure* a piece of work deserves (a one-line fix doesn't need a spec; a payments flow does).
 
 ## Working conventions
 
