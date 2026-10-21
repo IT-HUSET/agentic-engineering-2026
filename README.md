@@ -6,6 +6,8 @@ Hands-on lab for practicing the **end-to-end workflow for structured use of AI c
 
 - Claude Code installed and authenticated (a Claude.ai account with Claude Code access).
 - Basic command-line comfort.
+- The prep session, live or recorded, before the course.
+- The recorded prerequisite videos (working as an architect, strategic DDD, and others) before Day 1. Your facilitator shares the links.
 
 ## Get started
 
