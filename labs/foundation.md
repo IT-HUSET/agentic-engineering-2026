@@ -3,7 +3,7 @@
 > **The loop:** `[clarify →] plan → exec-plan → review --fix → ship`, with design between `clarify` and `plan` when the work earns it.
 > **You'll produce:** one real feature on `todo-app/` (shared lists), from a one-line idea to an open pull request, with every step's artifact on disk and checked.
 
-This is Day 1's foundation. You run the whole loop for **one feature, once**, on the lab app, so that in the case work you can run it on your own case and spend your attention on judgment, not on commands. Each section below is one step. Each step takes the previous step's artifact as **input**, produces one **output**, and ends with a **verify** checklist and a **dial check**: *was that the right amount of structure?*
+This is Day 1's foundation. You run the whole loop for **one feature, once**, on the lab app, so that in the case work you can run it on your own case and spend your attention on judgment, not on commands. Each section below is one step. Each step takes the previous step's artifact as **input**, produces one **output**, and ends with a **verify** checklist and a **sizing check**: *was that the right amount of structure?*
 
 The worked feature is **shared lists**: an owner lets another registered user see one of their lists. The idea is deliberately fuzzy, which is the point.
 
@@ -32,7 +32,7 @@ The *Agentic Engineering Playbook* has a chapter behind each step if you want th
 
 ## F1 – Orient and set up
 
-**Skills:** `now-what`, `init`, `describe`. You also meet the **Structure Dial**.
+**Skills:** `now-what`, `init`, `describe`. You also meet **right-sizing**.
 
 ### Input
 
@@ -60,7 +60,7 @@ The *Agentic Engineering Playbook* has a chapter behind each step if you want th
    It inspects the project (setup, codebase, workflow state), prints the chain `clarify (optional) → plan → exec-plan → review --fix → ship`, and offers `init` because the project has no Project Document Index yet. Answer yes.
 6. **`init`.** It asks nothing in an existing repository. It adds the **Project Document Index** to the `CLAUDE.md` in `todo-app/` without rewriting what is there, writes a `Key Dev Commands` document with the project's fast and full test commands, and adds two `.gitignore` entries (`.agent_temp/` and review reports). Documents already in `docs/` (see step 7) get an Index entry too. Its closing summary then offers extras one line each (role agents, critical rules, `describe`, more documents, a testing strategy, visual validation). **Ignore the offers for now.** An ignored offer writes nothing, and the catalog exercises pick them up when a case needs them.
 7. **`describe`: read the map of the code.** `describe` maps an existing codebase into `docs/ARCHITECTURE.md`, `docs/requirements-discovered.md` and `docs/decisions-discovered.md`. It fans out subagents, so **do not run it here**. The output of a prepared run is already committed in `todo-app/docs/`, and your facilitator re-runs `/andthen:describe` on screen. You run it yourself on your case repo in C1. If `todo-app/docs/` is missing or empty, tell your facilitator before you go on.
-8. **Read the dial.** Your facilitator introduces it. This is the whole course in one table:
+8. **Learn to right-size.** Your facilitator introduces it. This is the whole course in one table:
 
    | Work | Path | Structure |
    |------|------|-----------|
@@ -68,9 +68,9 @@ The *Agentic Engineering Playbook* has a chapter behind each step if you want th
    | One real feature | [`clarify` →] `plan` → `exec-plan <FIS>` → `review --fix` → `ship` | One story: one FIS, a one-story `plan.json` |
    | Several features | [`clarify` →] `plan <dir>` → `exec-plan <dir>` → `review --fix` → `ship` | Several stories, a FIS each. `--worktree` runs independent stories in parallel |
 
-   The entry test: **if you can't list three acceptance criteria, start with `clarify`; otherwise start with `plan`.** `now-what` applies it for you. `--worktree` and `--auto` are switches, not rungs.
+   The entry test: **if you can't list three acceptance criteria, start with `clarify`; otherwise start with `plan`.** `now-what` applies it for you. `--worktree` and `--auto` are switches, not sizes.
 
-   The second dial is **Proportionality**. `clarify`, `decide`, `plan` and the design skills size what they propose against three facts in `docs/PRODUCT.md`: the project's stage, its scale, and its standing technical non-goals. The first of them you run asks once if the facts are missing, and records your answers.
+   **Proportionality** sizes the details within a size. `clarify`, `decide`, `plan` and the design skills size what they propose against three facts in `docs/PRODUCT.md`: the project's stage, its scale, and its standing technical non-goals. The first of them you run asks once if the facts are missing, and records your answers.
 9. **Commit the setup.** AndThen builds on a tree you can read at a glance, so commit what `init` wrote. Stage by path, never `git add -A`:
    ```bash
    git status --short
@@ -89,11 +89,11 @@ A project AndThen can navigate: a Document Index in `todo-app/CLAUDE.md`, `docs/
 - [ ] `docs/KEY_DEVELOPMENT_COMMANDS.md` lists a test command, and you ran that exact command by hand and it passed.
 - [ ] `.gitignore` contains `.agent_temp/`.
 - [ ] In the committed `docs/requirements-discovered.md`, find one discovered requirement. Read its evidence and confidence. It is headed *Discovered – requires validation by team*: it is the code's story about itself, not yet a fact. Name one you would confirm and one you would doubt.
-- [ ] You can state the entry test and the three rungs of the dial.
+- [ ] You can state the entry test and the three sizes.
 
-### Dial check
+### Sizing check
 
-*Did the app earn `init` and `describe`?* A throwaway script earns neither. A codebase you will live in for weeks, or one you inherited, earns both once, up front. The one-line docstring change in step 4 was the bottom rung: no spec, just verify. `implement-fix` is the AndThen version of it.
+*Did the app earn `init` and `describe`?* A throwaway script earns neither. A codebase you will live in for weeks, or one you inherited, earns both once, up front. The one-line docstring change in step 4 was the smallest size: no spec, just verify. `implement-fix` is the AndThen version of it.
 
 ---
 
@@ -139,7 +139,7 @@ One line: **"Let people share their lists."** Nothing else. There is no prior PR
 - [ ] `docs/PRODUCT.md` has a Proportionality section with stage, scale and technical non-goals.
 - [ ] The PRD is **decision-ready**: someone could design and plan from it without guessing.
 
-### Dial check
+### Sizing check
 
 *Did "shared lists" earn a full `clarify` conversation?* Yes. A one-line idea that fans out into a dozen scope and edge-case forks is what discovery is for. For a sentence with no real unknowns ("rename the *Done* button to *Complete*"), no: that is `implement-fix`, where the requirement is the sentence. If your clarification is trying to pin down all of collaboration at once (invites, roles, assignment, notifications), that is a product, not a feature. Name the first slice and defer the rest.
 
@@ -191,7 +191,7 @@ An ADR in `docs/adrs/` with its row in `docs/DECISIONS.md`, and `docs/UBIQUITOUS
 - [ ] Glossary terms are canonical: one name per concept, banned synonyms in **Avoid**, no mechanism or rationale smuggled into a cell.
 - [ ] Both are ready for the next step: the FIS can cite the ADR and use the terms verbatim.
 
-### Dial check
+### Sizing check
 
 *Did this fork earn an ADR and a glossary?* For the sharing model, yes: a real fork with different long-term consequences, and new words the spec must use consistently. For renaming a button, no: no fork, no new vocabulary, straight to `implement-fix` or `plan`. Two ways to go the other direction: a question only running code can answer goes to `spike` (X1), and a tangle of subdomains and unclear boundaries across many features wants a Domain Map (X3), not one ADR.
 
@@ -253,7 +253,7 @@ A spec you can't verify against isn't a contract.
 - [ ] It is **execution-sized**: no unresolved `OVERSIZE:`, one coherent slice rather than three features in a trench coat.
 - [ ] `plan.json` has one story, story `S01`, `status: pending`, `dependsOn: []`.
 
-### Dial check
+### Sizing check
 
 *Was a FIS the right amount of structure?* For view-only sharing, which touches the data model and permissions: yes. For renaming a button: no, that is `implement-fix`. The other direction matters just as much: if the FIS comes out secretly huge, with unrelated scenarios and several demos hiding in it, climb to several stories rather than writing a bigger spec. That is what step 1 showed you.
 
@@ -301,7 +301,7 @@ The agent attested. You still check, and it is cheap because the FIS says exactl
 
 > **Tests pass is not it works.** Green tests prove the scenarios you *wrote* in F4. Whether those were the right and complete scenarios is F6's question. If a scenario could not be proved because it was written un-observably, fix the *spec*, then re-run.
 
-### Dial check
+### Sizing check
 
 *Was `exec-plan` on a FIS the right amount of structure?* For a feature with a real FIS and tasks across the data model and permissions: yes, you want the task-by-task proof loop. For a one-sentence change there is no FIS to execute, and `implement-fix` gives you the same verify discipline without a contract. Several stories would mean `exec-plan <dir>`, one fresh subagent per story.
 
@@ -347,7 +347,7 @@ A review report beside `plan.json`, the Fix-routed findings applied in your work
 - [ ] No fix crept past the FIS (no editor roles, no notifications).
 - [ ] `uv run pytest` passes after the fixes, and you can say in one sentence how much you trust this change and why.
 
-### Dial check
+### Sizing check
 
 *Was a full `review` the right weight?* For an authorization-bearing feature touching mutating routes, yes: a missed enforcement check is a real vulnerability, so you want spec fit, code, and security together. For a one-line copy tweak mid-flow, a full report is overkill: `review --quick` gives one pass's findings inline. Match the review weight to the risk of the change. If the feature has a UI surface, the UI lens is `visual-validation` (X2).
 
@@ -399,7 +399,7 @@ An open pull request (or its title, body and commands ready), new `docs/LEARNING
 - [ ] The handoff names artifacts **by path**; it does not paste them.
 - [ ] The fresh session passed the handoff test.
 
-### Dial check
+### Sizing check
 
 *Did the change need `ship`'s full close-out?* For a plan: yes. For a one-sentence fix: `implement-fix` then `ship`, which just commits and opens the PR with no bundle to land. When the plan is not ready, `ship` recommends opening the PR without the close-out and keeping the bundle, which is the per-story PR case. `handoff` is for a session that must end mid-work or has grown heavy; a short task that finishes in one sitting needs none.
 
@@ -407,4 +407,4 @@ An open pull request (or its title, body and commands ready), new `docs/LEARNING
 
 ## What's next
 
-You have run the whole loop once, and it ends at a pull request. The case work is the same loop on a case you are handed or one of your own, with your dial choices written down and a gate at each artifact. You repeat F1 on the case repo as the first part of C1. See [`labs/README.md`](README.md).
+You have run the whole loop once, and it ends at a pull request. The case work is the same loop on a case you are handed or one of your own, with your sizing choices written down and a gate at each artifact. You repeat F1 on the case repo as the first part of C1. See [`labs/README.md`](README.md).

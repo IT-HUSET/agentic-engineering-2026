@@ -59,6 +59,6 @@ Pull X8 when one of these is true of your case:
 - [ ] No issue label or comment was written that you did not ratify.
 - [ ] The issue you handed to the loop became a requirements source you can cite (a PRD or a plan that names the issue).
 
-## Dial check
+## Sizing check
 
 *How much close-out did this deserve?* A one-sentence fix: `implement-fix` then `ship`, with no bundle to land and a short PR. A planned feature: the full close-out above. A plan with work left: open the PR without it and keep the bundle. For the backlog, triage a bounded pass rather than the whole tracker, because every ratified label is visible to the team.

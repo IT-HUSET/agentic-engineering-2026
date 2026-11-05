@@ -61,6 +61,6 @@ The domain-heavy case your team works on: its PRD, and `docs/UBIQUITOUS_LANGUAGE
 - [ ] Terms that mean two things across contexts are in the glossary's **Overloaded Terms**, spelled exactly as the map spells the context.
 - [ ] The map holds no glossary terms (the glossary holds each term once), and the story boundaries in `plan.json` follow the context boundaries.
 
-## Dial check
+## Sizing check
 
-*Was an event storm plus a Domain Map the right amount of structure?* This is the top of the dial. For a genuinely multi-feature direction with new subdomains on top of an existing core and non-trivial integration, yes. For one feature, no: one fork and one vocabulary is `decide` plus `domain --mode glossary`, and carving contexts for a single feature is over-architecture. Climb down.
+*Was an event storm plus a Domain Map the right amount of structure?* This is the largest size. For a genuinely multi-feature direction with new subdomains on top of an existing core and non-trivial integration, yes. For one feature, no: one fork and one vocabulary is `decide` plus `domain --mode glossary`, and carving contexts for a single feature is over-architecture. Climb down.

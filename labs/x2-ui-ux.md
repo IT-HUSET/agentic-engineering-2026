@@ -64,6 +64,6 @@ Your team's `<feature-dir>/prd.md` (requirements as text, a file or a PRD is req
 - [ ] The FIS cites the wireframes (as an asset it builds against), so the implementer does not guess the layout.
 - [ ] After the build, `visual-validation` ran with no open P1 or P2 finding, and any `not judged` region is accounted for.
 
-## Dial check
+## Sizing check
 
-*Does this surface earn this much design, or any?* A share dialog earns wireframes: real states, a real interaction to get right. A single field added to an existing form earns none. A whole collaboration surface across many screens earns a design system. An API-only change earns nothing from X2. Same dial as `decide` and `domain`, gated on one question: is there a UI?
+*Does this surface earn this much design, or any?* A share dialog earns wireframes: real states, a real interaction to get right. A single field added to an existing form earns none. A whole collaboration surface across many screens earns a design system. An API-only change earns nothing from X2. Sized the same way as `decide` and `domain`, gated on one question: is there a UI?

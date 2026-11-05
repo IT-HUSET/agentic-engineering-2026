@@ -1,6 +1,6 @@
 # Labs
 
-Three parts, in order. The loop is the same everywhere: `[clarify →] plan → exec-plan → review --fix → ship`, sized to the work by the Structure Dial (see [CLAUDE.md](../CLAUDE.md)).
+Three parts, in order. The loop is the same everywhere: `[clarify →] plan → exec-plan → review --fix → ship`, right-sized to the work (see [CLAUDE.md](../CLAUDE.md#right-sizing-the-work)).
 
 | Part | What | Where |
 |------|------|-------|
@@ -12,7 +12,7 @@ In the foundation, paths are relative to `todo-app/`, where you start Claude Cod
 
 ## 1. Foundation
 
-[`foundation.md`](foundation.md) has one section per step. Each takes the previous step's artifact as input and ends with a checklist and a dial check.
+[`foundation.md`](foundation.md) has one section per step. Each takes the previous step's artifact as input and ends with a checklist and a sizing check.
 
 | Step | Skills | You produce |
 |------|--------|-------------|
@@ -26,23 +26,23 @@ In the foundation, paths are relative to `todo-app/`, where you start Claude Cod
 
 ## 2. Case work
 
-You take a case (a prepared one with a brief, or your own repo) and run the loop on it, with the dial choice for each piece of work written down. **The process is the product.** What you deliver is the artifact trail and the gates you passed, not how finished or polished the app looks. A half-built case with every gate passed is a better result than a polished app built around a skipped gate.
+You take a case (a prepared one with a brief, or your own repo) and run the loop on it, with the sizing choice for each piece of work written down. **The process is the product.** What you deliver is the artifact trail and the gates you passed, not how finished or polished the app looks. A half-built case with every gate passed is a better result than a polished app built around a skipped gate.
 
 Five gates, each approved by your facilitator against the **files**, not the running app. C1 and C5 apply to the case; C2 to C4 apply to every pull request, because AndThen ties a `plan.json` and its FIS files to a branch, so a PR is a plan.
 
 | Gate | Passed when |
 |------|-------------|
-| **C1 – Case framed** | Your team's own case repo is on GitHub (one repo per team, not a fork) with `check` green (your facilitator provides the `check` script), and `docs/specs/<slug>/prd.md` (or `intent.md`) holds at least three acceptance criteria and the Proportionality facts, the test command runs, and your dial choice is written down. |
+| **C1 – Case framed** | Your team's own case repo is on GitHub (one repo per team, not a fork) with `check` green (your facilitator provides the `check` script), and `docs/specs/<slug>/prd.md` (or `intent.md`) holds at least three acceptance criteria and the Proportionality facts, the test command runs, and your sizing choice is written down. |
 | **C2 – Plan approved** | `plan.json` and a FIS per story exist, every scenario has a runnable proof, no `OVERSIZE:` is unresolved, each ADR in `docs/adrs/` states its door type, and the plan fits one pull request. **No `exec-plan` before C2.** |
 | **C3 – First story green** | The story's `plan.json` row is `done` with a `verified.summary` quoting a check that was run (command, exit status, result line), the report has its `Reviewed:` line, and you reflected on whether the next FIS needs to change. |
 | **C4 – PR opened** | `review --fix` returned a Ready verdict with no open CRITICAL or HIGH finding, every scenario traces to a run proof, and `ship` opened a PR whose text gives the proof per story and the door type. |
-| **C5 – Closed** | The case repo has all its PRs, you have demoed against the assessment form, your friction log names one concrete next change to your harness, and your dial log is complete. |
+| **C5 – Closed** | The case repo has all its PRs, you have demoed against the assessment form, your friction log names one concrete next change to your harness, and your sizing log is complete. |
 
-Day 2 is the gate day. Aim for a first pull request through C2 to C4. Each day ends with `handoff`, and the next morning starts a fresh session from the handoff alone. Your facilitator shows the assessment form from the first morning, so nobody optimizes for the wrong target. The case kit (the brief template, setup checklist for your own repo, friction and dial log template, and gate board) is coming in `case-kit/`.
+Day 2 is the gate day. Aim for a first pull request through C2 to C4. Each day ends with `handoff`, and the next morning starts a fresh session from the handoff alone. Your facilitator shows the assessment form from the first morning, so nobody optimizes for the wrong target. The case kit (the brief template, setup checklist for your own repo, friction and sizing log template, and gate board) is coming in `case-kit/`.
 
 ## 3. Exercise catalog
 
-Optional. Your facilitator may point you to one at a gate when its trigger shows up in your own artifacts, and you can pull any other whenever you want. Each exercise has a **Trigger**, **Input**, **Output**, **Steps**, **Verify** and **Dial check**.
+Optional. Your facilitator may point you to one at a gate when its trigger shows up in your own artifacts, and you can pull any other whenever you want. Each exercise has a **Trigger**, **Input**, **Output**, **Steps**, **Verify** and **Sizing check**.
 
 | Exercise | Skills | Pull it when |
 |----------|--------|--------------|

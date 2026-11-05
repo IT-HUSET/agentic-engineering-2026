@@ -58,6 +58,6 @@ Your team's `<feature-dir>/prd.md`, plus `docs/DECISIONS.md` and `docs/UBIQUITOU
 - [ ] A spike verdict, if you ran one, names what it did not cover.
 - [ ] Glossary: one canonical term per concept, banned synonyms in **Avoid**, no rationale or mechanism in a cell, and the FIS files use the terms.
 
-## Dial check
+## Sizing check
 
 *Did this fork earn an ADR, and did the vocabulary earn a glossary?* A real fork with different long-term consequences does. A choice that is cheap to undo either way does not: record it as a *Still Current* line or leave it to `plan`. Do not decide design the code has already settled, and do not compare five options when two are obviously dominated. When the "decision" is really a tangle of subdomains across many features, one ADR is the wrong tool: see X3.

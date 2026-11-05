@@ -59,6 +59,6 @@ Your own suite and `plan.json`. If you have none of these problems yet, use the 
 - [ ] No test was deleted, disabled or weakened to get green. A flaky test is reported, never skipped on the agent's own call. Quarantine is a person's decision, recorded in the strategy.
 - [ ] If you wrote `docs/TESTING-STRATEGY.md`, it names your levels, fixtures and the before-merge bar and contains no commands.
 
-## Dial check
+## Sizing check
 
 *How much test discipline does this work earn?* A typo fix earns the existing suite staying green. A defect in an authorization path earns `prove-it`: the failing test is the only proof. A flaky suite earns a strategy and a quarantine decision before any more features land on it. Coverage percentage as a target is a vanity metric. Uncovered changed lines and tests that survive their behavior being removed are the real signals.

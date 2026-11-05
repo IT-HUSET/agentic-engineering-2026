@@ -69,6 +69,6 @@ Your own case repo, or a repo you inherited. If you have neither, your facilitat
 - [ ] At the start of a task you know what is in the window (`/context`), and it holds what the task needs rather than everything you have.
 - [ ] After `simplify-code`: the checks pass as they did at baseline, no behavior changed, and each dropped cleanup is reported with its reason.
 
-## Dial check
+## Sizing check
 
 *How much context discipline does this project earn?* Size it to the project's **lifespan**, not its size today. A one-session script earns almost none: do not scaffold an index for a throwaway. A feature you will live with earns the Document Index and a lean instruction file immediately. A long-lived or inherited codebase earns the full cadence: `describe` to make it legible, `handoff` between sessions, durable stores kept current, a cleanup pass after each plan.

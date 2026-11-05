@@ -34,7 +34,7 @@ Then, when unsure where to start, run `/andthen:now-what`: it inspects the proje
 
 Every skill works standalone. Each pipeline step ends by printing the next command to paste, so run each step in a fresh session (`/clear`).
 
-### The Structure Dial
+### Right-sizing the work
 
 Part of the skill is choosing *how much structure* a piece of work deserves:
 
@@ -44,7 +44,7 @@ Part of the skill is choosing *how much structure* a piece of work deserves:
 | One real feature | [`clarify` →] `plan` → `exec-plan <FIS>` → `review --fix` → `ship` |
 | Several features | [`clarify` →] `plan <dir>` → `exec-plan <dir>` → `review --fix` → `ship` (`--worktree` runs independent stories in parallel) |
 
-The entry test: if you can't list three acceptance criteria, start with `clarify`; otherwise start with `plan`. `--worktree` and `--auto` are switches, not rungs. Design follows the same dial: none for a typo, an ADR or wireframe for a feature, a Domain Map for a multi-feature product.
+The entry test: if you can't list three acceptance criteria, start with `clarify`; otherwise start with `plan`. `--worktree` and `--auto` are switches, not sizes. Design is right-sized the same way: none for a typo, an ADR or wireframe for a feature, a Domain Map for a multi-feature product.
 
 ## Working conventions
 

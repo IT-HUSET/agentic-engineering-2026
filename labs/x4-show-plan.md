@@ -58,6 +58,6 @@ For `tracker`, GitHub through `gh` is the supported path, so `gh auth status` mu
 - [ ] Nothing was written to the tracker unless you and your facilitator agreed. If you published, re-run `--dry-run` and confirm it targets the issues that exist instead of proposing new ones.
 - [ ] You know where your requirements live after the merge (`Record:` line) and what that means for `prd.md`.
 
-## Dial check
+## Sizing check
 
 *Does anyone else need this plan in a form other than the files?* A solo developer on a one-story plan does not. A team that approves plans in review, or a stakeholder who reads in the tracker, does. Publishing to a tracker is also a commitment to keep two views aligned: it is one way (plan to tracker), so decide which one is the truth before you start.

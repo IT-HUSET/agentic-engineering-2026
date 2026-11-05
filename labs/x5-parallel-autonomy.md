@@ -117,6 +117,6 @@ The loop ends on the hand-off, never on a verdict or a severity count: a `Note` 
 - [ ] You read each `ASSUMPTION:` line from the unattended run, and overturned or accepted each deliberately.
 - [ ] The plan-level `review --fix` still ran afterwards. Autonomy does not replace the gate.
 
-## Dial check
+## Sizing check
 
 *Did the machinery match the parallelism and risk that actually existed?* A multi-story plan with independent stories earns `--worktree`. A single story is `exec-plan <FIS>`, as in F5. A fully sequential plan runs plainly, because there is nothing to parallelize and isolation is overhead. `--auto` earns its place when you can afford to read the assumptions afterwards, not when you cannot afford to be asked. The judgment is not "use the most powerful mode", it is to match the machinery to the work.
