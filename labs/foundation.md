@@ -66,7 +66,7 @@ The *Agentic Engineering Playbook* has a chapter behind each step if you want th
    |------|------|-----------|
    | A fix you can state in one sentence | `implement-fix "<request>"` → `ship` | Minimal. Unknown cause or broken build: `triage` first |
    | One real feature | [`clarify` →] `plan` → `exec-plan <FIS>` → `review --fix` → `ship` | One story: one FIS, a one-story `plan.json` |
-   | Several features | [`clarify` →] `plan <dir>` → `exec-plan <dir>` → `review --fix` → `ship` | Several stories, a FIS each. `--worktree` runs independent stories in parallel |
+   | Several features | [`clarify` →] `plan <dir>` → `exec-plan <FIS>` per story → `review --fix` → `ship` | Several stories, a FIS each. `plan` prints the first ready story's command and each story's report names the next. `exec-plan <dir>` runs every story in one sweep, the form for `--auto` and `--worktree` runs, and `--worktree` runs independent stories in parallel |
 
    The entry test: **if you can't list three acceptance criteria, start with `clarify`; otherwise start with `plan`.** `now-what` applies it for you. `--worktree` and `--auto` are switches, not sizes.
 
@@ -124,7 +124,7 @@ One line: **"Let people share their lists."** Nothing else. There is no prior PR
 
    **Let it do its job.** Answer the question asked, and let it push back. If you dictate every answer up front you have skipped discovery and written down your first guess. Answer one thing vaguely on purpose ("anyone should be able to share") and watch it probe.
 4. **Read the PRD.** It prints the path relative to the project root, `docs/specs/<slug>/prd.md`. That directory is your `<feature-dir>`. The PRD is the one planning file that outlives the branch, and every story is cut from it, so this is where you read it carefully.
-5. **Compare with your hand-written criteria.** Did it ask things you missed, or did you ask things it didn't? Look at **Out of Scope** and the MVP boundary: what got parked on purpose so the first slice stays small?
+5. **Compare with your hand-written criteria.** Did it ask things you missed, or did you ask things it didn't? The PRD writes each requirement's acceptance criteria as one rule each (`While <precondition>, when <trigger>, the system shall <response>`), with an `If <unwanted condition>, then the system shall <response>` rule per unwanted condition: compare your awkward edge with those `If` rules. Look at **Out of Scope** and the MVP boundary: what got parked on purpose so the first slice stays small?
 
 ### Output
 
@@ -132,7 +132,7 @@ One line: **"Let people share their lists."** Nothing else. There is no prior PR
 
 ### Verify
 
-- [ ] You can list at least three concrete, testable acceptance criteria from the PRD. If you can't, discovery isn't done: go another round.
+- [ ] You can list at least three concrete, testable acceptance criteria from the PRD, including an `If` rule for an unwanted condition. If you can't, discovery isn't done: go another round.
 - [ ] Scope boundaries are explicit. You can say out loud what this will **not** do (invites, roles, notifications).
 - [ ] A smallest shippable slice is named (view-only, registered users).
 - [ ] The awkward edges (non-user, duplicate, self-share, revoke) have stated expected behavior, or sit in Open Questions on purpose.
@@ -279,7 +279,7 @@ The FIS and `plan.json` from F4. Start on `feat/shared-lists` with `uv run pytes
    - **Falsifiability**: a test must fail when the behavior it protects is removed.
    - **The full proof run.** After the tasks it runs the project's checks and every proof the FIS names, and keeps one line per proof: what ran, the exit status, the runner's own result line.
    - **A fresh reviewer.** It spawns a reviewer that did not write the code (`review --quick --fix`) over the story's changes.
-   - **Commit.** A commit with a brief subject and `Story-ID:` and `Plan:` trailers, and the story's row in `plan.json` set to `done`. Because this was the plan's last story, one `simplify-code` pass over the plan's code follows as a separate `refactor` commit.
+   - **Commit.** A commit with a brief subject and `Story-ID:` and `Plan:` trailers, and the story's row in `plan.json` set to `done`. Each finished story then gets one `simplify-code` pass over its code, as a separate `refactor` commit carrying the story's trailers.
    - **The report.** It ends with a `Reviewed:` line (what reviewed the change, what stays open), a Chain Attestation (one sentence per Expected Outcome), and `Next (fresh session):`.
 
    If it stops on a red gate, that is work to finish, not a caveat. A failed story ends with a route out: `review --fix` over the story's changed paths, then `exec-plan` again on the same FIS.
@@ -295,7 +295,7 @@ The agent attested. You still check, and it is cheap because the FIS says exactl
 
 - [ ] In `plan.json`, story `S01` is `status: done` and `verified.summary` quotes a **run** check: the command, its exit status, and the runner's own result line. "Looks right" and an exit code alone don't count.
 - [ ] **Run that command yourself.** Same result?
-- [ ] `git log -3` shows the story commit with `Story-ID: S01` (the story) and `Plan:` trailers (and a `refactor` commit from the final simplify pass, which a finished plan gets). `git status` is clean: you started with only the F4 bundle uncommitted, and `exec-plan` committed it with the story.
+- [ ] `git log -3` shows the story commit with `Story-ID: S01` (the story) and `Plan:` trailers (and a `refactor` commit from the simplify pass each done story gets). `git status` is clean: you started with only the F4 bundle uncommitted, and `exec-plan` committed it with the story.
 - [ ] Every task is checked in the FIS and none is checked without a passing `Verify` behind it.
 - [ ] The report's `Reviewed:` line says a fresh reviewer looked, and you know what it left open.
 
@@ -303,7 +303,7 @@ The agent attested. You still check, and it is cheap because the FIS says exactl
 
 ### Sizing check
 
-*Was `exec-plan` on a FIS the right amount of structure?* For a feature with a real FIS and tasks across the data model and permissions: yes, you want the task-by-task proof loop. For a one-sentence change there is no FIS to execute, and `implement-fix` gives you the same verify discipline without a contract. Several stories would mean `exec-plan <dir>`, one fresh subagent per story.
+*Was `exec-plan` on a FIS the right amount of structure?* For a feature with a real FIS and tasks across the data model and permissions: yes, you want the task-by-task proof loop. For a one-sentence change there is no FIS to execute, and `implement-fix` gives you the same verify discipline without a contract. Several stories would mean `exec-plan` on each story's FIS in turn, a fresh session each, or `exec-plan <dir>` to run every story in one sweep (the form for `--auto` and `--worktree` runs).
 
 ---
 
@@ -371,11 +371,11 @@ A reviewed branch: `plan.json` with story `S01` done, a clean review, and the `N
    What it does, in order:
    - **Checks for open work** (a story not done, an open CRITICAL or HIGH finding) and asks once whether to ship anyway.
    - **Lands what the FIS learned.** It reads each FIS's `## Implementation Observations` and writes the real traps as `docs/LEARNINGS.md` bullets. The rest it *recommends* (a `Decisions` line, a `decide` run); it does not write them for you.
-   - **Writes the pull request** for a reviewer deciding whether to merge: the intent, the outcomes, the proof of each (from `verified.summary`), the review's verdict, and whether the change is a **one-way or two-way door** and what breaks if it is wrong.
-   - **Commits** the review's fixes still in your working tree and the Learnings, and **deletes `plan.json` and the FIS** (they govern one branch and never merge). `prd.md` stays.
-   - **Asks once before anything leaves the machine**: base branch, the commits leaving, the title and the body.
-3. **Read the PR text before you say yes.** Does it put what the merge decision needs first? Could a reviewer who never saw your chat tell what the change is for, and how it was proved? With your fork as the target, say yes. Without a fork, say no: the skill prints the title, the body and the commands to run later. (`ship --auto` stops before anything leaves the machine and prints the same commands.)
-4. **Check the aftermath.** `git ls-files <feature-dir>` shows only `prd.md` (a `ls` would also show the review report, which is gitignored). `git log` shows the Learnings commit and the bundle's deletion. `docs/LEARNINGS.md` has the new bullets.
+   - **Writes the pull request** for a reviewer deciding whether to merge: the intent, the outcomes, the proof of each (from `verified.summary`), the review's verdict, and whether the change is a **one-way or two-way door** and what breaks if it is wrong. It also names where a reviewer should read closely and what stays open, and ends on a fixed `## Ship summary` section.
+   - **Commits** the review's fixes still in your working tree and the Learnings.
+   - **Asks once before anything leaves the machine**: base branch, the commits leaving, the title and the body. For a ready plan the same question asks whether to **delete `plan.json` and the FIS** (they govern one branch and never merge), recommending deletion.
+3. **Read the PR text before you say yes.** Does it put what the merge decision needs first? Could a reviewer who never saw your chat tell what the change is for, and how it was proved? With your fork as the target, accept the recommended delete and say yes. Without a fork, say no: the skill prints the title, the body and the commands to run later, and deletes nothing. (`ship --auto` stops before anything leaves the machine and prints the same commands.)
+4. **Check the aftermath.** `docs/LEARNINGS.md` has the new bullets, and `git log` shows the Learnings commit. If you said yes: the bundle's deletion is committed before the push, `git ls-files <feature-dir>` shows only `prd.md` (a `ls` would also show the review report, which is gitignored), and `prd.md` gains a `> **Shipped**: ...` header line. If you said no, the bundle is still there and nothing is stamped.
 5. **Hand off.** A session that has to end mid-work, or the end of a day, is a boundary your context does not survive. Run:
    ```text
    /andthen:handoff "next: frame my case repo – init, describe, test command"
@@ -389,19 +389,19 @@ A reviewed branch: `plan.json` with story `S01` done, a clean review, and the `N
 
 ### Output
 
-An open pull request (or its title, body and commands ready), new `docs/LEARNINGS.md` bullets, a branch with no plan bundle on it, and a handoff a fresh session resumed from.
+An open pull request (or its title, body and commands ready), new `docs/LEARNINGS.md` bullets, a branch whose plan bundle is deleted (if you pushed), and a handoff a fresh session resumed from.
 
 ### Verify
 
 - [ ] The PR body states intent, outcomes, proof per outcome, and door type with blast radius, before any per-story detail.
-- [ ] `plan.json` and the FIS are gone from the branch; `prd.md` remains. You know why: specs govern one branch and never merge, so the PR body and the PRD carry the intent afterwards.
+- [ ] If you said yes: `plan.json` and the FIS are gone from the branch; `prd.md` remains and carries a `> **Shipped**:` line. You know why: specs govern one branch and never merge, so the PR body and the PRD carry the intent afterwards. If you said no, the bundle is intact.
 - [ ] Each new Learnings bullet traces to an Implementation Observation you can find in the FIS in git history.
 - [ ] The handoff names artifacts **by path**; it does not paste them.
 - [ ] The fresh session passed the handoff test.
 
 ### Sizing check
 
-*Did the change need `ship`'s full close-out?* For a plan: yes. For a one-sentence fix: `implement-fix` then `ship`, which just commits and opens the PR with no bundle to land. When the plan is not ready, `ship` recommends opening the PR without the close-out and keeping the bundle, which is the per-story PR case. `handoff` is for a session that must end mid-work or has grown heavy; a short task that finishes in one sitting needs none.
+*Did the change need `ship`'s full close-out?* For a plan: yes. For a one-sentence fix: `implement-fix` then `ship`, which just commits and opens the PR with no bundle to land. When the plan is not ready, `ship` asks whether to keep the bundle and recommends keeping it while it opens the PR without the close-out, which is the per-story PR case. `handoff` is for a session that must end mid-work or has grown heavy; a short task that finishes in one sitting needs none.
 
 ---
 

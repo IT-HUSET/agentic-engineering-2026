@@ -57,7 +57,7 @@ Your own case repo, or a repo you inherited. If you have neither, your facilitat
    ```text
    /andthen:simplify-code <paths from the story's commit>
    ```
-   It records a check baseline first, simplifies for clarity, reuse and leanness while preserving behavior exactly, and re-runs the checks. It drops any cleanup that contradicts the governing FIS's *What We're NOT Doing* or *Architecture Decision*. Removing anything observable or exported needs your approval. A standalone run that changes a lot ends on a `Next (fresh session):` line for a `review` of the changed paths. `exec-plan` already runs one pass over a plan's code when it completes the last story, so this step is for older code or a story set you want cleaned separately.
+   It records a check baseline first, simplifies for clarity, reuse and leanness while preserving behavior exactly, and re-runs the checks. It drops any cleanup that contradicts the governing FIS's *What We're NOT Doing* or *Architecture Decision*. Removing anything observable or exported needs your approval. A standalone run that changes a lot ends on a `Next (fresh session):` line for a `review` of the changed paths. `exec-plan` already runs one pass per `done` story (one per merged batch under `--worktree`), so this step is for older code or a story set you want cleaned separately.
 
 ## Verify
 
@@ -71,4 +71,4 @@ Your own case repo, or a repo you inherited. If you have neither, your facilitat
 
 ## Sizing check
 
-*How much context discipline does this project earn?* Size it to the project's **lifespan**, not its size today. A one-session script earns almost none: do not scaffold an index for a throwaway. A feature you will live with earns the Document Index and a lean instruction file immediately. A long-lived or inherited codebase earns the full cadence: `describe` to make it legible, `handoff` between sessions, durable stores kept current, a cleanup pass after each plan.
+*How much context discipline does this project earn?* Size it to the project's **lifespan**, not its size today. A one-session script earns almost none: do not scaffold an index for a throwaway. A feature you will live with earns the Document Index and a lean instruction file immediately. A long-lived or inherited codebase earns the full cadence: `describe` to make it legible, `handoff` between sessions, durable stores kept current, a cleanup pass after each finished story.

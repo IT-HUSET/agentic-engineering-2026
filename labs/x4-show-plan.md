@@ -48,7 +48,7 @@ For `tracker`, GitHub through `gh` is the supported path, so `gh auth status` mu
    /andthen:tracker publish <feature-dir>/plan.json
    ```
    It shows the preview again and asks once. Re-running updates the same issues, found through the parent's checklist. Flow is one way, plan to tracker, with no sync back, so an edit you make in the tracker is shown to you before it is replaced. A closed issue is a shipped record and is never edited.
-7. **Know what `ship` will do.** Under `Record: tracker`, `ship` offers to publish before the push, and the pull request closes each finished story's issue. With the plan unfinished it keeps the bundle and closes only the finished stories' issues.
+7. **Know what `ship` will do.** Under `Record: tracker`, `ship` offers to publish before the push, and the pull request closes each finished story's issue. With the plan unfinished it asks whether to keep the bundle (recommending keep) and closes only the finished stories' issues, leaving the parent open.
 
 ## Verify
 

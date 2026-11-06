@@ -13,11 +13,11 @@ This repo is for **learning by doing**. Follow the labs in [`labs/`](labs/README
 Install AndThen as a Claude Code plugin:
 
 ```bash
-/plugin marketplace add IT-HUSET/andthen@develop
+/plugin marketplace add IT-HUSET/andthen@v1.0.0
 /plugin install andthen@andthen
 ```
 
-Your facilitator can pin an exact release tag (`IT-HUSET/andthen@v1.0.0-rc.<N>`) before the course; use the line they give you. If an older AndThen (0.x) is installed, run `/plugin marketplace remove andthen` first, because both marketplaces share a name.
+The course pins AndThen 1.0.0; if your facilitator gives you another tag, use their line. If AndThen is already installed (0.x, or 1.0 from `@develop` or `main`), run `/plugin marketplace remove andthen` first: a marketplace stays on the version it was added with.
 
 Then, when unsure where to start, run `/andthen:now-what`: it inspects the project and routes you to the right skill.
 
@@ -30,7 +30,7 @@ Then, when unsure where to start, run `/andthen:now-what`: it inspects the proje
 - **`plan`** writes the **Feature Implementation Specification (FIS)**: what to build, the proof for each acceptance scenario, when it's done. It decides whether the work is one story or several and writes a `plan.json` beside the FIS files. No code changes.
 - **`exec-plan`** builds a FIS, or runs a plan directory with one fresh subagent per story. A story is `done` only on a quoted line from a check that actually ran, and a fresh reviewer checks each one.
 - **`review --fix`** reviews the finished work as a whole (spec fit, code, security, outcome) and applies the findings marked `Fix`.
-- **`ship`** lands what was learned, drops the plan files, and opens the pull request after your one yes.
+- **`ship`** lands what was learned, then asks once whether to push, open the pull request, and drop the plan files (keeping them is your call).
 
 Every skill works standalone. Each pipeline step ends by printing the next command to paste, so run each step in a fresh session (`/clear`).
 
@@ -42,7 +42,7 @@ Part of the skill is choosing *how much structure* a piece of work deserves:
 |------|------|
 | A fix you can state in one sentence | `implement-fix "<request>"` → `ship`. Unknown cause or broken build: `triage` first |
 | One real feature | [`clarify` →] `plan` → `exec-plan <FIS>` → `review --fix` → `ship` |
-| Several features | [`clarify` →] `plan <dir>` → `exec-plan <dir>` → `review --fix` → `ship` (`--worktree` runs independent stories in parallel) |
+| Several features | [`clarify` →] `plan <dir>` → `exec-plan <first FIS>`, one story per fresh session, each naming the next → `review --fix` → `ship` (`exec-plan <dir>` runs every story in one sweep, the form for `--auto` and `--worktree` runs; `--worktree` runs independent stories in parallel) |
 
 The entry test: if you can't list three acceptance criteria, start with `clarify`; otherwise start with `plan`. `--worktree` and `--auto` are switches, not sizes. Design is right-sized the same way: none for a typo, an ADR or wireframe for a feature, a Domain Map for a multi-feature product.
 

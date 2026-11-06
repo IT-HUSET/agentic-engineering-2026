@@ -1,6 +1,6 @@
 # X7 – Trust the tests
 
-> **Skills:** `triage`, `testing` (`--mode prove-it`, `--mode tdd`, `--mode strategy`)
+> **Skills:** `triage`, `testing` (`--mode prove-it`, `--mode strategy`)
 > **Pull this when:** the suite cannot be trusted, a bug has an unknown cause, or a story went `done` on weak proof. Playbook background: §11.
 
 ## Trigger
@@ -48,8 +48,8 @@ Your own suite and `plan.json`. If you have none of these problems yet, use the 
    /andthen:testing --mode prove-it "<the defect>"
    ```
    The flow is fixed: reproduce as a failing test (its output matches the reported symptom), the minimum production change that turns it green, refactor on green, keep the test. Its report must include the exact **pre-fix failure output**. Without it, the bug was never proven to exist. For untested legacy code it pins current behavior with a characterization test first.
-6. **New behavior, test first.** `/andthen:testing --mode tdd "<behavior>"` drives red, green, refactor one behavior at a time. `exec-plan --tdd <FIS>` does the same across a story.
-7. **Strengthen a weak proof.** For a scenario you graded "does not protect": `/andthen:testing "<the scenario's code>"` writes tests for existing behavior at the lowest level that crosses the real trust boundary. Then repeat step 1 on the new test. Break the behavior and watch it go red.
+6. **New behavior, test first.** Test-first is not a flag. Require it in your `Testing Strategy` document, or say so in the request: `/andthen:testing "<behavior>, test first"` runs each test red, for the missing behavior, before the code that turns it green. A plan run's stories (`exec-plan`) take test-first only from the `Testing Strategy` document.
+7. **Strengthen a weak proof.** For a scenario you graded "does not protect": `/andthen:testing "<the scenario's code>"` writes tests for the behavior at the lowest level that crosses the real trust boundary. Then repeat step 1 on the new test. Break the behavior and watch it go red.
 
 ## Verify
 
