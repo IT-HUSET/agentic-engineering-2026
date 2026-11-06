@@ -10,14 +10,23 @@ This repo is for **learning by doing**. Follow the labs in [`labs/`](labs/README
 
 ## Setup
 
-Install AndThen as a Claude Code plugin:
+Install AndThen as a plugin for your agent (Claude Code, Codex CLI or GitHub Copilot CLI):
 
 ```bash
+# Claude Code
 /plugin marketplace add IT-HUSET/andthen@v1.0.0
 /plugin install andthen@andthen
+
+# Codex CLI
+codex plugin marketplace add IT-HUSET/andthen@v1.0.0
+codex plugin add andthen@andthen
+
+# GitHub Copilot CLI (pins with a URL fragment instead of @)
+copilot plugin marketplace add https://github.com/IT-HUSET/andthen.git#v1.0.0
+copilot plugin install andthen@andthen
 ```
 
-The course pins AndThen 1.0.0; if your facilitator gives you another tag, use their line. If AndThen is already installed (0.x, or 1.0 from `@develop` or `main`), run `/plugin marketplace remove andthen` first: a marketplace stays on the version it was added with.
+The course pins AndThen 1.0.0; if your facilitator gives you another tag, use their line. If AndThen is already installed (0.x, or 1.0 from `@develop` or `main`), remove the `andthen` marketplace first (`/plugin marketplace remove andthen`; in Codex `codex plugin remove andthen@andthen`, then `codex plugin marketplace remove andthen`; in Copilot `copilot plugin marketplace remove andthen`): a marketplace stays on the version it was added with. The labs show the `/andthen:<name>` commands of Claude Code and Copilot CLI. In Codex, ask for the skill by name: *Run the `andthen:init` skill*.
 
 Then, when unsure where to start, run `/andthen:now-what`: it inspects the project and routes you to the right skill.
 

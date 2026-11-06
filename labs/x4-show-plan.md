@@ -17,12 +17,12 @@ A single-story plan that only you read needs neither.
 
 Your team's `<feature-dir>/plan.json` and `prd.md` from C2. If your plan is not ready, your facilitator has a several-story `plan.json` to use.
 
-For `tracker`, GitHub through `gh` is the supported path, so `gh auth status` must show you signed in, and the repo needs a GitHub remote. Your facilitator tells you which repo is safe to write to.
+For `tracker`, GitHub through `gh` is the supported path, so `gh auth status` must show you signed in, and the repo needs a GitHub remote. Publish to your team's case repo, nowhere else.
 
 ## Output
 
 - `.agent_temp/visualize/plan.html`: a self-contained page with story dependencies and status. It is a derived copy, not committed by default.
-- A **dry-run preview** of what `tracker publish` would write, and, only if your facilitator agrees, the issues themselves.
+- A **dry-run preview** of what `tracker publish` would write, then the issues themselves in your team's case repo.
 
 ## Steps
 
@@ -43,7 +43,7 @@ For `tracker`, GitHub through `gh` is the supported path, so `gh auth status` mu
    /andthen:tracker publish <feature-dir>/plan.json --dry-run
    ```
    It shows what each issue would gain or lose and writes nothing. Check: one parent issue carrying the PRD and a story checklist, and a child issue per story titled `S03 - <name>` with its scope, intent, expected outcomes, acceptance scenarios and dependencies. **No issue names a file or a commit**, because both are gone after the merge.
-6. **Publish only on a yes from your facilitator.**
+6. **Publish to your team's case repo.**
    ```text
    /andthen:tracker publish <feature-dir>/plan.json
    ```
@@ -55,7 +55,7 @@ For `tracker`, GitHub through `gh` is the supported path, so `gh auth status` mu
 - [ ] The page shows every story in `plan.json` and every `dependsOn` edge, and a stranger can tell what blocks what without opening a FIS.
 - [ ] The page's status per story matches `plan.json` (re-draw it after a story moves; it goes stale).
 - [ ] The dry-run preview lists one issue per story plus the parent, and none of them mentions a file path or commit.
-- [ ] Nothing was written to the tracker unless you and your facilitator agreed. If you published, re-run `--dry-run` and confirm it targets the issues that exist instead of proposing new ones.
+- [ ] Issues were written only to your team's case repo. Re-run `--dry-run` and confirm it targets the issues that exist instead of proposing new ones.
 - [ ] You know where your requirements live after the merge (`Record:` line) and what that means for `prd.md`.
 
 ## Sizing check

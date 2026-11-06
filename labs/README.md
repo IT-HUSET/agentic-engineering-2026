@@ -26,9 +26,9 @@ In the foundation, paths are relative to `todo-app/`, where you start Claude Cod
 
 ## 2. Case work
 
-You take a case (a prepared one with a brief, or your own repo) and run the loop on it, with the sizing choice for each piece of work written down. **The process is the product.** What you deliver is the artifact trail and the gates you passed, not how finished or polished the app looks. A half-built case with every gate passed is a better result than a polished app built around a skipped gate.
+In a team of two to four, you take a prepared case with a brief, build it in a new GitHub repo your team creates for it, and run the loop on it, with the sizing choice for each piece of work written down. **The process is the product.** What you deliver is the artifact trail and the gates you passed, not how finished or polished the app looks. A half-built case with every gate passed is a better result than a polished app built around a skipped gate.
 
-Five gates, each approved by your facilitator against the **files**, not the running app. C1 and C5 apply to the case; C2 to C4 apply to every pull request, because AndThen ties a `plan.json` and its FIS files to a branch, so a PR is a plan.
+Five gates, each approved by your facilitator against the **files**, not the running app. At each gate your team presents its decisions, the solution, the consequences and the trade-offs, with the artifacts as proof. The facilitator picks who explains, so everyone on the team needs to understand what was built and why. C1 and C5 apply to the case; C2 to C4 apply to every pull request, because AndThen ties a `plan.json` and its FIS files to a branch, so a PR is a plan.
 
 | Gate | Passed when |
 |------|-------------|
@@ -38,7 +38,7 @@ Five gates, each approved by your facilitator against the **files**, not the run
 | **C4 – PR opened** | `review --fix` returned a Ready verdict with no open CRITICAL or HIGH finding, every scenario traces to a run proof, and `ship` opened a PR whose text gives the proof per story and the door type. |
 | **C5 – Closed** | The case repo has all its PRs, you have demoed against the assessment form, your friction log names one concrete next change to your harness, and your sizing log is complete. |
 
-Day 2 is the gate day. Aim for a first pull request through C2 to C4. Each day ends with `handoff`, and the next morning starts a fresh session from the handoff alone. Your facilitator shows the assessment form from the first morning, so nobody optimizes for the wrong target. The case kit (the brief template, setup checklist for your own repo, friction and sizing log template, and gate board) is coming in `case-kit/`.
+Day 2 is the gate day. Aim for a first pull request through C2 to C4. Each day ends with `handoff`, and the next morning a teammate who was not in the chat resumes from the handoff in a fresh session. Your facilitator shows the assessment form from the first morning, so nobody optimizes for the wrong target. The case kit (the brief template, setup checklist for your team's repo, friction and sizing log template, and gate board) is coming in `case-kit/`.
 
 ## 3. Exercise catalog
 
