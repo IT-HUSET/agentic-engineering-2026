@@ -6,7 +6,7 @@ Three parts, in order. The loop is the same everywhere: `[clarify →] plan → 
 |------|------|-------|
 | **1. Foundation** | The loop for one feature, once, on `todo-app/` (shared lists), ending in a pull request and a handoff | [`foundation.md`](foundation.md) |
 | **2. Case work** | The loop on a case, gated by C1–C5 | below, plus `case-kit/` |
-| **3. Exercise catalog** | Optional exercises you pull when your case calls for them | [below](#3-exercise-catalog) |
+| **3. Exercise catalog** | Optional deepening: end of Day 3 if there is time, or when your case calls for one | [below](#3-exercise-catalog) |
 
 In the foundation, paths are relative to `todo-app/`, where you start Claude Code. In case work they are relative to your case repo's root. Start every step in a fresh session (`/clear`), because each AndThen skill ends by printing the next command to paste.
 
@@ -42,7 +42,7 @@ Day 2 is the gate day. Aim for a first pull request through C2 to C4. Each day e
 
 ## 3. Exercise catalog
 
-Optional. Your facilitator may point you to one at a gate when its trigger shows up in your own artifacts, and you can pull any other whenever you want. Each exercise has a **Trigger**, **Input**, **Output**, **Steps**, **Verify** and **Sizing check**.
+Optional deepening. Do them at the end of Day 3 if there is time, or earlier when your case needs one or you are curious. Nothing is assigned; your facilitator may point you to one when its trigger shows up in your own artifacts. Each exercise has a **Trigger**, **Input**, **Output**, **Steps**, **Verify** and **Sizing check**.
 
 | Exercise | Skills | Pull it when |
 |----------|--------|--------------|

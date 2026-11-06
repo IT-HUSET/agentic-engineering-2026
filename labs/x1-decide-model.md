@@ -1,7 +1,7 @@
 # X1 – Decide and model
 
 > **Skills:** `decide`, `domain --mode glossary`, `spike`
-> **Pull this when:** your PRD or plan shows a design fork, or two names for one thing. You apply the strategic-DDD and architect-role prerequisite videos here; this exercise does not re-teach them.
+> **Pull this when:** your PRD or plan shows a design fork, or two names for one thing. You apply what the Day 1 talks covered; this exercise does not re-teach the theory.
 
 ## Trigger
 

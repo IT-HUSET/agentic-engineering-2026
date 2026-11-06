@@ -1,7 +1,7 @@
 # X3 – Strategic design
 
 > **Skills:** `domain --mode event-storming`, `domain --mode subdomains,contexts`, `visualize`
-> **Pull this when:** your work spans several subdomains, or nobody can say where one module ends and the next begins. This exercise applies the strategic-DDD prerequisite video. It does not re-teach it.
+> **Pull this when:** your work spans several subdomains, or nobody can say where one module ends and the next begins. This exercise applies strategic DDD. It does not teach the theory from scratch.
 
 ## Trigger
 

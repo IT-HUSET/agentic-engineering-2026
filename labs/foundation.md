@@ -37,7 +37,7 @@ The *Agentic Engineering Playbook* has a chapter behind each step if you want th
 ### Input
 
 - A clone of your fork of this repo (recommended, see the [README](../README.md#get-started)), Claude Code authenticated, AndThen installed as in the [README](../README.md#get-started) at the release your facilitator named.
-- The prep session (live or recorded) and the recorded prerequisite videos.
+- The prep session (live or recorded).
 
 ### Steps
 
@@ -147,7 +147,7 @@ One line: **"Let people share their lists."** Nothing else. There is no prior PR
 
 ## F3 – Decide
 
-**Skills:** `decide`, then `domain --mode glossary`. You apply what the prerequisite videos taught (working as an architect, strategic DDD). This step does not re-teach it.
+**Skills:** `decide`, then `domain --mode glossary`. You apply what the Day 1 talk on working as an architect covered. This step does not re-teach it.
 
 ### Input
 

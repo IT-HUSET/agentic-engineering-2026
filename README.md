@@ -5,9 +5,9 @@ Hands-on lab for practicing the **end-to-end workflow for structured use of AI c
 ## Prerequisites
 
 - One of Claude Code, Codex CLI or GitHub Copilot CLI, installed and signed in.
+- A plan with room for three days of agent runs. IT-HUSET staff use the company's Claude team seat; other participants bring their own subscription.
 - Basic command-line comfort.
 - The prep session, live or recorded, before the course.
-- The recorded prerequisite videos (working as an architect, strategic DDD, and others) before Day 1. Your facilitator shares the links.
 
 ## Get started
 
@@ -36,7 +36,7 @@ The [`todo-app/`](todo-app/) directory is the lab's brownfield base – an exist
 
 - **Foundation (Day 1).** The loop for one feature, once, on `todo-app/`: [`labs/foundation.md`](labs/foundation.md).
 - **Case work.** The same loop on a case, with the amount of structure you choose written down and a gate at each artifact.
-- **Exercise catalog.** Optional exercises (X1–X8) you pull when your case calls for them.
+- **Exercise catalog.** Optional deepening (X1–X8): at the end of Day 3 if there is time, or earlier when your case calls for one.
 
 ## The one idea
 
