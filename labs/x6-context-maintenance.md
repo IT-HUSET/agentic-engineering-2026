@@ -8,7 +8,7 @@
 Pull X6 when you can point to one of these:
 
 - **Brownfield.** Your case started from existing code, and there is no `docs/ARCHITECTURE.md`, no `docs/models/architecture-model.json`, or the Index in your `CLAUDE.md` points at nothing real. The agent keeps asking where things are.
-- **Context rot between days.** The overnight handoff test failed: a fresh session did not know a decision or a convention you settled yesterday, or it repeats a mistake you already fixed.
+- **Context rot between days.** A fresh session the next day did not know a decision or a convention you settled yesterday, or it repeats a mistake you already fixed.
 - **Duplication at reflection.** After a story, the diff contains a helper that already existed, or two stories solved the same thing two ways.
 - **Knowledge in a dead chat.** A trap or decision exists only in the transcript of a session you closed.
 
