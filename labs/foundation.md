@@ -36,7 +36,7 @@ The *Agentic Engineering Playbook* has a chapter behind each step if you want th
 
 ### Input
 
-- A clone of your fork of this repo (recommended, see the [README](../README.md#get-started)), Claude Code authenticated, AndThen installed as in the [README](../README.md#get-started) at the release your facilitator named.
+- A clone of your fork of this repo (recommended, see the [README](../README.md#get-started)), Claude Code authenticated, AndThen installed as in the [README](../README.md#get-started).
 - The prep session (live or recorded).
 
 ### Steps

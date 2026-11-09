@@ -15,18 +15,18 @@ Hands-on lab for practicing the **end-to-end workflow for structured use of AI c
 2. Install AndThen:
    ```bash
    # Claude Code
-   /plugin marketplace add IT-HUSET/andthen@v1.0.0
+   /plugin marketplace add IT-HUSET/andthen
    /plugin install andthen@andthen
 
    # Codex CLI
-   codex plugin marketplace add IT-HUSET/andthen@v1.0.0
+   codex plugin marketplace add IT-HUSET/andthen
    codex plugin add andthen@andthen
 
-   # GitHub Copilot CLI (pins with a URL fragment instead of @)
-   copilot plugin marketplace add https://github.com/IT-HUSET/andthen.git#v1.0.0
+   # GitHub Copilot CLI
+   copilot plugin marketplace add IT-HUSET/andthen
    copilot plugin install andthen@andthen
    ```
-   The course pins AndThen 1.0.0, so everyone runs the same skills. Your facilitator tells you if the tag changes before your course. If you already have AndThen installed (0.x, or 1.0 from `@develop` or `main`), remove the `andthen` marketplace first (`/plugin marketplace remove andthen`; in Codex `codex plugin remove andthen@andthen`, then `codex plugin marketplace remove andthen`; in Copilot `copilot plugin marketplace remove andthen`): a marketplace stays on the version it was added with. The labs show the `/andthen:<name>` commands of Claude Code and Copilot CLI. In Codex, ask for the skill by name: *Run the `andthen:init` skill*.
+   This installs the latest AndThen release. **Note:** the course material is based on AndThen 1.0.0, so a later release may differ in details. Already have AndThen installed? Update it (`claude plugin update andthen@andthen` in Claude Code). If you added it from a tag or `@develop`, remove the `andthen` marketplace first (`/plugin marketplace remove andthen`; in Codex `codex plugin remove andthen@andthen`, then `codex plugin marketplace remove andthen`; in Copilot `copilot plugin marketplace remove andthen`): a marketplace stays on the ref it was added with. The labs show the `/andthen:<name>` commands of Claude Code and Copilot CLI. In Codex, ask for the skill by name: *Run the `andthen:init` skill*.
 3. Read [CLAUDE.md](CLAUDE.md) for the workflow you'll practice.
 4. Follow [`labs/README.md`](labs/README.md): the foundation lab first, then the case work.
 

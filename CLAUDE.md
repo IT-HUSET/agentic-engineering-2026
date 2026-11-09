@@ -14,19 +14,19 @@ Install AndThen as a plugin for your agent (Claude Code, Codex CLI or GitHub Cop
 
 ```bash
 # Claude Code
-/plugin marketplace add IT-HUSET/andthen@v1.0.0
+/plugin marketplace add IT-HUSET/andthen
 /plugin install andthen@andthen
 
 # Codex CLI
-codex plugin marketplace add IT-HUSET/andthen@v1.0.0
+codex plugin marketplace add IT-HUSET/andthen
 codex plugin add andthen@andthen
 
-# GitHub Copilot CLI (pins with a URL fragment instead of @)
-copilot plugin marketplace add https://github.com/IT-HUSET/andthen.git#v1.0.0
+# GitHub Copilot CLI
+copilot plugin marketplace add IT-HUSET/andthen
 copilot plugin install andthen@andthen
 ```
 
-The course pins AndThen 1.0.0; if your facilitator gives you another tag, use their line. If AndThen is already installed (0.x, or 1.0 from `@develop` or `main`), remove the `andthen` marketplace first (`/plugin marketplace remove andthen`; in Codex `codex plugin remove andthen@andthen`, then `codex plugin marketplace remove andthen`; in Copilot `copilot plugin marketplace remove andthen`): a marketplace stays on the version it was added with. The labs show the `/andthen:<name>` commands of Claude Code and Copilot CLI. In Codex, ask for the skill by name: *Run the `andthen:init` skill*.
+This installs the latest release; the course material is based on AndThen 1.0.0. If AndThen is already installed, update it (`claude plugin update andthen@andthen` in Claude Code). If it was added from a tag or `@develop`, remove the `andthen` marketplace first (`/plugin marketplace remove andthen`; in Codex `codex plugin remove andthen@andthen`, then `codex plugin marketplace remove andthen`; in Copilot `copilot plugin marketplace remove andthen`): a marketplace stays on the ref it was added with. The labs show the `/andthen:<name>` commands of Claude Code and Copilot CLI. In Codex, ask for the skill by name: *Run the `andthen:init` skill*.
 
 Then, when unsure where to start, run `/andthen:now-what`: it inspects the project and routes you to the right skill.
 
