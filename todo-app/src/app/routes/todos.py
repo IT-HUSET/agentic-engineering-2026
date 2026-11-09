@@ -116,7 +116,6 @@ async def create_todo(
     todo = Todo(
         list_id=list_id,
         title=title.strip(),
-        priority="low",
         position=new_pos,
     )
     db.add(todo)
@@ -224,7 +223,7 @@ async def update_todo(
     # Parse due date
     if due_date and due_date.strip():
         try:
-            todo.due_date = datetime.strptime(due_date, "%Y-%m-%d")
+            todo.due_date = datetime.strptime(due_date, "%Y-%m-%dT%H:%M")
         except ValueError:
             pass  # Keep existing
     else:
@@ -301,15 +300,10 @@ async def delete_todo(
     if not list_obj:
         return Response(status_code=403)
 
-    list_id = todo.list_id
     db.delete(todo)
     db.commit()
 
-    return templates.TemplateResponse(
-        request=request,
-        name="partials/todo_deleted_oob.html",
-        context={"list_id": list_id, "count": _get_list_todo_count(db, list_id)},
-    )
+    return Response(status_code=200)
 
 
 @router.post("/{todo_id}/reorder")
