@@ -38,7 +38,7 @@ Five gates, each approved by your facilitator against the **files**, not the run
 | **C4 – PR opened** | `review --fix` returned a Ready verdict with no open CRITICAL or HIGH finding, every scenario traces to a run proof, and `ship` opened a PR whose text gives the proof per story and the door type. |
 | **C5 – Closed** | The case repo has all its PRs, you have demoed against the assessment form, your friction log names one concrete next change to your harness, and your sizing log is complete. |
 
-Day 1 ends with the case start: your team creates its case repo and repeats F1 there, so `check` is green. Day 2 is the gate day. It opens with `clarify` on the brief, C1 and the first presentation, then aims for a first pull request through C2 to C4. Your facilitator shows the assessment form from the first morning, so nobody optimizes for the wrong target. The case kit (the brief template, setup checklist for your team's repo, friction and sizing log template, and gate board) is coming in `case-kit/`.
+Day 1 ends with the case start: your team creates its case repo and repeats F1 there, so `check` is green. Day 2 is the case day. It opens with `clarify` on the brief, C1 and the first presentation, then aims for a first pull request through C2 to C4. Your facilitator shows the assessment form from the first morning, so nobody optimizes for the wrong target. The case kit (the brief template, setup checklist for your team's repo, friction and sizing log template, and gate board) is coming in `case-kit/`.
 
 ## 3. Exercise catalog
 
