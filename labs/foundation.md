@@ -57,8 +57,8 @@ The *Agentic Engineering Playbook* has a chapter behind each step if you want th
    ```text
    /andthen:now-what
    ```
-   It inspects the project (setup, codebase, workflow state), prints the chain `clarify (optional) → plan → exec-plan → review --fix → ship`, and offers `init` because the project has no Project Document Index yet. Answer yes.
-6. **`init`.** It asks nothing in an existing repository. It adds the **Project Document Index** to the `CLAUDE.md` in `todo-app/` without rewriting what is there, writes a `Key Dev Commands` document with the project's fast and full test commands, and adds two `.gitignore` entries (`.agent_temp/` and review reports). Documents already in `docs/` (see step 7) get an Index entry too. Its closing summary then offers extras one line each (role agents, critical rules, `describe`, more documents, a testing strategy, visual validation). **Ignore the offers for now.** An ignored offer writes nothing, and the catalog exercises pick them up when a case needs them.
+   It inspects the project (setup, codebase, workflow state), prints the chain `clarify (optional) → plan → exec-plan → review --fix → ship`, and offers `init` because the project has no Project Document Index yet. Answer yes. (Started in the repo root instead of `todo-app/`, it reads the root `CLAUDE.md` and `init` writes the Index there. Restart in `todo-app/`.)
+6. **`init`.** It asks nothing in an existing repository. It adds the **Project Document Index** to the `CLAUDE.md` in `todo-app/`, with short Overview, Guidelines and Key Development Commands sections, without rewriting what is there. It writes a `Key Dev Commands` document with the project's fast and full test commands (the same command here, because the suite has no slower tier), and adds two `.gitignore` entries (`.agent_temp/` and review reports). `PRODUCT.md` and `ARCHITECTURE.md` in `docs/` (see step 7) get an Index entry too. The two discovered files do not, because the Index has no entry for them. Its closing summary then offers extras one line each (role agents, critical rules, `describe`, more documents, a testing strategy, visual validation). **Ignore the offers for now.** An ignored offer writes nothing, and the catalog exercises pick them up when a case needs them.
 7. **`describe`: read the map of the code.** `describe` maps an existing codebase into `docs/ARCHITECTURE.md`, `docs/requirements-discovered.md` and `docs/decisions-discovered.md`. It fans out subagents, so **do not run it here**. The output of a prepared run is already committed in `todo-app/docs/`, and your facilitator re-runs `/andthen:describe` on screen. You run it yourself on your case repo in C1. If `todo-app/docs/` is missing or empty, tell your facilitator before you go on.
 8. **Learn to right-size.** Your facilitator introduces it. This is the whole course in one table:
 
@@ -77,7 +77,7 @@ The *Agentic Engineering Playbook* has a chapter behind each step if you want th
    git add CLAUDE.md .gitignore docs
    git commit -m "Set up AndThen"
    ```
-   The status should list only the files `init` wrote (the Index in `CLAUDE.md`, `.gitignore`, `docs/KEY_DEVELOPMENT_COMMANDS.md`). If something else shows up, find out why before you commit.
+   The status should list only the files `init` wrote (`CLAUDE.md`, `.gitignore`, `docs/KEY_DEVELOPMENT_COMMANDS.md`). If something else shows up, find out why before you commit.
 ### Output
 
 A project AndThen can navigate: a Document Index in `todo-app/CLAUDE.md`, `docs/KEY_DEVELOPMENT_COMMANDS.md`, the `.gitignore` entries, and the committed `describe` output in `docs/`. You are on branch `feat/shared-lists`, with the setup files committed and a clean tree.
@@ -119,16 +119,18 @@ One line: **"Let people share their lists."** Nothing else. There is no prior PR
    - It states the scope (a feature, so it writes a PRD) and where the file will land.
    - If `docs/PRODUCT.md` has no Proportionality facts, it asks for all three in one question: stage, scale, standing technical non-goals. Answer honestly for the lab app (a prototype, a handful of users, one SQLite file, no external services).
    - It interviews you in rounds, each question with a recommendation first. It always asks at least one round and waits for real answers.
+   - **Scope:** its first recommendation is the smallest MVP. Ask instead for the whole sharing direction (sharing, invitations, roles, notifications) in phases, with view-only sharing between registered users as the first slice and the MVP boundary. F4 needs that breadth to show how `plan` sizes work. Leave **how access is modeled** open for `decide` in F3.
    - Then it plays the settled picture back and asks you to confirm it. If the scope adds screens no wireframes cover, it also asks whether design runs before planning. For now answer no; wireframes are the catalog exercise X2.
-   - A fresh reviewer checks the PRD and may put Notes to you. Answer them.
+   - A fresh reviewer checks the PRD and usually puts Notes to you, some marked as blocking. Answer them: they are often real contradictions with the code.
 
    **Let it do its job.** Answer the question asked, and let it push back. If you dictate every answer up front you have skipped discovery and written down your first guess. Answer one thing vaguely on purpose ("anyone should be able to share") and watch it probe.
-4. **Read the PRD.** It prints the path relative to the project root, `docs/specs/<slug>/prd.md`. That directory is your `<feature-dir>`. The PRD is the one planning file that outlives the branch, and every story is cut from it, so this is where you read it carefully.
-5. **Compare with your hand-written criteria.** Did it ask things you missed, or did you ask things it didn't? The PRD writes each requirement's acceptance criteria as one rule each (`While <precondition>, when <trigger>, the system shall <response>`), with an `If <unwanted condition>, then the system shall <response>` rule per unwanted condition: compare your awkward edge with those `If` rules. Look at **Out of Scope** and the MVP boundary: what got parked on purpose so the first slice stays small?
+4. **Read the PRD.** It prints the path relative to the project root, `docs/specs/<slug>/prd.md`. That directory is your `<feature-dir>`. The PRD is the one planning file that outlives the branch, and every story is cut from it, so this is where you read it carefully. It is long for a one-line idea: start with the MVP boundary, **Out of Scope** and the `If` rules.
+5. **Settle the Non-Goal.** The PRD records that you overturned the sharing Non-Goal, but `clarify` leaves `docs/PRODUCT.md` as it was: it only ever adds rejected directions there. Ask the agent to amend the Non-Goal, and the lines that say lists stay private, so the product document agrees with the PRD. `decide` and `plan` read it next and would flag the contradiction.
+6. **Compare with your hand-written criteria.** Did it ask things you missed, or did you ask things it didn't? The PRD writes each requirement's acceptance criteria as one rule each (`While <precondition>, when <trigger>, the system shall <response>`), with an `If <unwanted condition>, then the system shall <response>` rule per unwanted condition: compare your awkward edge with those `If` rules. Look at **Out of Scope** and the MVP boundary: what got parked on purpose so the first slice stays small?
 
 ### Output
 
-`<feature-dir>/prd.md`, and Proportionality facts in `docs/PRODUCT.md`. The skill closes on one `Next (fresh session):` line: usually `decide`, because the sharing model is a design fork that binds beyond one story.
+`<feature-dir>/prd.md`, and Proportionality facts and the amended Non-Goal in `docs/PRODUCT.md`. The skill closes on one `Next (fresh session):` line: `decide` when the PRD leaves a design fork open, as the sharing model is, otherwise `plan`. If you get `plan`, go to F3 anyway: the lab needs the ADR.
 
 ### Verify
 
@@ -136,7 +138,7 @@ One line: **"Let people share their lists."** Nothing else. There is no prior PR
 - [ ] Scope boundaries are explicit. You can say out loud what this will **not** do (invites, roles, notifications).
 - [ ] A smallest shippable slice is named (view-only, registered users).
 - [ ] The awkward edges (non-user, duplicate, self-share, revoke) have stated expected behavior, or sit in Open Questions on purpose.
-- [ ] `docs/PRODUCT.md` has a Proportionality section with stage, scale and technical non-goals.
+- [ ] `docs/PRODUCT.md` has a Proportionality section with stage, scale and technical non-goals, and no longer says sharing is out.
 - [ ] The PRD is **decision-ready**: someone could design and plan from it without guessing.
 
 ### Sizing check
@@ -151,7 +153,7 @@ One line: **"Let people share their lists."** Nothing else. There is no prior PR
 
 ### Input
 
-`<feature-dir>/prd.md` from F2. Open its *Decisions Log*, *Constraints & Assumptions* and *Open Questions*. The design fork to find: **how is "this user may see that list" modeled?** Three real options: an access grant per list, ownership at a workspace level, or an invite link.
+`<feature-dir>/prd.md` from F2. Open its *Decisions Log*, *Constraints & Assumptions* and *Open Questions*. The design fork to find: **how is "this user may see that list" modeled?** Three real options: an access grant per list, ownership at a workspace level, or an invite link. Your PRD may already park workspaces or links in Out of Scope. `decide` still compares them, and the PRD's reasons show up in the scores.
 
 ### Steps
 
@@ -160,24 +162,25 @@ One line: **"Let people share their lists."** Nothing else. There is no prior PR
    /andthen:decide <feature-dir>
    ```
    What to expect:
-   - It lists the decision points and sorts each: already settled by the code or an ADR (cited, not asked), a requirement (goes back to the PRD via `clarify`), a choice that binds beyond one story or is costly to reverse (decided now), or local to one story (left to `plan`). You can add, drop or move a point.
-   - A decision where no option stands out is **contested** and gets a weighted trade-off. It proposes options, criteria and weights and asks you to confirm or adjust **before** researching. That gate is the whole point, so don't rush it. It compares five options unless you name a count; say *"compare three options"* if it proposes more.
+   - It lists the decision points and sorts each: already settled by the code or an ADR (cited, not asked), a requirement (goes back to the PRD via `clarify`), a choice that binds beyond one story or is costly to reverse (decided now), or local to one story (left to `plan`). It asks you to confirm the sorting, and you can add, drop or move a point.
+   - A decision where no option stands out is **contested** and gets a weighted trade-off. It proposes options, criteria and weights and asks you to confirm or adjust **before** researching. That gate is the whole point, so don't rush it. It compares five options unless you name a count; say *"compare three options"* if it proposes more. The floor option comes on top as an extra row.
+   - After the research it recommends one option and asks whether to accept it, refine it or go deeper. The research runs in subagents, so expect a wait before this question.
    - Each decision is labelled a **one-way or two-way door**: costly or cheap to reverse. Close options on a two-way door skip the analysis, because either pick is cheap to undo. Expect it to tell you when a fork does not earn one.
    - Before it writes anything it plays the settled set back and asks whether the ADRs go in as `Accepted` or `Proposed`. You just decided, so `Accepted`.
-2. **Read the ADR.** It lands in `docs/adrs/` (`ADR-001…`) and is registered in `docs/DECISIONS.md`. Find the **Reversal** line: which kind of door is it, and what would reversing it take? Find **Alternatives Considered**: the rejected options and why, plus the floor option (do nothing, or extend what exists).
+2. **Read the ADR.** It lands in `docs/adrs/` (`ADR-001…`) and is registered in `docs/DECISIONS.md`. Find the **Reversal** line: which kind of door is it, and what would reversing it take? Find **Alternatives Considered**: the rejected options and why, plus the floor option (do nothing, or extend what exists). `decide` does not edit the PRD, so its Open Questions still say the sharing model waits for an ADR: replace that line with a pointer to the ADR.
 3. **Name the terms.** In a fresh session:
    ```text
    /andthen:domain --mode glossary shared lists
    ```
-   It reads the code, the PRD and your ADR, pulls out the domain terms (list, owner, recipient or member, share, invitation), clusters synonyms under one canonical term, and flags words that mean two things. It merges into any existing glossary rather than overwriting it.
+   It reads the code, the PRD and your ADR, pulls out the domain terms (list, owner, recipient or member, share, invitation), clusters synonyms under one canonical term, and flags a word that means two things if it finds one. It asks nothing and prints no `Next` line. It merges into any existing glossary rather than overwriting it.
 4. **Read the glossary.** It lands in `docs/UBIQUITOUS_LANGUAGE.md`. Look at the **Avoid** column: it bans the synonyms ("collaborator", "guest") that would otherwise drift into the spec. `plan` reads this document next.
 5. **Commit the design artifacts.** `plan` and `exec-plan` start from a readable tree. Stage by path, never `git add -A`:
    ```bash
    git status --short
-   git add docs
+   git add docs CLAUDE.md
    git commit -m "Add shared-lists PRD, ADR and glossary"
    ```
-   The status should list the PRD, the Proportionality update in `docs/PRODUCT.md`, the ADR, `docs/DECISIONS.md`, `docs/UBIQUITOUS_LANGUAGE.md` and any `docs/research/` trade-off files. Review reports and `.agent_temp/` are gitignored.
+   The status should list the PRD, the `docs/PRODUCT.md` changes from F2, the ADR, `docs/DECISIONS.md`, `docs/UBIQUITOUS_LANGUAGE.md`, any `docs/research/` trade-off files, and `CLAUDE.md`, where the new documents got Index entries. Review reports and `.agent_temp/` are gitignored.
 
 ### Output
 
@@ -211,9 +214,9 @@ An ADR in `docs/adrs/` with its row in `docs/DECISIONS.md`, and `docs/UBIQUITOUS
    ```text
    /andthen:plan <feature-dir>
    ```
-   `plan` decides whether the PRD is one story or several, asks about missing requirements, writes `plan.json` and a FIS per story, reviews them together, then runs a final round of open questions. **Do not run `exec-plan` on the result.** Read:
+   `plan` decides whether the PRD is one story or several, asks about missing requirements, writes `plan.json` and a FIS per story, reviews them together, then runs a final round of open questions. It drafts the stories in dependency order, a batch at a time, so this is the slowest run of the day: start it, then write the skeleton in step 2 while it works. The final round asks one question per open item, which on a broad PRD can be twenty or more. Take the recommendations unless one is wrong. **Do not run `exec-plan` on the result.** Read:
    - `plan.json`: how many stories, each one's `scope`, and the `dependsOn` edges between them. Which could run at the same time?
-   - Any `OVERSIZE:` line. It means one FIS is too big for a single run; the skill asks whether to split it or keep it.
+   - Any `OVERSIZE:` line. It means one FIS is too big for a single run; the skill asks whether to split it or keep it. A well-cut plan has none.
    - Where the story seams fall relative to your ADR and glossary.
 
    If your PRD's scope was narrow and you got one story, that is an answer too: your PRD is one story. Your facilitator shows what a several-story plan looks like on a wider scope.
@@ -223,6 +226,7 @@ An ADR in `docs/adrs/` with its row in `docs/DECISIONS.md`, and `docs/UBIQUITOUS
    mkdir -p .agent_temp/whole-prd-plan
    mv <feature-dir>/plan.json <feature-dir>/s*.md .agent_temp/whole-prd-plan/
    ```
+   A final-round answer that changes a requirement also edits `prd.md`. Leave it in place, and check it with `git diff <feature-dir>/prd.md` in step 5.
 2. **Manual once: write the FIS skeleton for the slice you will build.** The slice is **share a list, view-only**: an owner lets one registered user *read* one of their lists, and can revoke. Before running the skill, write in `.agent_temp/f4-my-fis.md`:
    - **Intent**: one sentence, why this exists.
    - **Expected Outcomes**: two or three, one sentence each.
@@ -235,12 +239,18 @@ An ADR in `docs/adrs/` with its row in `docs/DECISIONS.md`, and `docs/UBIQUITOUS
    ```text
    /andthen:plan "<feature-dir>/ as one story: share a list view-only with a registered user, and revoke"
    ```
-   "As one story" overrides the sizing: a vertical slice that fits one fresh-context run is one story. Expect a requirements round, a self-review by a fresh reviewer, and a final round of open questions that closes with `Decided:` and `Assumed:` lists. Read them: each open item is listed with what settled it. The skill writes no code.
+   "As one story" overrides the sizing: a vertical slice that fits one fresh-context run is one story. Expect a requirements round, a self-review by a fresh reviewer, and a final round of open questions that closes with `Decided:` and `Assumed:` lists. Read them: each open item is listed with what settled it. `Assumed:` stays empty when you answered every item; it fills with questions nobody answered, as in an `--auto` run. The skill writes no code.
 4. **Compare with your skeleton.** Did it find edge cases you missed, or the other way round? Look at how it grounds tasks in real files in this repo (routes, models, templates), and at **What We're NOT Doing** and **Architecture Decision**, which should point at your ADR.
+5. **Commit any PRD change.** F5 starts with nothing uncommitted but the bundle. Read `git diff <feature-dir>/prd.md`. If it changed and you agree, commit it by path:
+   ```bash
+   git add <feature-dir>/prd.md
+   git commit -m "Amend shared-lists PRD from planning"
+   ```
+   Leave `plan.json` and the FIS uncommitted: `exec-plan` commits them with the story.
 
 ### Output
 
-`<feature-dir>/s01-<name>.md` (the FIS) and a one-story `<feature-dir>/plan.json` beside it, with story `S01` `pending`. (Story IDs and scenario IDs both start at `S01`; this lab always says "story S01" or "scenario S03" to keep them apart.) The skill closes on `Next (fresh session): /andthen:exec-plan <fis-path>`.
+`<feature-dir>/s01-<name>.md` (the FIS) and a one-story `<feature-dir>/plan.json` beside it, with story `S01` `pending`, plus any PRD amendment committed. (Story IDs and scenario IDs both start at `S01`; this lab always says "story S01" or "scenario S03" to keep them apart.) The skill closes on `Next (fresh session): /andthen:exec-plan <fis-path>`.
 
 ### Verify
 
@@ -275,12 +285,12 @@ The FIS and `plan.json` from F4. Start on `feat/shared-lists` with `uv run pytes
    /andthen:exec-plan <feature-dir>/s01-<name>.md
    ```
    There is no hand-implementation step here: the loop you would do by hand (change, run the check, repeat) is what the skill runs, task by task. Watch for:
-   - **Tasks in FIS order**, each passing its `Verify` before the next. Tests are written through the `testing` skill.
+   - **Tasks in FIS order**, each passing its `Verify` before the next. Your session writes the code itself, so this is the long, context-heavy part. Tests are written through the `testing` skill.
    - **Falsifiability**: a test must fail when the behavior it protects is removed.
-   - **The full proof run.** After the tasks it runs the project's checks and every proof the FIS names, and keeps one line per proof: what ran, the exit status, the runner's own result line.
-   - **A fresh reviewer.** It spawns a reviewer that did not write the code (`review --quick --fix`) over the story's changes.
-   - **Commit.** A commit with a brief subject and `Story-ID:` and `Plan:` trailers, and the story's row in `plan.json` set to `done`. Each finished story then gets one `simplify-code` pass over its code, as a separate `refactor` commit carrying the story's trailers.
-   - **The report.** It ends with a `Reviewed:` line (what reviewed the change, what stays open), a Chain Attestation (one sentence per Expected Outcome), and `Next (fresh session):`.
+   - **The full proof run.** After the tasks it runs the project's checks, every proof the FIS names and every Final Validation Checklist item, and keeps one line per proof: what ran, the exit status, the runner's own result line. A checklist item that needs a person in a browser it records as not run. That one is yours (see Verify).
+   - **A fresh reviewer.** It spawns a reviewer that did not write the code (`review --quick --fix`) over the story's changes. A quick pass gives findings, not a verdict. F6 gives the verdict.
+   - **Commit.** A commit with a brief subject and `Story-ID:` and `Plan:` trailers, and the story's row in `plan.json` set to `done`. Each finished story then gets one `simplify-code` pass over its code. When the pass changes something, it lands as a separate `refactor` commit carrying the story's trailers.
+   - **The report.** It ends with a `Reviewed:` line (what reviewed the change, what stays open), a Chain Attestation (one sentence per Expected Outcome), and `Next (fresh session):`. The simplify pass prints a `Next` line of its own: use the one at the very end of the `exec-plan` report.
 
    If it stops on a red gate, that is work to finish, not a caveat. A failed story ends with a route out: `review --fix` over the story's changed paths, then `exec-plan` again on the same FIS.
 3. **Read what it learned.** Open the `## Implementation Observations` section at the bottom of the FIS: traps, drift from the spec, things it noticed but did not touch. In the case work this is the **reflection between stories**: before the next FIS runs, you check it against what this story taught you.
@@ -295,8 +305,9 @@ The agent attested. You still check, and it is cheap because the FIS says exactl
 
 - [ ] In `plan.json`, story `S01` is `status: done` and `verified.summary` quotes a **run** check: the command, its exit status, and the runner's own result line. "Looks right" and an exit code alone don't count.
 - [ ] **Run that command yourself.** Same result?
-- [ ] `git log -3` shows the story commit with `Story-ID: S01` (the story) and `Plan:` trailers (and a `refactor` commit from the simplify pass each done story gets). `git status` is clean: you started with only the F4 bundle uncommitted, and `exec-plan` committed it with the story.
-- [ ] Every task is checked in the FIS and none is checked without a passing `Verify` behind it.
+- [ ] `git log -3` shows the story commit with `Story-ID: S01` (the story) and `Plan:` trailers, and a `refactor` commit if the simplify pass changed something. `git status` is clean: you started with only the F4 bundle uncommitted, and `exec-plan` committed it with the story.
+- [ ] Story `S01`'s `completedTaskIds` in `plan.json` lists every task in the FIS, and the report has a passing proof line behind each task's `Verify`. The FIS itself only gains the `## Implementation Observations` section.
+- [ ] **Run the browser item yourself.** Start `./run.sh`, share a list as the demo user, register a second user in a private window, and check that they can read the list but not change it. Then revoke and reload as the second user.
 - [ ] The report's `Reviewed:` line says a fresh reviewer looked, and you know what it left open.
 
 > **Tests pass is not it works.** Green tests prove the scenarios you *wrote* in F4. Whether those were the right and complete scenarios is F6's question. If a scenario could not be proved because it was written un-observably, fix the *spec*, then re-run.
@@ -322,21 +333,21 @@ The committed slice from F5, `plan.json` (story `S01` done) and the FIS. Re-read
    - **Read the scenario's test.** Does it drive the **route**, or only click the UI? A test that only clicks the UI never asked the real question.
    - **Falsify the test.** Comment out the server-side check in one handler, run `uv run pytest`, then put it back with `git restore <file>`. Red means a test protects the rule. **Green means the suite is lying**: it asserted what the UI shows, not the invariant the server must hold.
 
-   Either outcome is useful. If the server refuses and the test goes red, you have confirmed the rule by evidence, which is what review will also do. If not, you found the gap yourself. Reading code against the contract is the durable skill; the tool confirms it faster. Keep your notes for step 3.
+   Either outcome is useful. If the server refuses and the test goes red, you have confirmed the rule by evidence, which is what review will also do. If not, you found the gap yourself. One thing that is not your bug: a stranger gets 403 on todo routes but 404 on list routes. That predates the feature (`GAP-D08` in `docs/requirements-discovered.md`). Reading code against the contract is the durable skill; the tool confirms it faster. Keep your notes for step 3.
 2. **With AndThen: run the plan-level review.** In a fresh session, paste the line `exec-plan` printed:
    ```text
    /andthen:review --fix <feature-dir>/plan.json
    ```
-   Review runs in a fresh reviewer that did not write the code, against the FIS and PRD as the intent baseline. It picks the lenses itself and typically chains them: `code`, `gap` (does it match the FIS), `security` where its trigger fires (this diff touches authorization), and `outcome` (does it solve the PRD's problem). It proves coverage before it gives a verdict, then routes each finding **Fix** (mechanical, safe to apply) or **Note** (surfaced for you). `--fix` then applies the Fix findings in one round, with no re-review. The report is written beside `plan.json` and is gitignored by default.
+   Review runs in a fresh reviewer that did not write the code, against the FIS and PRD as the intent baseline. It picks the lenses itself and typically chains them: `code`, `gap` (does it match the FIS), `security` where its trigger fires (this diff touches authorization), and `outcome` (does it solve the PRD's problem). One reviewer subagent runs all the lenses in one long pass. It proves coverage before it gives a verdict, then routes each finding **Fix** (mechanical, safe to apply) or **Note** (surfaced for you). `--fix` then applies the Fix findings in one round, with no re-review. It may dispatch implementer subagents for that, tests first. This is the heaviest step for your quota. The report is written beside `plan.json` and is gitignored by default.
 3. **Compare the report with your hunt.** Did review prove the bypass you suspected, citing the unguarded handler? Did it confirm the scenarios that genuinely pass, and correctly dismiss things you parked in **What We're NOT Doing** (no "you forgot editor roles")?
-4. **Settle the rest.** Open `## Remediation Status` in the report. Fix findings are resolved or deferred with a reason. **Note** findings are untouched until you decide: fix it, or defer it on purpose. A Fix blocked by an open decision lands in `docs/TECH-DEBT-BACKLOG.md` after you approve it. If the report ends on a `Next (fresh session):` follow-up review (it fixed a CRITICAL or HIGH finding, so a session that did not apply the fixes should re-read), run it.
+4. **Settle the rest.** Open `## Remediation Status` in the report. Fix findings are resolved or deferred with a reason. **Note** findings are untouched until you decide: fix it, or defer it on purpose. The run ends on one question covering every Note: slow down here. A Fix blocked by an open decision lands in `docs/TECH-DEBT-BACKLOG.md` after you approve it. The skill's final output, not the report file, ends on the `Next (fresh session):` line. Usually that is `ship`. If it is a follow-up review (it fixed a CRITICAL or HIGH finding, so a session that did not apply the fixes should re-read), run it.
 
    Resist "while I'm here" cleanup. Findings are routed, not a flat to-do list. If you spot something out of scope, surface it; don't bundle it in.
 5. **Re-run the checks yourself** after the fixes: `uv run pytest`.
 
 ### Output
 
-A review report beside `plan.json`, the Fix-routed findings applied in your working tree (the skill leaves them uncommitted; `ship` commits them), and a report that ends on a `Next (fresh session):` line for `ship`.
+A review report beside `plan.json`, the Fix-routed findings applied in your working tree (the skill leaves them uncommitted; `ship` commits them), and a `Next (fresh session):` line for `ship` at the end of the skill's output.
 
 ### Verify
 
@@ -373,9 +384,14 @@ A reviewed branch: `plan.json` with story `S01` done, a clean review, and the `N
    - **Lands what the FIS learned.** It reads each FIS's `## Implementation Observations` and writes the real traps as `docs/LEARNINGS.md` bullets. The rest it *recommends* (a `Decisions` line, a `decide` run); it does not write them for you.
    - **Writes the pull request** for a reviewer deciding whether to merge: the intent, the outcomes, the proof of each (from `verified.summary`), the review's verdict, and whether the change is a **one-way or two-way door** and what breaks if it is wrong. It also names where a reviewer should read closely and what stays open, and ends on a fixed `## Ship summary` section.
    - **Commits** the review's fixes still in your working tree and the Learnings.
-   - **Asks once before anything leaves the machine**: base branch, the commits leaving, the title and the body. For a ready plan the same question asks whether to **delete `plan.json` and the FIS** (they govern one branch and never merge), recommending deletion.
-3. **Read the PR text before you say yes.** Does it put what the merge decision needs first? Could a reviewer who never saw your chat tell what the change is for, and how it was proved? With your fork as the target, accept the recommended delete and say yes. Without a fork, say no: the skill prints the title, the body and the commands to run later, and deletes nothing. (`ship --auto` stops before anything leaves the machine and prints the same commands.)
-4. **Check the aftermath.** `docs/LEARNINGS.md` has the new bullets, and `git log` shows the Learnings commit. If you said yes: the bundle's deletion is committed before the push, `git ls-files <feature-dir>` shows only `prd.md` (a `ls` would also show the review report, which is gitignored), and `prd.md` gains a `> **Shipped**: ...` header line. If you said no, the bundle is still there and nothing is stamped.
+   - **Asks once before anything leaves the machine**: base branch, the commits leaving, the title and the body. For a ready plan the same question asks whether to **delete `plan.json` and the FIS** (they govern one branch and never merge), recommending deletion. A clone with no remote at all gets no push question, only the question about the bundle.
+3. **Read the PR text before you say yes.** Does it put what the merge decision needs first? Could a reviewer who never saw your chat tell what the change is for, and how it was proved? The proof comes from `verified.summary`, written before F6's fixes, so its test count can be lower than your last run: the PR text should say so. Then answer:
+   - **Your fork as the target:** accept the recommended delete and say yes.
+   - **No fork** (your remote is the course repo, which you cannot push to): say no. The skill prints the title, the body and the commands to run later, and deletes nothing.
+   - **No remote at all:** answer **keep**. A delete goes ahead at once here, and nothing was pushed.
+
+   If you did not push, copy the title and body into `.agent_temp/f7-pr.md` now: the PR text exists only in this session. (`ship --auto` stops before anything leaves the machine and prints the same commands.)
+4. **Check the aftermath.** `git log` shows the Learnings commit. `docs/LEARNINGS.md` exists (`ship` creates it on first use) and holds what passed its test for a durable trap, often only one bullet. The output says why it left out the other observations. If you said yes: the bundle's deletion is committed before the push, `git ls-files <feature-dir>` shows only `prd.md` (a `ls` would also show the review report, which is gitignored), and `prd.md` gains a `> **Shipped**: ...` header line. If you answered keep, the bundle stays and `plan.json` carries a `shipped` marker. If you said no, the bundle is still there and nothing is stamped.
 5. **Hand off.** A session that has to end mid-work, or the end of a day, is a boundary your context does not survive. Run:
    ```text
    /andthen:handoff "next: frame my case repo – init, describe, test command"
@@ -389,12 +405,12 @@ A reviewed branch: `plan.json` with story `S01` done, a clean review, and the `N
 
 ### Output
 
-An open pull request (or its title, body and commands ready), new `docs/LEARNINGS.md` bullets, a branch whose plan bundle is deleted (if you pushed), and a handoff a fresh session resumed from.
+An open pull request (or its title, body and commands saved), new `docs/LEARNINGS.md` bullets, a branch whose plan bundle is deleted (if you pushed) or marked `shipped` (if you kept it), and a handoff a fresh session resumed from.
 
 ### Verify
 
 - [ ] The PR body states intent, outcomes, proof per outcome, and door type with blast radius, before any per-story detail.
-- [ ] If you said yes: `plan.json` and the FIS are gone from the branch; `prd.md` remains and carries a `> **Shipped**:` line. You know why: specs govern one branch and never merge, so the PR body and the PRD carry the intent afterwards. If you said no, the bundle is intact.
+- [ ] If you said yes: `plan.json` and the FIS are gone from the branch; `prd.md` remains and carries a `> **Shipped**:` line. You know why: specs govern one branch and never merge, so the PR body and the PRD carry the intent afterwards. If you answered keep, `plan.json` has a top-level `shipped` entry. If you said no, the bundle is intact.
 - [ ] Each new Learnings bullet traces to an Implementation Observation you can find in the FIS in git history.
 - [ ] The handoff names artifacts **by path**; it does not paste them.
 - [ ] The fresh session passed the handoff test.
