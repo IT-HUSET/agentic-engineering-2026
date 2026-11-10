@@ -125,7 +125,7 @@ One line: **"Let people share their lists."** Nothing else. There is no prior PR
 
    **Let it do its job.** Answer the question asked, and let it push back. If you dictate every answer up front you have skipped discovery and written down your first guess. Answer one thing vaguely on purpose ("anyone should be able to share") and watch it probe.
 4. **Read the PRD.** It prints the path relative to the project root, `docs/specs/<slug>/prd.md`. That directory is your `<feature-dir>`. The PRD is the one planning file that outlives the branch, and every story is cut from it, so this is where you read it carefully. It is long for a one-line idea: start with the MVP boundary, **Out of Scope** and the `If` rules.
-5. **Settle the Non-Goal.** The PRD records that you overturned the sharing Non-Goal, but `clarify` leaves `docs/PRODUCT.md` as it was: it only ever adds rejected directions there. Ask the agent to amend the Non-Goal, and the lines that say lists stay private, so the product document agrees with the PRD. `decide` and `plan` read it next and would flag the contradiction.
+5. **Check the Non-Goal, then finish the job.** `clarify` curates `docs/PRODUCT.md`'s Non-Goals in both directions, so the sharing bullet should now be narrowed to what you still reject, or gone. Read it and say whether that matches what you decided. Two lines outside that section are still yours: the *Value Propositions* line "Lists stay private to their owner" and the *Decisions Log* row saying the same. Ask the agent to amend them, so the whole product document agrees with the PRD. `decide` and `plan` read it next and would flag the contradiction.
 6. **Compare with your hand-written criteria.** Did it ask things you missed, or did you ask things it didn't? The PRD writes each requirement's acceptance criteria as one rule each (`While <precondition>, when <trigger>, the system shall <response>`), with an `If <unwanted condition>, then the system shall <response>` rule per unwanted condition: compare your awkward edge with those `If` rules. Look at **Out of Scope** and the MVP boundary: what got parked on purpose so the first slice stays small?
 
 ### Output
@@ -167,7 +167,7 @@ One line: **"Let people share their lists."** Nothing else. There is no prior PR
    - After the research it recommends one option and asks whether to accept it, refine it or go deeper. The research runs in subagents, so expect a wait before this question.
    - Each decision is labelled a **one-way or two-way door**: costly or cheap to reverse. Close options on a two-way door skip the analysis, because either pick is cheap to undo. Expect it to tell you when a fork does not earn one.
    - Before it writes anything it plays the settled set back and asks whether the ADRs go in as `Accepted` or `Proposed`. You just decided, so `Accepted`.
-2. **Read the ADR.** It lands in `docs/adrs/` (`ADR-001…`) and is registered in `docs/DECISIONS.md`. Find the **Reversal** line: which kind of door is it, and what would reversing it take? Find **Alternatives Considered**: the rejected options and why, plus the floor option (do nothing, or extend what exists). `decide` does not edit the PRD, so its Open Questions still say the sharing model waits for an ADR: replace that line with a pointer to the ADR.
+2. **Read the ADR.** It lands in `docs/adrs/` (`ADR-001…`) and is registered in `docs/DECISIONS.md`. Find the **Reversal** line: which kind of door is it, and what would reversing it take? Find **Alternatives Considered**: the rejected options and why, plus the floor option (do nothing, or extend what exists). Then open the PRD: the *Open Questions* line that said the sharing model waits for an ADR should now name the ADR that settles it, with its own text intact. Nothing else in the PRD changes, because a requirement goes back through `clarify`.
 3. **Name the terms.** In a fresh session:
    ```text
    /andthen:domain --mode glossary shared lists
@@ -191,6 +191,7 @@ An ADR in `docs/adrs/` with its row in `docs/DECISIONS.md`, and `docs/UBIQUITOUS
 - [ ] The ADR's decision is one option, stated plainly, with a reason that names the criteria that decided it.
 - [ ] **Alternatives Considered** includes the rejected options and the floor option, and the **Reversal** line says one-way or two-way and what reversing takes.
 - [ ] `docs/DECISIONS.md` has a row for the ADR, with the status you chose.
+- [ ] The PRD's *Open Questions* row for the sharing model names the ADR that settles it, and still reads as it did otherwise.
 - [ ] Glossary terms are canonical: one name per concept, banned synonyms in **Avoid**, no mechanism or rationale smuggled into a cell.
 - [ ] Both are ready for the next step: the FIS can cite the ADR and use the terms verbatim.
 

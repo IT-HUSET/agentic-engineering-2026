@@ -9,7 +9,7 @@ Pull X4 when you can say one of these about your plan:
 
 - A reviewer, product owner or teammate will approve the plan at C2 without having been in your session, and `plan.json` plus a stack of FIS files is a poor thing to hand them.
 - Your team tracks work in GitHub issues (or another tracker) and wants the stories there.
-- `docs/ISSUE-TRACKER.md` exists, or your team's convention says requirements live in the tracker (`Record: tracker`).
+- Your team's convention says requirements live in the tracker (`Record: tracker`), or you already keep a `docs/ISSUE-TRACKER.md`.
 
 A single-story plan that only you read needs neither.
 
@@ -33,11 +33,11 @@ For `tracker`, GitHub through `gh` is the supported path, so `gh auth status` mu
    ```
    The page lands at `.agent_temp/visualize/plan.html`. Before it hands the page over, the skill renders it in a browser and fixes overlaps, clipped labels and unreadable arrows. With no browser reachable it says the page is **unchecked**; open it yourself and look. It works for any other AndThen artifact too (the Domain Map, a FIS, an ADR, a review report).
 3. **Compare the picture with your notes.** Does the diagram bring out your answers from step 1? If a reader has to dig for the blocking story, ask for a different emphasis and re-run.
-4. **Set up the tracker, once.** `tracker publish` offers `setup` whenever `docs/ISSUE-TRACKER.md` is missing, even on GitHub, because creating the document is part of the first publish. Accept it when offered, or run it first:
+4. **Decide whether you need `setup` at all.** On a GitHub remote you do not: with no `docs/ISSUE-TRACKER.md`, `publish` takes the built-in `gh` path and `Record:` defaults to `repo`, so `prd.md` stays in the repo after the merge. Run `setup` only to put the record in the tracker instead, or for a tracker that is not GitHub:
    ```text
    /andthen:tracker setup
    ```
-   Choose GitHub as the backend, and choose your `Record:` line. It asks which backend you use and whether requirements live in the repo (`Record: repo`, the default: `prd.md` stays after the merge) or the tracker (`Record: tracker`: the PRD lives in its issue and child issues keep each story's record).
+   It asks which backend you use, for anything but GitHub the command per operation, and whether requirements live in the repo (`Record: repo`) or the tracker (`Record: tracker`: the PRD lives in its issue and child issues keep each story's record).
 5. **Preview before you write.** Always dry-run first:
    ```text
    /andthen:tracker publish <feature-dir>/plan.json --dry-run
