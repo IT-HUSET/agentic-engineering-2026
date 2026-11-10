@@ -29,7 +29,7 @@ Don't want to install on your own machine, or on Windows without WSL2? Use the [
    copilot plugin marketplace add IT-HUSET/andthen
    copilot plugin install andthen@andthen
    ```
-   This installs the latest AndThen release. **Note:** the course material is based on AndThen 1.0.0, so a later release may differ in details. Already have AndThen installed? Update it (`claude plugin update andthen@andthen` in Claude Code). If you added it from a tag or `@develop`, remove the `andthen` marketplace first (`/plugin marketplace remove andthen`; in Codex `codex plugin remove andthen@andthen`, then `codex plugin marketplace remove andthen`; in Copilot `copilot plugin marketplace remove andthen`): a marketplace stays on the ref it was added with. The labs show the `/andthen:<name>` commands of Claude Code and Copilot CLI. In Codex, ask for the skill by name: *Run the `andthen:init` skill*.
+   This installs the latest AndThen release. **Note:** the course material is based on AndThen 1.0.0 and rechecked against 1.1.0, so a later release may differ in details. Already have AndThen installed? Update it (`claude plugin update andthen@andthen` in Claude Code). If you added it from a tag or `@develop`, remove the `andthen` marketplace first (`/plugin marketplace remove andthen`; in Codex `codex plugin remove andthen@andthen`, then `codex plugin marketplace remove andthen`; in Copilot `copilot plugin marketplace remove andthen`): a marketplace stays on the ref it was added with. The labs show the `/andthen:<name>` commands of Claude Code and Copilot CLI. In Codex, ask for the skill by name: *Run the `andthen:init` skill*.
 3. Check your setup from the repo root:
    ```bash
    uv run check.py

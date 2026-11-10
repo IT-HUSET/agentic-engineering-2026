@@ -219,6 +219,7 @@ An ADR in `docs/adrs/` with its row in `docs/DECISIONS.md`, and `docs/UBIQUITOUS
    - `plan.json`: how many stories, each one's `scope`, and the `dependsOn` edges between them. Which could run at the same time?
    - Any `OVERSIZE:` line. It means one FIS is too big for a single run; the skill asks whether to split it or keep it. A well-cut plan has none.
    - Where the story seams fall relative to your ADR and glossary.
+   - Whether story S01 is a **walking skeleton**: when the main flow crosses several stories, the first story's `scope` says it is the thinnest end-to-end path of that flow, and every story that thickens it lists S01 in `dependsOn`.
 
    If your PRD's scope was narrow and you got one story, that is an answer too: your PRD is one story. Your facilitator shows what a several-story plan looks like on a wider scope.
 
@@ -339,7 +340,7 @@ The committed slice from F5, `plan.json` (story `S01` done) and the FIS. Re-read
    ```text
    /andthen:review --fix <feature-dir>/plan.json
    ```
-   Review runs in a fresh reviewer that did not write the code, against the FIS and PRD as the intent baseline. It picks the lenses itself and typically chains them: `code`, `gap` (does it match the FIS), `security` where its trigger fires (this diff touches authorization), and `outcome` (does it solve the PRD's problem). One reviewer subagent runs all the lenses in one long pass. It proves coverage before it gives a verdict, then routes each finding **Fix** (mechanical, safe to apply) or **Note** (surfaced for you). `--fix` then applies the Fix findings in one round, with no re-review. It may dispatch implementer subagents for that, tests first. This is the heaviest step for your quota. The report is written beside `plan.json` and is gitignored by default.
+   Review runs in a fresh reviewer that did not write the code, against the FIS and PRD as the intent baseline. It picks the lenses itself and typically chains them: `code`, `gap` (does it match the FIS), `security` where its trigger fires (this diff touches authorization), and `outcome` (does it solve the PRD's problem). One reviewer subagent runs all the lenses in one long pass. It proves coverage before it gives a verdict, then routes each finding **Fix** (mechanical, safe to apply) or **Note** (surfaced for you). `--fix` then applies the Fix findings in one round, with no re-review, and commits the verified change by path. It may dispatch implementer subagents for that, tests first. This is the heaviest step for your quota. The report is written beside `plan.json` and is gitignored by default.
 3. **Compare the report with your hunt.** Did review prove the bypass you suspected, citing the unguarded handler? Did it confirm the scenarios that genuinely pass, and correctly dismiss things you parked in **What We're NOT Doing** (no "you forgot editor roles")?
 4. **Settle the rest.** Open `## Remediation Status` in the report. Fix findings are resolved or deferred with a reason. **Note** findings are untouched until you decide: fix it, or defer it on purpose. The run ends on one question covering every Note: slow down here. A Fix blocked by an open decision lands in `docs/TECH-DEBT-BACKLOG.md` after you approve it. The skill's final output, not the report file, ends on the `Next (fresh session):` line. Usually that is `ship`. If it is a follow-up review (it fixed a CRITICAL or HIGH finding, so a session that did not apply the fixes should re-read), run it.
 
@@ -348,11 +349,11 @@ The committed slice from F5, `plan.json` (story `S01` done) and the FIS. Re-read
 
 ### Output
 
-A review report beside `plan.json`, the Fix-routed findings applied in your working tree (the skill leaves them uncommitted; `ship` commits them), and a `Next (fresh session):` line for `ship` at the end of the skill's output.
+A review report beside `plan.json`, the Fix-routed findings applied and committed (`git log -1` shows the commit), and a `Next (fresh session):` line for `ship` at the end of the skill's output.
 
 ### Verify
 
-- [ ] The overall readiness is **Ready** and no CRITICAL or HIGH finding is open. A *deferred* one counts as open. If a Note you chose to keep holds readiness back, you can say why.
+- [ ] The overall readiness is **PASS**, or **FAIL** with a `**Remediated**:` line under the report's title and every finding behind it resolved. No CRITICAL or HIGH finding is open: a *deferred* one counts as open. If a Note you chose to keep holds readiness back, you can say why.
 - [ ] Every acceptance scenario traces to evidence that was actually run, in the report's coverage matrix, and you spot-checked one.
 - [ ] The direct-request path is refused server-side, and a test that drives the route would fail if the check were removed.
 - [ ] Every **Fix** finding is resolved with evidence, and every **Note** is decided by you, not waved through.
@@ -384,9 +385,9 @@ A reviewed branch: `plan.json` with story `S01` done, a clean review, and the `N
    - **Checks for open work** (a story not done, an open CRITICAL or HIGH finding) and asks once whether to ship anyway.
    - **Lands what the FIS learned.** It reads each FIS's `## Implementation Observations` and writes the real traps as `docs/LEARNINGS.md` bullets. The rest it *recommends* (a `Decisions` line, a `decide` run); it does not write them for you.
    - **Writes the pull request** for a reviewer deciding whether to merge: the intent, the outcomes, the proof of each (from `verified.summary`), the review's verdict, and whether the change is a **one-way or two-way door** and what breaks if it is wrong. It also names where a reviewer should read closely and what stays open, and ends on a fixed `## Ship summary` section.
-   - **Commits** the review's fixes still in your working tree and the Learnings.
+   - **Commits** the Learnings, and anything still uncommitted (F6's `review --fix` already committed its fixes).
    - **Asks once before anything leaves the machine**: base branch, the commits leaving, the title and the body. For a ready plan the same question asks whether to **delete `plan.json` and the FIS** (they govern one branch and never merge), recommending deletion. A clone with no remote at all gets no push question, only the question about the bundle.
-3. **Read the PR text before you say yes.** Does it put what the merge decision needs first? Could a reviewer who never saw your chat tell what the change is for, and how it was proved? The proof comes from `verified.summary`, written before F6's fixes, so its test count can be lower than your last run: the PR text should say so. Then answer:
+3. **Read the PR text before you say yes.** Does it put what the merge decision needs first? Could a reviewer who never saw your chat tell what the change is for, and how it was proved? The proof comes from `verified.summary`, written before F6's fixes, so its test count can be lower than your last run: the PR text should say so, and the `## Ship summary` lens table marks that review `Remediated: yes`. Then answer:
    - **Your own repo as the target:** accept the recommended delete and say yes.
    - **A clone of the course repo** (your remote is the course repo, which you cannot push to): say no. The skill prints the title, the body and the commands to run later, and deletes nothing.
    - **No remote at all:** answer **keep**. A delete goes ahead at once here, and nothing was pushed.
@@ -418,7 +419,7 @@ An open pull request (or its title, body and commands saved), new `docs/LEARNING
 
 ### Sizing check
 
-*Did the change need `ship`'s full close-out?* For a plan: yes. For a one-sentence fix: `implement-fix` then `ship`, which just commits and opens the PR with no bundle to land. When the plan is not ready, `ship` asks whether to keep the bundle and recommends keeping it while it opens the PR without the close-out, which is the per-story PR case. `handoff` is for a session that must end mid-work or has grown heavy; a short task that finishes in one sitting needs none.
+*Did the change need `ship`'s full close-out?* For a plan: yes. For a one-sentence fix: `implement-fix`, which commits the verified change, then `ship`, which just opens the PR with no bundle to land. When the plan is not ready, `ship` asks whether to keep the bundle and recommends keeping it while it opens the PR without the close-out, which is the per-story PR case. `handoff` is for a session that must end mid-work or has grown heavy; a short task that finishes in one sitting needs none.
 
 ---
 

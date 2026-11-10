@@ -106,7 +106,7 @@ a fix needs a decision. Finish with the final verdict, the report paths, and
 the remaining Note and DEFERRED findings.
 ```
 
-The loop ends on the hand-off, never on a verdict or a severity count: a `Note` no fix round may apply can hold readiness at *Needs Fixes*, so "until Ready" may never terminate.
+The loop ends on the hand-off, never on a verdict or a severity count: a `Note` no fix round may apply can hold a lens at *FAIL*, so "until PASS" may never terminate.
 
 ## Verify
 

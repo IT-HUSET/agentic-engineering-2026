@@ -57,7 +57,7 @@ Your own case repo, or a repo you inherited. If you have neither, your facilitat
    ```text
    /andthen:simplify-code <paths from the story's commit>
    ```
-   It records a check baseline first, simplifies for clarity, reuse and leanness while preserving behavior exactly, and re-runs the checks. It drops any cleanup that contradicts the governing FIS's *What We're NOT Doing* or *Architecture Decision*. Removing anything observable or exported needs your approval. A standalone run that changes a lot ends on a `Next (fresh session):` line for a `review` of the changed paths. `exec-plan` already runs one pass per `done` story (one per merged batch under `--worktree`), so this step is for older code or a story set you want cleaned separately.
+   It records a check baseline first, simplifies for clarity, reuse and leanness while preserving behavior exactly, re-runs the checks, and commits the change by path once they are green. It drops any cleanup that contradicts the governing FIS's *What We're NOT Doing* or *Architecture Decision*. Removing anything observable or exported needs your approval. A standalone run that changes a lot ends on a `Next (fresh session):` line for a `review` of the changed paths. `exec-plan` already runs one pass per `done` story (one per merged batch under `--worktree`), so this step is for older code or a story set you want cleaned separately.
 
 ## Verify
 

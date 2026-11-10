@@ -42,7 +42,7 @@ Your own suite and `plan.json`. If you have none of these problems yet, use the 
    ```text
    /andthen:triage "<the symptom>"
    ```
-   It reaches a root cause, writes a failing test through `testing` that proves the defect **before** the fix, fixes, searches for other instances of the same cause, and closes on the **original symptom**, not on a green local test. Watch the stop rule: after two failed fix attempts it writes down what both assumed and tests that assumption before a third. After three it hands the problem once to an `oracle` role agent, if you installed them in X5, then stops and reports.
+   It reaches a root cause, writes a failing test through `testing` that proves the defect **before** the fix, fixes, searches for other instances of the same cause, and closes on the **original symptom**, not on a green local test. Watch the stop rule: after two failed fix attempts it writes down what both assumed and tests that assumption before a third. After three it hands the problem once to an `oracle` role agent, if you installed them in X5, then stops and reports. A fix that turns green is committed by path.
 5. **A known defect: prove it.**
    ```text
    /andthen:testing --mode prove-it "<the defect>"
