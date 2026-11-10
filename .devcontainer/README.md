@@ -6,12 +6,20 @@ Use it in one of three ways: run your agent in the container's terminal (VS Code
 
 Your case team can use it too: copy `.devcontainer/` to the root of your team's repo, and change the `uv sync` step in `setup.sh` if your stack needs something else.
 
+## Let Claude set it up
+
+The quickest way to a codespace with the Claude app connected. Open a session in the Claude app's Code tab on your own machine, in any folder, and paste this with your GitHub account filled in. Claude runs the commands and stops when you need to sign in or click something in the app.
+
+> Set up a GitHub codespace for my fork `<your-account>/agentic-engineering-2026` and connect this Claude app to it over SSH. Install the GitHub CLI (`gh`) if it's missing and sign me in with the `codespace` scope. Then read `.devcontainer/README.md` in my fork with `gh` and follow its Codespaces steps. Run the commands yourself, and stop when I need to sign in or click in the app.
+
+Prefer to do it by hand? Follow the steps below.
+
 ## Start it
 
-**Codespaces:** you need `gh` on your own machine, signed in. It creates the codespace and carries every SSH connection to it, the Claude app's included. On Windows, install it with `winget install --id GitHub.cli`, then open a new PowerShell window so it finds `gh`.
+**Codespaces:** you need the GitHub CLI, `gh`, on your own machine, signed in. It creates the codespace and carries every SSH connection to it, the Claude app's included. Install it if you don't have it: `winget install --id GitHub.cli` on Windows (then open a new PowerShell window so it finds `gh`), `brew install gh` on macOS, or see [cli.github.com](https://cli.github.com).
 
 ```bash
-gh auth login -s codespace
+gh auth login -h github.com -p https -w -s codespace
 ```
 
 Already signed in to `gh`? Add the scope instead:
