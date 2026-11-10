@@ -22,18 +22,37 @@ gh codespace create -R <your-account>/agentic-engineering-2026 -b main --idle-ti
 
 The Claude Code tab in the desktop app can run its sessions inside your codespace over SSH. You don't sign in to Claude in the container for this, because the app passes its own sign-in to each session.
 
+On Windows you need the Claude app from Claude's download page, not the Microsoft Store, and `gh` (`winget install --id GitHub.cli`). Run the commands below in PowerShell. `ssh -V` should show OpenSSH 9.4 or later. With an older version the app uses a built-in SSH client with fewer features.
+
 1. Give the codespace a fixed SSH name. Replace `<codespace>` with the name from `gh codespace list`. Run this again if you create a new codespace.
+
+   macOS and Linux:
    ```bash
    gh codespace ssh -c <codespace> --config | sed -E 's/^Host .*/Host course-codespace/' > ~/.ssh/course-codespace.conf
    ```
+   Windows (PowerShell):
+   ```powershell
+   New-Item -ItemType Directory -Force "$HOME\.ssh" | Out-Null
+   gh codespace ssh -c <codespace> --config | ForEach-Object { $_ -replace '^Host .*', 'Host course-codespace' } | Set-Content -Encoding ascii "$HOME\.ssh\course-codespace.conf"
+   ```
 2. Include that file in your SSH config. Do this once.
+
+   macOS and Linux:
    ```bash
    printf '\nMatch all\nInclude ~/.ssh/course-codespace.conf\n' >> ~/.ssh/config
    ```
-3. In the app, open the environment selector and choose **New environment**, **SSH**, **Add SSH connection**. Enter `course-codespace` as **SSH host** and leave port and key empty.
-4. Choose `/workspaces/<repo-name>` as the folder.
+   Windows (PowerShell):
+   ```powershell
+   Add-Content -Encoding ascii "$HOME\.ssh\config" "`nMatch all`nInclude ~/.ssh/course-codespace.conf"
+   ```
+3. Check that it connects. This prints `ok`, and starts the codespace if it was stopped:
+   ```bash
+   ssh course-codespace echo ok
+   ```
+4. In the app, open the environment selector and choose **New environment**, **SSH**, **Add SSH connection**. Enter `course-codespace` as **SSH host** and leave port and key empty.
+5. Choose `/workspaces/<repo-name>` as the folder.
 
-Tested from macOS. **Windows is not tested yet.** Claude's docs say the app uses Windows' own SSH client only with OpenSSH 9.4 or later and an app from Claude's download page, not the Microsoft Store. Otherwise it uses a built-in client with fewer features.
+Tested from macOS. **Windows is not tested yet.**
 
 ### What differs from a local session
 
