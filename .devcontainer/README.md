@@ -2,18 +2,26 @@
 
 An alternative to installing everything on your own machine, and the way to run on Windows without WSL2. It has Claude Code, Codex CLI, GitHub Copilot CLI, AndThen, `gh`, `uv`, Node and `tmux`, and it installs the `todo-app` dependencies.
 
+Use it in one of three ways: run your agent in the container's terminal (VS Code, or the codespace in your browser) after signing in there, for example `claude auth login`; connect the Claude app to a codespace over SSH; or follow a session with Remote Control.
+
 Your case team can use it too: copy `.devcontainer/` to the root of your team's repo, and change the `uv sync` step in `setup.sh` if your stack needs something else.
 
 ## Start it
 
-**Codespaces:**
+**Codespaces:** you need `gh` on your own machine, signed in. It creates the codespace and carries every SSH connection to it, the Claude app's included. On Windows, install it with `winget install --id GitHub.cli`, then open a new PowerShell window so it finds `gh`.
+
+```bash
+gh auth login -s codespace
+```
+
+Already signed in to `gh`? Add the scope instead:
 
 ```bash
 gh auth refresh -h github.com -s codespace
 ```
 
 ```bash
-gh codespace create -R <your-account>/agentic-engineering-2026 -b main --idle-timeout 240m
+gh codespace create -R <your-account>/agentic-engineering-2026 -b main --machine basicLinux32gb --idle-timeout 240m
 ```
 
 **Docker on your own machine:** open the repo in VS Code and run **Dev Containers: Reopen in Container**. The Claude app connection below works only with Codespaces, because this container does not publish its SSH port to your machine.
@@ -22,7 +30,7 @@ gh codespace create -R <your-account>/agentic-engineering-2026 -b main --idle-ti
 
 The Claude Code tab in the desktop app can run its sessions inside your codespace over SSH. You don't sign in to Claude in the container for this, because the app passes its own sign-in to each session.
 
-On Windows you need the Claude app from Claude's download page, not the Microsoft Store, and `gh` (`winget install --id GitHub.cli`). Run the commands below in PowerShell. `ssh -V` should show OpenSSH 9.4 or later. With an older version the app uses a built-in SSH client with fewer features.
+On Windows you need the Claude app from Claude's download page, not the Microsoft Store. Run the commands below in PowerShell. `ssh -V` should show OpenSSH 9.4 or later. With an older version the app uses a built-in SSH client with fewer features.
 
 1. Give the codespace a fixed SSH name. Replace `<codespace>` with the name from `gh codespace list`. Run this again if you create a new codespace.
 
@@ -52,7 +60,7 @@ On Windows you need the Claude app from Claude's download page, not the Microsof
 4. In the app, open the environment selector and choose **New environment**, **SSH**, **Add SSH connection**. Enter `course-codespace` as **SSH host** and leave port and key empty.
 5. Choose `/workspaces/<repo-name>` as the folder.
 
-Tested from macOS. **Windows is not tested yet.**
+Tested from macOS and from Windows 11 (PowerShell 5.1, OpenSSH 9.5).
 
 ### What differs from a local session
 
