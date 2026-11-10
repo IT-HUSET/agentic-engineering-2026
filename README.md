@@ -13,7 +13,7 @@ Don't want to install on your own machine, or on Windows without WSL2? Use the [
 
 ## Get started
 
-1. Fork this repo to your own GitHub account and clone your fork (recommended). Your day 1 changes are then saved, and your pull request has somewhere to go. Run `gh repo set-default <your-account>/agentic-engineering-2026` in the clone, so pull requests open in your fork and not against the course repo.
+1. Create your own repo from this one and clone it (recommended). On GitHub choose **Use this template → Create a new repository**, pick your account, and tick **Include all branches**. Your day 1 changes are then saved, and your pull request opens in your own repo.
 2. Install AndThen:
    ```bash
    # Claude Code

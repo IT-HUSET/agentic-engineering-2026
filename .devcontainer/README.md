@@ -10,7 +10,7 @@ Your case team can use it too: copy `.devcontainer/` to the root of your team's 
 
 The quickest way to a codespace with the Claude app connected. Open a session in the Claude app's Code tab on your own machine, in any folder, and paste this with your GitHub account filled in. Claude runs the commands and stops when you need to sign in or click something in the app.
 
-> Set up a GitHub codespace for my fork `<your-account>/agentic-engineering-2026` and connect this Claude app to it over SSH. Install the GitHub CLI (`gh`) if it's missing and sign me in with the `codespace` scope. Then read `.devcontainer/README.md` in my fork with `gh` and follow its Codespaces steps. Run the commands yourself, and stop when I need to sign in or click in the app.
+> Set up a GitHub codespace for my repo `<your-account>/agentic-engineering-2026` and connect this Claude app to it over SSH. Install the GitHub CLI (`gh`) if it's missing and sign me in with the `codespace` scope. Then read `.devcontainer/README.md` in my repo with `gh` and follow its Codespaces steps. Run the commands yourself, and stop when I need to sign in or click in the app.
 
 Prefer to do it by hand? Follow the steps below.
 

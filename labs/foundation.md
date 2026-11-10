@@ -36,7 +36,7 @@ The *Agentic Engineering Playbook* has a chapter behind each step if you want th
 
 ### Input
 
-- A clone of your fork of this repo (recommended, see the [README](../README.md#get-started)), Claude Code authenticated, AndThen installed as in the [README](../README.md#get-started).
+- A clone of your own repo created from this one (recommended, see the [README](../README.md#get-started)), Claude Code authenticated, AndThen installed as in the [README](../README.md#get-started).
 - The prep session (live or recorded).
 
 ### Steps
@@ -371,7 +371,7 @@ A review report beside `plan.json`, the Fix-routed findings applied in your work
 
 ### Input
 
-A reviewed branch: `plan.json` with story `S01` done, a clean review, and the `Next (fresh session):` line for `ship` that `review` printed. The pull-request target is your fork of this repo.
+A reviewed branch: `plan.json` with story `S01` done, a clean review, and the `Next (fresh session):` line for `ship` that `review` printed. The pull-request target is your own repo created from this one.
 
 ### Steps
 
@@ -387,8 +387,8 @@ A reviewed branch: `plan.json` with story `S01` done, a clean review, and the `N
    - **Commits** the review's fixes still in your working tree and the Learnings.
    - **Asks once before anything leaves the machine**: base branch, the commits leaving, the title and the body. For a ready plan the same question asks whether to **delete `plan.json` and the FIS** (they govern one branch and never merge), recommending deletion. A clone with no remote at all gets no push question, only the question about the bundle.
 3. **Read the PR text before you say yes.** Does it put what the merge decision needs first? Could a reviewer who never saw your chat tell what the change is for, and how it was proved? The proof comes from `verified.summary`, written before F6's fixes, so its test count can be lower than your last run: the PR text should say so. Then answer:
-   - **Your fork as the target:** accept the recommended delete and say yes.
-   - **No fork** (your remote is the course repo, which you cannot push to): say no. The skill prints the title, the body and the commands to run later, and deletes nothing.
+   - **Your own repo as the target:** accept the recommended delete and say yes.
+   - **A clone of the course repo** (your remote is the course repo, which you cannot push to): say no. The skill prints the title, the body and the commands to run later, and deletes nothing.
    - **No remote at all:** answer **keep**. A delete goes ahead at once here, and nothing was pushed.
 
    If you did not push, copy the title and body into `.agent_temp/f7-pr.md` now: the PR text exists only in this session. (`ship --auto` stops before anything leaves the machine and prints the same commands.)
