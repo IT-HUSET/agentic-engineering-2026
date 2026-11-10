@@ -1,0 +1,27 @@
+{
+  "name": "Agentic Engineering 2026",
+  "build": { "dockerfile": "Dockerfile" },
+  "features": {
+    "ghcr.io/devcontainers/features/github-cli:1": {},
+    "ghcr.io/devcontainers/features/node:1": { "version": "lts" },
+    "ghcr.io/devcontainers/features/sshd:1": {},
+    "ghcr.io/va-h/devcontainers-features/uv:1": {},
+    "ghcr.io/anthropics/devcontainer-features/claude-code:1": {}
+  },
+  "remoteUser": "vscode",
+  "mounts": [
+    "source=agentic-engineering-claude-${devcontainerId},target=/home/vscode/.claude,type=volume"
+  ],
+  "containerEnv": {
+    "CLAUDE_CONFIG_DIR": "/home/vscode/.claude",
+    "UV_PROJECT_ENVIRONMENT": "/home/vscode/.venvs/project"
+  },
+  "portsAttributes": {
+    "2222": { "label": "SSH", "onAutoForward": "silent" },
+    "8000": { "label": "App", "onAutoForward": "notify" }
+  },
+  "customizations": {
+    "vscode": { "extensions": ["anthropic.claude-code", "ms-python.python"] }
+  },
+  "postCreateCommand": "bash .devcontainer/setup.sh"
+}

@@ -9,6 +9,8 @@ Hands-on lab for practicing the **end-to-end workflow for structured use of AI c
 - Basic command-line comfort.
 - The prep session, live or recorded, before the course.
 
+Don't want to install on your own machine, or on Windows without WSL2? Use the [dev container](.devcontainer/README.md), locally or in GitHub Codespaces.
+
 ## Get started
 
 1. Fork this repo to your own GitHub account and clone your fork (recommended). Your day 1 changes are then saved, and your pull request has somewhere to go. Run `gh repo set-default <your-account>/agentic-engineering-2026` in the clone, so pull requests open in your fork and not against the course repo.
