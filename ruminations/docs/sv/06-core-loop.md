@@ -25,7 +25,7 @@ Interactive component: tre pillerformade knappar, en per väg. Den valda vägen 
 | Path | Label | Start | Steps | Note |
 | - | - | - | - | - |
 | feature | En funktion | idé | clarify, decide, plan, exec-plan, review, ship | En riktig funktion går igenom hela Core Loop med en enda FIS. Börja med clarify om du inte kan räkna upp tre acceptanskriterier. Annars börjar du med plan. |
-| several | Flera funktioner | idé | clarify, decide, plan, exec-plan, review, ship | Flera funktioner går igenom samma Core Loop, men med en plankatalog. plan delar upp arbetet i stories, och exec-plan bygger var och en med en ny subagent. |
+| several | Flera funktioner | idé | clarify, decide, plan, exec-plan, review, ship | Flera funktioner går igenom samma Core Loop, men med en plankatalog. plan delar upp arbetet i stories, och exec-plan bygger dem en story i taget, eller hela katalogen i ett svep. |
 | fix | En rättelse på en mening | rättelse | triage, implement-fix, ship | En rättelse som du kan beskriva i en mening hoppar över specen. Okänd orsak eller trasigt bygge? Kör triage först. |
 
 Component: stegraden. Startetiketten med en röd prick, sedan varje steg som ett piller med nummer, namn och ”valfritt” när det gäller (streckad ram). Under varje piller en tagg med ikonen och Tag från stegets Result i shared/skills.md. Mellan stegen en markering ”/clear”. Piltangenterna flyttar längs raden.
@@ -83,11 +83,11 @@ Kommandona kan skilja sig mellan vägarna. En rad `Command (several): …` gäll
 - Tint: green
 - Role: Implementation
 - Title: Bygg mot specen
-- Summary: Bygger en FIS, eller kör en plankatalog med en ny subagent per story. En story är done först när det finns en citerad rad från en kontroll som faktiskt kördes, och en ny granskare kontrollerar var och en.
+- Summary: Bygger en FIS, eller kör en plankatalog med en ny subagent per story. En story är done först när det finns en citerad rad från en kontroll som faktiskt kördes, och en ny granskare kontrollerar var och en. Varje färdig story får sedan en förenklingsrunda, och det den upptäckte förs in i FIS-filerna för stories som inte har börjat.
 - When: **Låt den vara medan den kör.** Redigera inte kod för hand mitt i en körning. Låt den bli klar, eller stoppa och ändra i FIS:en.
 - Reads: En FIS, eller en plankatalog
 - Command (feature): `/andthen:exec-plan <FIS>`
-- Command (several): `/andthen:exec-plan <dir>`; `/andthen:exec-plan <dir> --worktree` (Kör oberoende stories parallellt)
+- Command (several): `/andthen:exec-plan <first ready FIS>` (Raden som plan skriver ut: en story i taget, och varje körning anger nästa); `/andthen:exec-plan <dir>` (Eller alla stories i ett svep); `/andthen:exec-plan <dir> --worktree` (Kör oberoende stories parallellt)
 - Studio: Plan board, som du låter stå öppen: storyn flyttar till done när körningen committar, och den öppnar diffen för sina ändringar.
 
 ### review --fix
@@ -96,7 +96,7 @@ Kommandona kan skilja sig mellan vägarna. En rad `Command (several): …` gäll
 - Tint: teal
 - Role: Granskning
 - Title: Granska helheten
-- Summary: Granskar det färdiga arbetet som helhet: hur väl det följer specen, kod, säkerhet och utfall. Sedan genomför den fynden som är markerade Fix.
+- Summary: Granskar det färdiga arbetet som helhet: hur väl det följer specen, kod, säkerhet och utfall. Sedan ger den utlåtandet PASS eller FAIL, genomför fynden som är markerade Fix och committar dem.
 - When: **Hela ändringen på en gång.** exec-plan har redan kontrollerat varje story. Det här steget tittar på hur de passar ihop.
 - Reads: Den färdiga ändringen och dess spec
 - Command: `/andthen:review --fix`
@@ -108,11 +108,11 @@ Kommandona kan skilja sig mellan vägarna. En rad `Command (several): …` gäll
 - Tint: lav
 - Role: Leverans
 - Title: Leverera
-- Summary: Sparar lärdomarna, tar bort planfilerna när alla stories är klara och öppnar pull requesten efter ett enda ja från dig.
+- Summary: Sparar lärdomarna, öppnar pull requesten efter ett enda ja från dig och erbjuder att ta bort planfilerna när alla stories är klara.
 - When: **Du har kontrollen.** Ingenting öppnas förrän du säger ja.
 - Reads: Det granskade arbetet och dess planfiler
 - Command: `/andthen:ship`
-- Note (several): **Är bara en del av planen byggd?** `ship` kontrollerar det först. Finns det stories kvar namnger den dem och frågar en gång om du vill skeppa ändå. Den rekommenderar att planen behålls: `plan.json` och FIS-filerna ligger kvar, följer med i pull requesten tillsammans med arbetet och läses av de stories som återstår. Även steget med Learnings väntar. Pull requesten anger vad som fortfarande är öppet. Den sista `ship`, när alla stories är klara och granskade, för in lärdomarna i Learnings och tar bort planen.
+- Note (several): **Är bara en del av planen byggd?** `ship` kontrollerar det först. Finns det stories kvar namnger den dem och frågar en gång om du vill skeppa ändå. Den rekommenderar att planen behålls: `plan.json` och FIS-filerna ligger kvar, följer med i pull requesten tillsammans med arbetet och läses av de stories som återstår. Även steget med Learnings väntar. Pull requesten anger vad som fortfarande är öppet. Den sista `ship`, när alla stories är klara och granskade, för in lärdomarna i Learnings och frågar om planen ska tas bort, och rekommenderar ja. `prd.md` ligger kvar, med en Shipped-rad.
 - Studio: Walkthroughs: en guidad tur genom pull requesten innan du mergar den. Efter den sista `ship` är Plan board tom, eftersom den raderar `plan.json`.
 
 ### triage
@@ -122,7 +122,7 @@ Kommandona kan skilja sig mellan vägarna. En rad `Command (several): …` gäll
 - Optional: yes
 - Role: Diagnos
 - Title: Hitta orsaken först
-- Summary: Undersöker och diagnostiserar problemet innan något ändras.
+- Summary: Undersöker problemet ner till grundorsaken, rättar det under ett test som fallerar och committar rättelsen. --plan-only stannar vid planen för rättelsen.
 - When: **Valfritt.** Bara när orsaken är okänd eller bygget är trasigt. Beskriv symptom, inte lösningar.
 - Reads: Symptom: fel, tester som fallerar, loggar
 - Command: `/andthen:triage`
@@ -133,7 +133,7 @@ Kommandona kan skilja sig mellan vägarna. En rad `Command (several): …` gäll
 - Tint: rust
 - Role: Liten rättelse
 - Title: Gör rättelsen
-- Summary: För en rättelse som du kan beskriva i en mening. Den hoppar över specen och går direkt till en verifierad ändring.
+- Summary: För en rättelse som du kan beskriva i en mening. Den hoppar över specen och går direkt till en verifierad ändring, som den committar.
 - When: **Lagom mycket struktur.** Kan du inte säga det i en mening är det en funktion. Använd plan i stället.
 - Reads: Det du ber om, i en mening
 - Command: `/andthen:implement-fix "<request>"`
@@ -167,6 +167,7 @@ Component: två tonade kort bredvid varandra med en pil och en etikett emellan (
 - Row: Innehåll · problemet, kraven (FR1, FR2 …) med prioritet, vad som ingår och inte ingår, MVP-gränsen, begränsningar och en beslutslogg
 - Row: Skrivs av · `clarify` på funktionsnivå, som är standardläget
 - Row: Läses av · `plan`, som gör en FIS av den, och `review` med linsen outcome
+- Row: Shipped · `ship` lägger till en Shipped-rad när den tar bort planen. En ändring via `clarify` tar bort raden
 - Note: PRD:n förankras i produkten. I labbets PRD om delade listor faller e-post och notifieringar bort, eftersom `docs/PRODUCT.md` anger en prototyp med en enda SQLite-fil och inga externa tjänster. `clarify` stryker eller flaggar förmågor som de uppgifterna inte bär, och hänvisar till dem.
 
 ### Så väljer clarify nivå
@@ -197,7 +198,7 @@ Component: tre tonade kort med pilar och etiketter emellan (staplade, med pilar 
 - Eyebrow: En per plankatalog
 - Tint: rust
 - Arrow: fis
-- Text: Planens tillstånd. För varje story: beroenden (`dependsOn`), status, vilka tasks i FIS:en som är klara (`completedTaskIds`) och en pekare till FIS:en. `plan` skriver filen, och sedan uppdaterar den session som bygger en story storyns rad. Där står inget om hur något ska byggas. Filen finns bara på branchen, och `ship` tar bort den.
+- Text: Planens tillstånd. För varje story: beroenden (`dependsOn`), status, vilka tasks i FIS:en som är klara (`completedTaskIds`) och en pekare till FIS:en. `plan` skriver filen, och sedan uppdaterar den session som bygger en story storyns rad. Där står inget om hur något ska byggas. Filen finns bara på branchen. `ship` tar bort den när du säger ja. Behåller du den får den en `shipped`-markering som dokumentation.
 - Row: S01 · Listor har ägare · `s01-listor-har-agare.md` · done
 - Row: S02 · Dela en lista · beror på S01 · in-progress
 - Row: S03 · Sortera efter förfallodatum · inga beroenden · done
@@ -220,10 +221,10 @@ Component: tre tonade kort med pilar och etiketter emellan (staplade, med pilar 
 
 `plan` avgör det i sitt steg 3, One story or several. En story är per definition en vertikal slice: något du kan demonstrera genom alla lager.
 
-1. **En story när arbetet ryms.** Arbetet förblir en story när det är en vertikal slice som ryms i en enda exec-körning med ny kontext och lite marginal, ungefär 18 tasks.
+1. **En story när arbetet ryms.** Arbetet förblir en story när det är en vertikal slice som ryms i en enda exec-körning med ny kontext och lite marginal, ungefär 12 tasks.
 2. **Annars så få slices som möjligt.** `plan` delar upp arbetet i så få stories som täcker källan, utan överlapp. Den delar aldrig upp efter lager, som endpoint, handler och UI var för sig.
 3. **För stort delas tunnare.** En story som kommer tillbaka med `OVERSIZE:` delas i tunnare vertikala slices.
-4. **Gränser och överlapp.** Där modulgränserna är starka delas arbetet längs dem, och `sharedDecisions` låser gränssnittet. Stories som skulle röra ungefär samma filer slås ihop.
+4. **Gränser och överlapp.** Där modulgränserna är starka delas arbetet längs dem, och `sharedDecisions` låser gränssnittet. Stories som skulle röra ungefär samma filer slås ihop, utom ett gående skelett: när huvudflödet går genom flera stories är den första dess tunnaste väg genom hela flödet, och de stories som bygger på den beror på den.
 
 ### Se upp med namnen
 
@@ -254,9 +255,9 @@ Merge label: merge
 
 ### Vem avgör
 
-1. **plan drar upp beroendena.** `dependsOn` innehåller bara orsakssamband: en story beror på en annan bara när den använder något som den andra storyn skapar, ett kontrakt eller ett beslut. Stories som skulle röra ungefär samma filer slås ihop till en, och ett gränssnitt som två stories delar låses i `sharedDecisions`. När två eller fler stories kan köras samtidigt föreslår plans sista rad `--worktree`.
+1. **plan drar upp beroendena.** `dependsOn` innehåller bara orsakssamband: en story beror på en annan bara när den använder något som den andra storyn skapar, ett kontrakt eller ett beslut. Stories som skulle röra ungefär samma filer slås ihop till en, och ett gränssnitt som två stories delar låses i `sharedDecisions`. plans sista rad anger `exec-plan` på FIS:en för den första storyn som är redo, och varje körning anger nästa. Att köra hela katalogen, med eller utan `--worktree`, är ditt val.
 2. **exec-plan tar en våg i taget.** Före varje omgång läser den `plan.json` igen och tar de stories vars beroenden är klara. Med `--worktree` startar den upp till ungefär fem av dem samtidigt, var och en som en ny subagent på en egen branch, `story/<id>`, i ett eget worktree.
-3. **Mergen har sista ordet.** Varje färdig story mergas med `git merge --no-ff` innan nästa omgång startar, så att de stories som beror på den utgår från en bas som har dess arbete. En mergekonflikt gör att storyn misslyckas, utom när båda sidor bara har lagt till rader i ett dokument som bara växer, till exempel Learnings. En misslyckad story behåller sitt worktree, och de stories som beror på den hoppas över.
+3. **Mergen har sista ordet.** Varje färdig story mergas med `git merge --no-ff` innan nästa omgång startar, så att de stories som beror på den utgår från en bas som har dess arbete. En mergekonflikt gör att storyn misslyckas, utom när båda sidor bara har lagt till rader i ett dokument som bara växer, till exempel Learnings. En misslyckad story behåller sitt worktree, och de stories som beror på den hoppas över. Efter varje mergad omgång körs en förenklingsrunda över dess stories, och det de upptäckte förs in i FIS-filerna för stories som inte har börjat.
 
 Förutsättningar: `--worktree` stoppar före den första storyn om en spårad fil har ändringar som inte är committade, eller om `plan.json` inte är committad. Ett worktree innehåller bara det som är committat.
 

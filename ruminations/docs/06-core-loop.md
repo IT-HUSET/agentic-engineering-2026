@@ -25,7 +25,7 @@ Interactive component: three pill buttons, one per path. The chosen path sets th
 | Path | Label | Start | Steps | Note |
 | - | - | - | - | - |
 | feature | One feature | idea | clarify, decide, plan, exec-plan, review, ship | One real feature runs the full Core Loop on a single FIS. Start with clarify if you can’t list three acceptance criteria. Otherwise start with plan. |
-| several | Several features | idea | clarify, decide, plan, exec-plan, review, ship | Several features share the same Core Loop, run on a plan directory. plan splits the work into stories, and exec-plan builds each one with a fresh subagent. |
+| several | Several features | idea | clarify, decide, plan, exec-plan, review, ship | Several features share the same Core Loop, run on a plan directory. plan splits the work into stories, and exec-plan builds them one story at a time, or the whole directory in one sweep. |
 | fix | A one-sentence fix | fix | triage, implement-fix, ship | A fix you can state in one sentence skips the spec. Unknown cause or broken build? Run triage first. |
 
 Component: the rail. The start label with a red dot, then each step as a pill with its number, name and "optional" when it applies (dashed border). Under each pill, a tag with the step’s Result icon and Tag from shared/skills.md. Between steps a "/clear" marker; arrow keys move along the rail.
@@ -83,11 +83,11 @@ Commands may differ per path; a line `Command (several): …` applies only to th
 - Tint: green
 - Role: Implementation
 - Title: Build against the spec
-- Summary: Builds a FIS, or runs a plan directory with one fresh subagent per story. A story is done only on a quoted line from a check that actually ran, and a fresh reviewer checks each one.
+- Summary: Builds a FIS, or runs a plan directory with one fresh subagent per story. A story is done only on a quoted line from a check that actually ran, and a fresh reviewer checks each one. Each finished story then gets a simplify pass, and what it found is carried into the FIS files of stories not yet started.
 - When: **Hands off while it runs.** Don’t hand-edit code mid-run. Let it finish, or stop and amend the FIS.
 - Reads: A FIS, or a plan directory
 - Command (feature): `/andthen:exec-plan <FIS>`
-- Command (several): `/andthen:exec-plan <dir>`; `/andthen:exec-plan <dir> --worktree` (Run independent stories in parallel)
+- Command (several): `/andthen:exec-plan <first ready FIS>` (The line plan prints: one story at a time, each run names the next); `/andthen:exec-plan <dir>` (Or every story in one sweep); `/andthen:exec-plan <dir> --worktree` (Run independent stories in parallel)
 - Studio: Plan board, left open: the story moves to done as the run commits, and opens the diff of its changes.
 
 ### review --fix
@@ -96,7 +96,7 @@ Commands may differ per path; a line `Command (several): …` applies only to th
 - Tint: teal
 - Role: Review
 - Title: Review the whole
-- Summary: Reviews the finished work as a whole: spec fit, code, security and outcome. Then it applies the findings marked Fix.
+- Summary: Reviews the finished work as a whole: spec fit, code, security and outcome. Then it gives a PASS or FAIL verdict, applies the findings marked Fix and commits them.
 - When: **Whole-change view.** exec-plan already checked each story; this looks at how they fit together.
 - Reads: The finished change and its spec
 - Command: `/andthen:review --fix`
@@ -108,11 +108,11 @@ Commands may differ per path; a line `Command (several): …` applies only to th
 - Tint: lav
 - Role: Delivery
 - Title: Ship it
-- Summary: Lands what was learned, drops the plan files once every story is done, and opens the pull request after your one yes.
+- Summary: Lands what was learned, opens the pull request after your one yes, and once every story is done offers to drop the plan files.
 - When: **You stay in control.** Nothing is opened until you say yes.
 - Reads: The reviewed work and its plan files
 - Command: `/andthen:ship`
-- Note (several): **Only part of the plan built?** `ship` checks first. While stories are left, it names them and asks once whether to ship anyway, and recommends keeping the plan: `plan.json` and the FIS files stay, go into the pull request with the work, and the remaining stories keep reading them. The Learnings step waits too. The pull request names what is still open. The last `ship`, once every story is done and reviewed, lands the Learnings and deletes the plan.
+- Note (several): **Only part of the plan built?** `ship` checks first. While stories are left, it names them and asks once whether to ship anyway, and recommends keeping the plan: `plan.json` and the FIS files stay, go into the pull request with the work, and the remaining stories keep reading them. The Learnings step waits too. The pull request names what is still open. The last `ship`, once every story is done and reviewed, lands the Learnings and asks to delete the plan, recommending yes. `prd.md` stays, with a Shipped line.
 - Studio: Walkthroughs: a guided tour of the pull request before you merge it. After the last `ship` the plan board is empty, because it deletes `plan.json`.
 
 ### triage
@@ -122,7 +122,7 @@ Commands may differ per path; a line `Command (several): …` applies only to th
 - Optional: yes
 - Role: Diagnosis
 - Title: Find the cause first
-- Summary: Investigates and diagnoses the problem before anything gets changed.
+- Summary: Investigates the problem down to a root cause, fixes it under a failing test and commits the fix. --plan-only stops at the fix plan.
 - When: **Optional.** Only when the cause is unknown or the build is broken. Describe symptoms, not fixes.
 - Reads: Symptoms: errors, failing tests, logs
 - Command: `/andthen:triage`
@@ -133,7 +133,7 @@ Commands may differ per path; a line `Command (several): …` applies only to th
 - Tint: rust
 - Role: Small fix
 - Title: Make the fix
-- Summary: For a fix you can state in one sentence. It skips the spec and goes straight to a verified change.
+- Summary: For a fix you can state in one sentence. It skips the spec and goes straight to a verified change, committed.
 - When: **Right-size it.** If you can’t say it in one sentence, it’s a feature. Use plan instead.
 - Reads: Your one-sentence request
 - Command: `/andthen:implement-fix "<request>"`
@@ -167,6 +167,7 @@ Component: two tinted cards side by side, joined by a labelled arrow (stacked, w
 - Row: Holds · the problem, the requirements (FR1, FR2 …) with priority, what is in and out of scope, the MVP boundary, constraints and a decisions log
 - Row: Written by · `clarify` at feature scope, the default
 - Row: Read by · `plan`, which turns it into the FIS, and the outcome lens of `review`
+- Row: Shipped · `ship` adds a Shipped line when it deletes the plan; an amendment through `clarify` removes it
 - Note: The PRD is anchored in the product. In the lab’s shared-lists PRD, email and notifications are out because `docs/PRODUCT.md` says prototype, one SQLite file and no external services. `clarify` drops or flags a capability those facts don’t carry, citing the anchor.
 
 ### How clarify picks the level
@@ -197,7 +198,7 @@ Component: three tinted cards joined by labelled arrows (stacked, with downward 
 - Eyebrow: One per plan directory
 - Tint: rust
 - Arrow: fis
-- Text: The plan’s state. For each story: its dependencies (`dependsOn`), its status, which of its FIS tasks are done (`completedTaskIds`), and a pointer to its FIS. `plan` writes it; after that, the session building a story updates that story’s row. It says nothing about how to build anything. It lives on the branch, and `ship` deletes it.
+- Text: The plan’s state. For each story: its dependencies (`dependsOn`), its status, which of its FIS tasks are done (`completedTaskIds`), and a pointer to its FIS. `plan` writes it; after that, the session building a story updates that story’s row. It says nothing about how to build anything. It lives on the branch. `ship` deletes it on your yes; kept, it gets a `shipped` marker as a record.
 - Row: S01 · Lists have owners · `s01-lists-have-owners.md` · done
 - Row: S02 · Share a list · depends on S01 · in-progress
 - Row: S03 · Sort by due date · no dependencies · done
@@ -220,10 +221,10 @@ Component: three tinted cards joined by labelled arrows (stacked, with downward 
 
 `plan` decides in its step 3, One story or several. A story is by definition a vertical slice: something you can demo through every layer.
 
-1. **One story when it fits.** The work stays one story when it is one vertical slice that fits a single exec run in a fresh context with headroom, about 18 tasks.
+1. **One story when it fits.** The work stays one story when it is one vertical slice that fits a single exec run in a fresh context with headroom, about 12 tasks.
 2. **Otherwise the fewest slices.** `plan` cuts the fewest stories that cover the source, none overlapping. It never cuts by layer, such as endpoint, handler and UI on their own.
 3. **Too big splits thinner.** A story that comes back `OVERSIZE:` is cut into thinner vertical slices.
-4. **Seams and overlaps.** Where module boundaries are strong, the work splits along them and `sharedDecisions` pins the interface. Stories that would touch mostly the same files are merged.
+4. **Seams and overlaps.** Where module boundaries are strong, the work splits along them and `sharedDecisions` pins the interface. Stories that would touch mostly the same files are merged, except a walking skeleton: when the main flow crosses several stories, the first is its thinnest end-to-end path, and the stories that thicken it depend on it.
 
 ### Watch the names
 
@@ -254,9 +255,9 @@ Merge label: merge
 
 ### Who decides
 
-1. **plan draws the edges.** `dependsOn` holds causal edges only: a story depends on another only when it uses something that story produces, a contract or a decision. Stories that would touch mostly the same files are merged into one, and an interface two stories share is pinned in `sharedDecisions`. When two or more stories can run at once, plan’s last line suggests `--worktree`.
+1. **plan draws the edges.** `dependsOn` holds causal edges only: a story depends on another only when it uses something that story produces, a contract or a decision. Stories that would touch mostly the same files are merged into one, and an interface two stories share is pinned in `sharedDecisions`. plan’s last line names `exec-plan` on the first ready story’s FIS, and each story run names the next. Running the whole directory, with or without `--worktree`, is your call.
 2. **exec-plan takes one wave at a time.** Before each batch it re-reads `plan.json` and takes the stories whose dependencies are all done. With `--worktree` it starts up to about five of them at once, each a fresh subagent on its own `story/<id>` branch in its own worktree.
-3. **The merge has the last word.** Each finished story is merged with `git merge --no-ff` before the next batch starts, so the stories that depend on it start from a base that has its work. A merge conflict fails the story, unless both sides only added lines to an append-only document such as Learnings. A failed story keeps its worktree, and the stories that depend on it are skipped.
+3. **The merge has the last word.** Each finished story is merged with `git merge --no-ff` before the next batch starts, so the stories that depend on it start from a base that has its work. A merge conflict fails the story, unless both sides only added lines to an append-only document such as Learnings. A failed story keeps its worktree, and the stories that depend on it are skipped. After each merged batch, one simplify pass covers its stories, and what they found goes into the FIS files of stories not yet started.
 
 Prerequisites: `--worktree` stops before the first story when a tracked file has uncommitted changes, or when `plan.json` is not committed, because a worktree holds only what was committed.
 

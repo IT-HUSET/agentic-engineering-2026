@@ -14,35 +14,40 @@ Eyebrow: Installation
 
 Component: ”AndThen” i rubriken sätts i accentfärgen.
 
-Berätta om din miljö, så visar stegen nedan exakt de kommandon du behöver. Kopiera in dem i Claude Code i tur och ordning.
+Berätta om din miljö, så visar stegen nedan exakt de kommandon du behöver. Kör dem i tur och ordning.
 
 ## Din miljö
 
-Interactive component: en dämpad ruta med rubriken ”Din miljö” och två kontroller. Stegen nedan byggs om så fort någon av dem ändras.
+Interactive component: en dämpad ruta med rubriken ”Din miljö” och två kryssrutor. Den andra går bara att kryssa i när den första är ikryssad. Stegen nedan byggs om så fort någon av dem ändras.
 
-- Checkbox: Jag har en äldre AndThen (0.x) installerad
-- Text field: Releasetagg från din kursledare, visas som `v1.0.0-rc.` följt av ett kort fält för N (bara siffror, platshållaren N). Tomt fält betyder kursens branch `develop`.
+- Checkbox: AndThen är redan installerat
+- Checkbox: Jag lade till det från en tagg eller `@develop`
 
 ## Steg
 
-Component: numrerade vita kort (01, 02 …), vart och ett med rubrik, text och kommandot i en mörk ruta med en kopieringsknapp. Kommandorutan är dold från början: en liten knapp med kontur, terminalikon och texten ”Visa kommando” visar den, och sedan står det ”Dölj kommando” på knappen. En ruta som har visats förblir öppen när stegen byggs om. Ett villkorat steg har streckad kant och etiketten ”bara om du har 0.x”. Numreringen följer de steg som faktiskt visas.
+Component: numrerade vita kort (01, 02 …), vart och ett med rubrik, text och kommandot i en mörk ruta med en kopieringsknapp. Kommandorutan är dold från början: en liten knapp med kontur, terminalikon och texten ”Visa kommando” visar den, och sedan står det ”Dölj kommando” på knappen. En ruta som har visats förblir öppen när stegen byggs om. Ett villkorat steg har streckad kant och sitt villkor som etikett. Numreringen följer de steg som faktiskt visas.
 
-1. **Ta bort den gamla versionen** – bara när rutan för 0.x är ikryssad. AndThen 0.x och 1.0 har samma marketplace-namn, andthen, så den gamla marketplacen måste bort först.
+1. **Skapa ditt eget repo.** Öppna kursens repo på GitHub och välj Use this template och sedan Create a new repository. Välj ditt konto och kryssa i Include all branches. Klona repot och arbeta där: dina ändringar sparas, och din pull request öppnas i ditt eget repo.
+   Command: `gh repo clone <your-account>/<your-repo>`
+2. **Ta bort den gamla marketplacen** – bara om AndThen redan är installerat och lades till från en tagg eller `@develop`. En marketplace ligger kvar på den ref den lades till med, så en tagg eller @develop måste bort innan du lägger till den senaste releasen.
    Command: `/plugin marketplace remove andthen`
-2. **Lägg till AndThens marketplace.**
-   - With no tag: Kommandot talar om för Claude Code var AndThen finns. @develop följer kursens branch. Får du en releasetagg av din kursledare skriver du in den ovan.
-     Command: `/plugin marketplace add IT-HUSET/andthen@develop`
-   - With tag N: Kommandot talar om för Claude Code var AndThen finns, låst till den release som din kursledare gav dig.
-     Command: `/plugin marketplace add IT-HUSET/andthen@v1.0.0-rc.N`
-3. **Installera pluginet.** Kommandot installerar pluginet från den marketplace du just lade till. Namnet läses plugin@marketplace:
+3. **Uppdatera marketplacen** – bara om AndThen redan är installerat, inte från en tagg. Hämtar den senaste releasen av AndThen.
+   Command: `/plugin marketplace update andthen`
+4. **Uppdatera pluginet** – bara om AndThen redan är installerat, inte från en tagg. Uppdaterar AndThen från marketplacen. Starta om Claude Code efteråt.
+   Command: `/plugin update andthen@andthen`
+5. **Lägg till AndThens marketplace** – om du inte just har uppdaterat. Kommandot talar om för Claude Code var AndThen finns. Det följer den senaste releasen. Kursen bygger på AndThen 1.0.0 och är avstämd mot 1.1.0, så en senare release kan skilja sig i detaljer.
+   Command: `/plugin marketplace add IT-HUSET/andthen`
+6. **Installera pluginet** – om du inte just har uppdaterat. Kommandot installerar pluginet från den marketplace du just lade till. Namnet läses plugin@marketplace:
    Component: annoterat namn, `andthen` märkt ”plugin”, `@`, `andthen` märkt ”marketplace”.
    Command: `/plugin install andthen@andthen`
-4. **Fråga var du ska börja.** Kör now-what när du är osäker på var du ska börja. Den undersöker projektet och skickar dig vidare till rätt skill.
+7. **Kontrollera din miljö.** I en terminal, från repots rot. Den kontrollerar git, gh, Claude Code med AndThen och testerna i todo-app, och slutar med GREEN eller RED. Åtgärda varje FAIL före dag 1.
+   Command: `uv run check.py`
+8. **Fråga var du ska börja.** Kör now-what när du är osäker på var du ska börja. Den undersöker projektet och skickar dig vidare till rätt skill.
    Command: `/andthen:now-what`
 
 ## Var du skriver kommandona
 
-Det här är slash-kommandon. Skriv dem ett i taget vid prompten i Claude Code, i en terminalsession som du har startat med `claude`.
+Kommandon som börjar med `/` är slash-kommandon: skriv dem ett i taget vid prompten i Claude Code, i en terminalsession som du har startat med `claude`. De andra, som `uv run check.py`, kör du i en vanlig terminal från repots rot.
 
 ## Felsökning
 
@@ -50,12 +55,12 @@ Component: en hopfälld detaljruta.
 
 Summary: Det går inte att lägga till marketplacen: ”its source doesn’t match its extraKnownMarketplaces entry”
 
-Dina användarinställningar har redan en marketplace som heter `andthen`, men den pekar på en annan källa. Öppna `~/.claude/settings.json` och se till att posten stämmer med raden du lägger till. För kursens branch lägger du till `"ref": "develop"`:
+Dina användarinställningar har redan en marketplace som heter `andthen`, men den pekar på en annan källa. Öppna `~/.claude/settings.json` och se till att posten stämmer med raden du lägger till. För den senaste releasen utelämnar du `ref`:
 
 ```json
 "extraKnownMarketplaces": {
   "andthen": {
-    "source": { "source": "github", "repo": "IT-HUSET/andthen", "ref": "develop" }
+    "source": { "source": "github", "repo": "IT-HUSET/andthen" }
   }
 }
 ```

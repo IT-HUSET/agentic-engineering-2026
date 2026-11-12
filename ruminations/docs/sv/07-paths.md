@@ -4,7 +4,7 @@ tab: Vägar
 token: paths
 order: 7
 depends_on: []
-source: AndThen 1.0.0-rc.7 – plugin/README.md and COOKBOOK.md (https://github.com/IT-HUSET/andthen), labs/x2-ui-ux.md
+source: AndThen 1.1.0 – plugin/README.md and COOKBOOK.md (https://github.com/IT-HUSET/andthen), labs/x2-ui-ux.md
 ---
 
 # Vägar i AndThen
@@ -35,7 +35,7 @@ Interactive component: en lista med situationsknappar till vänster och ett kort
 
 - Situation: En rättelse du kan beskriva i en mening
 - Chain: implement-fix, ship
-- Text: Ingen spec. `implement-fix` gör den minsta säkra ändringen, validerar den igen och lämnar den i din arbetskatalog. `ship` committar den och öppnar pull requesten när du har sagt ja.
+- Text: Ingen spec. `implement-fix` gör den minsta säkra ändringen, validerar den igen och committar den. På `main` frågar den först om den ska starta en funktionsbranch. `ship` skriver pull requesten och pushar den när du har sagt ja.
 - You get: En verifierad ändring och en pull request. Inget annat skrivs.
 - Command: `/andthen:implement-fix "<request>"`
 - Command: `/andthen:ship`
@@ -64,7 +64,7 @@ Interactive component: en lista med situationsknappar till vänster och ett kort
 - Situation: Ett tekniskt val som är dyrt att ångra
 - Chain: decide, plan
 - Text: `decide` räknar upp beslutspunkterna och intervjuar dig om dem som binder mer än en story. Ber du om en jämförelse gör den en viktad avvägning. En fråga som bara mätningar kan avgöra går i stället till `spike`.
-- You get: En ADR per beslut i `docs/adrs/`, var och en med en rad i `docs/DECISIONS.md`. Inga kodändringar.
+- You get: En ADR per beslut i `docs/adrs/`, var och en med en rad i `docs/DECISIONS.md`, och PRD-raderna som den avgör hänvisar nu till den. Inga kodändringar.
 - Command: `/andthen:decide docs/specs/<feature>/`
 - Command: `/andthen:decide "compare three options for <the choice>"`
 - Link: Se det genomarbetade exemplet → (#paths-decide)
@@ -74,7 +74,7 @@ Interactive component: en lista med situationsknappar till vänster och ett kort
 - Situation: Skärmar som inte finns än
 - Chain: ui-ux-design, plan, exec-plan, visual-validation
 - Text: Designen kommer före specen, så att FIS:en kan peka på wireframes i stället för att hitta på skärmarna. Det genomarbetade exemplet nedan går igenom det för delade listor.
-- You get: Wireframes i `docs/wireframes/` och, för en bred yta, ett designsystem i `docs/design-system/`.
+- You get: Wireframes i `docs/wireframes/<feature>/`. För en bred yta ett designsystem i `docs/design-system/`, och sedan klickbara mockups i `docs/mockups/<feature>/`.
 - Command: `/andthen:ui-ux-design "wireframe <the screens>, all states" docs/specs/<feature>/prd.md`
 - Link: Se det genomarbetade exemplet → (#paths-ui)
 
@@ -150,19 +150,19 @@ Interactive component: en tidslinje med en kolumn per fas och en rad per artefak
 | Artifact | Path | Written by | Read by | From | To | Kind | Note |
 | - | - | - | - | - | - | - | - |
 | Produktfakta | `docs/PRODUCT.md` | `clarify`, eller den första av `decide`, `plan` och `architecture` som behöver mognadsfas och skala | varje skill som föreslår något | req | after | kept | Ankaret som avgör hur stort det som byggs ska vara: mognadsfas, skala och tekniska icke-mål. |
-| PRD | `docs/specs/<feature>/prd.md` | `clarify` | `plan`, `review` (gap och outcome) | req | after | kept | Produktens dokumentation. Den överlever mergen, så att skälen finns kvar även nästa år. |
+| PRD | `docs/specs/<feature>/prd.md` | `clarify` | `plan`, `review` (gap och outcome) | req | after | kept | Produktens dokumentation. Den överlever mergen, så att skälen finns kvar även nästa år. När `ship` tar bort planen får den en Shipped-rad. |
 | ADR:er och beslut | `docs/adrs/`, `docs/DECISIONS.md` | `decide` | varje skill när en uppgift börjar | design | after | kept | En ADR per dyrt val, med alternativen och vad som krävs för att backa. |
 | Ordlista | `docs/UBIQUITOUS_LANGUAGE.md` | `domain --mode glossary`, och `clarify` för fastställda termer | varje skill som namnger saker | design | after | kept | Ett namn per begrepp, och de synonymer som ska undvikas. |
-| Wireframes och designsystem | `docs/wireframes/`, `docs/design-system/` | `ui-ux-design` | `plan`, `exec-plan`, `visual-validation` | design | after | kept | Committas med dokumenten. FIS:en hänvisar till dem, och de byggda skärmarna kontrolleras mot dem. |
+| Wireframes och designsystem | `docs/wireframes/`, `docs/design-system/` | `ui-ux-design` | `plan`, `exec-plan`, `visual-validation` | design | after | kept | FIS:en hänvisar till dem, och de byggda skärmarna kontrolleras mot dem. Designsystemet ligger kvar. `ship` frågar om funktionens mappar med wireframes och mockups ska tas bort, och rekommenderar det när skärmarna är byggda. |
 | Underlag för avvägning | `docs/research/<topic>/` | `decide`, för ett omstritt beslut | ADR:en, dina granskare | design | after | kept | Belägget bakom en ADR: utredningen, den viktade matrisen och rekommendationen. Committas tillsammans med ADR:en. |
 | Spike | branchen `spike/<slug>` | `spike` | `decide` och `plan`, via utlåtandet | design | after | local | Mergas aldrig. AndThen behåller branchen som belägg. Radera den när utlåtandet är infört i ADR:en. |
-| Plan | `docs/specs/<feature>/plan.json` | `plan`, sedan `exec-plan` för varje storys status | `exec-plan`, `review`, `ship` | plan | ship | branch | Stories, deras beroenden och status. `ship` raderar den: en plan gäller en branch. |
-| FIS | `docs/specs/<feature>/s01-<name>.md` | `plan` | `exec-plan`, `review`, `ship` | plan | ship | branch | Raderas av `ship` när dess Implementation Observations har blivit lärdomar. PR:en och git-historiken behåller den. |
-| Kod och tester | källkodsträdet | `exec-plan`, en commit per story | `review`, ditt team | build | after | kept | En squash-commit på `main` efter mergen. |
+| Plan | `docs/specs/<feature>/plan.json` | `plan`, sedan `exec-plan` för varje storys status | `exec-plan`, `review`, `ship` | plan | ship | branch | Stories, deras beroenden och status. `ship` frågar om den ska raderas, och rekommenderar det: en plan gäller en branch. Behålls den får den en `shipped`-markering. |
+| FIS | `docs/specs/<feature>/s01-<name>.md` | `plan` | `exec-plan`, `review`, `ship` | plan | ship | branch | Raderas av `ship` när du säger ja, efter att dess Implementation Observations har blivit lärdomar. PR:en och git-historiken behåller den. |
+| Kod och tester | källkodsträdet | `exec-plan`, en commit per story plus en eventuell `refactor`-commit. `review --fix` och `implement-fix` committar sina rättelser | `review`, ditt team | build | after | kept | En squash-commit på `main` efter mergen. |
 | Granskningsrapport | bredvid den granskade specen, annars `.agent_temp/reviews/` | `review` | `implement-fix`, `ship` | review | after | local | Gitignorerad som standard: en arbetsfil för en körning. Utlåtandet hamnar i PR-texten. |
 | Teknisk skuld | `docs/TECH-DEBT-BACKLOG.md` | `review --fix` och `implement-fix` för fynd du skjuter upp, `triage` | den skill som arbetar i det området | review | after | kept | Varje post anger vad som blockerar den. Bara det du godkänner skrivs. |
 | Lärdomar | `docs/LEARNINGS.md` | `ship`, från FIS:ens observationer, och även `triage` och `handoff` | varje skill när en uppgift börjar | ship | after | kept | Fällorna som är värda att minnas, en punkt för varje. |
-| Pull request | på GitHub | `ship`, när du har sagt ja | dina granskare | ship | after | kept | Avsikt, utfall, beviset för varje utfall och dörrtypen. Vid en squash-merge är det här som berättelsen om FIS:en finns kvar. |
+| Pull request | på GitHub | `ship`, när du har sagt ja | dina granskare | ship | after | kept | Avsikt, utfall, beviset för varje utfall, dörrtypen, var granskaren ska läsa noga och en avslutande Ship summary. Vid en squash-merge är det här som berättelsen om FIS:en finns kvar. |
 | Överlämning | `.agent_temp/handoff/` | `handoff` | nästa nya session | req | after | local | Skrivs i vilket steg som helst. Ligger under `.agent_temp/` och committas därför aldrig. |
 
 ### Efter ship
@@ -171,13 +171,13 @@ Component: tre kolumner under tidslinjen (staplade på en telefon), byggda från
 
 ## Efter ship – Vad du kan göra sedan
 
-Branchen är mergad och `plan.json` är borta. Dokumenten som blev kvar pekar ut vad som kommer härnäst.
+Branchen är mergad, och `plan.json` är borta om du inte behöll den vid ship. Dokumenten som blev kvar pekar ut vad som kommer härnäst.
 
 Component: vita kort i ett rutnät, tre i bredd (ett på en telefon). Varje kort har en rubrik, texten och sitt kommando, dolt bakom en knapp ”Visa kommando”.
 
 1. **Bygg nästa funktion** · PRD:ns Out of Scope och Open Questions är en färdig backlog. Skapa en ny branch från `main` och välj en punkt. · `/andthen:clarify "<the next idea>"`
 2. **Betala av teknisk skuld** · Varje uppskjutet fynd ligger i `docs/TECH-DEBT-BACKLOG.md` tillsammans med det som blockerar det. En post som du kan formulera i en mening är en `implement-fix`. · `/andthen:implement-fix "<an entry from docs/TECH-DEBT-BACKLOG.md>"`
-3. **Gör det som ship rekommenderade** · `ship` skriver bara lärdomar. Resten rekommenderar den, till exempel en körning av `decide` för en designändring som ingen ADR dokumenterar än. · `/andthen:decide "<the change ship named>"`
+3. **Gör det som ship rekommenderade** · `ship` skriver bara lärdomar och PRD:ns Shipped-rad. Resten rekommenderar den, till exempel en körning av `decide` för en designändring som ingen ADR dokumenterar än. · `/andthen:decide "<the change ship named>"`
 4. **Kontrollera utfallet** · Löste funktionen PRD:ns problem för sina användare? Linsen outcome läser PRD:n mot det som byggdes. · `/andthen:review --mode outcome docs/specs/<feature>/prd.md`
 5. **Sortera inkommande ärenden** · Nya idéer och buggar samlas i trackern. `tracker triage` sätter etikett på varje ärende och skickar det vidare, och du godkänner allt den skriver. · `/andthen:tracker triage "the ten oldest"`
 6. **Sluta för dagen** · Lämna över med nästa fokus, så att morgondagens nya session börjar från filer och inte från minnet. · `/andthen:handoff "next: <the focus>"`
@@ -196,19 +196,19 @@ Flow: prd.md → research → wireframes → [designsystem] → plan → exec-pl
    Command: `/andthen:ui-ux-design "research the shared-lists flows" docs/specs/let-people-share-their-lists/prd.md`
 2. **Gör wireframes för varje skärm och tillstånd.** Först skriver den en sidinventering, sedan en HTML-sida i gråskala per skärm och tillstånd, och sist kontrollerar den sidorna i fyra skärmstorlekar.
    Command: `/andthen:ui-ux-design "wireframe the share dialog and the member list, all states" docs/specs/let-people-share-their-lists/prd.md`
-3. **Ett designsystem, bara för en bred yta.** Ett helt samarbetsområde med många skärmar är värt tokens och komponentstilar. En enda dialog är det inte.
+3. **Ett designsystem, bara för en bred yta.** Ett helt samarbetsområde med många skärmar är värt tokens och komponentstilar. En enda dialog är det inte. När `DESIGN.md` finns bygger en beställning av mockups klickbara mockups av dess tokens i `docs/mockups/<feature>/`.
    Command: `/andthen:ui-ux-design "create a design system for the collaboration screens" docs/specs/let-people-share-their-lists/prd.md`
 4. **Planera utifrån designen.** `ui-ux-design` avslutar med det här kommandot. FIS:en hänvisar till wireframes, så `exec-plan` bygger efter dem.
    Command: `/andthen:plan docs/specs/let-people-share-their-lists/`
 5. **Kontrollera de byggda skärmarna.** Ställ in rutinen för skärmbilder en gång och jämför sedan de byggda skärmarna med wireframes.
    Command: `/andthen:visual-validation --mode setup`
-   Command: `/andthen:visual-validation "share dialog and member list, mobile and desktop" docs/wireframes/`
+   Command: `/andthen:visual-validation "share dialog and member list, mobile and desktop" docs/wireframes/shared-lists/`
 
 ### Artefakterna
 
 ```
 docs/
-├── wireframes/
+├── wireframes/shared-lists/   en mapp per funktion
 │   ├── index.html              ← open this: every wireframe as a preview
 │   ├── page-inventory.md       every screen and state, checked off
 │   ├── share-dialog.html       one page per screen…
@@ -226,13 +226,13 @@ Note: Filnamnen på wireframes är exempel. Det är sidinventeringen som bestäm
 
 ### Det här gör du med dem
 
-1. **Öppna `docs/wireframes/index.html` i en webbläsare.** Alla skärmar ska finnas där, och alla tillstånd: tom, fel (”no account for that email”), redan delad och laddar.
+1. **Öppna `docs/wireframes/shared-lists/index.html` i en webbläsare.** Alla skärmar ska finnas där, och alla tillstånd: tom, fel (”no account for that email”), redan delad och laddar.
 2. **Jämför med `page-inventory.md`.** Ingen sida får hoppas över för att den ser ”likadan” ut som en annan. Ett tillstånd som saknas är en skärm som agenten hittar på senare.
-3. **Committa dem tillsammans med PRD:n.** De är designdokumentation och ligger kvar på `main` efter `ship`, precis som PRD:n och ADR:erna.
+3. **Committa dem tillsammans med PRD:n.** FIS:en hänvisar till dem medan branchen byggs. Vid leveransen frågar `ship` om funktionens mapp med wireframes ska tas bort, och rekommenderar det när skärmarna är byggda och validerade. Designsystemet ligger kvar.
 4. **Planera utifrån dem.** FIS:en anger wireframes som underlaget att bygga efter, och `exec-plan` bygger efter dem i stället för att gissa layouten.
 5. **Validera det som byggdes.** `visual-validation` listar varje avvikelse från wireframes innan den ger sitt utlåtande. Fynd med P1 och P2 blockerar, medan P3 rapporteras.
 
-Sizing check: Ett fält som läggs till i ett befintligt formulär är inte värt några wireframes. En dialog med riktiga tillstånd är värd wireframes. En hel yta med många skärmar är värd ett designsystem. En API-ändring får ingenting från den här skillen.
+Sizing check: Ett fält som läggs till i ett befintligt formulär är inte värt några wireframes. En dialog med riktiga tillstånd är värd wireframes. En hel yta med många skärmar är värd ett designsystem, och mockups när skärmarna ska godkännas i dess utseende. En API-ändring får ingenting från den här skillen.
 
 ## Genomarbetat exempel – decide, architecture och spike för todo-sökning
 
