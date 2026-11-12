@@ -24,7 +24,7 @@ Your own suite and `plan.json`. If you have none of these problems yet, use the 
 
 ## Steps
 
-1. **Manual once: break it to see if the test notices.** A test protects a behavior only if removing the behavior turns it red. For three scenarios from your FIS files or `plan.json` rows:
+1. **Manual: break it to see if the test notices.** A test protects a behavior only if removing the behavior turns it red. For three scenarios from your FIS files or `plan.json` rows:
    - Read the `verified.summary`. It should quote a command, its exit status and the runner's own result line. An exit code alone records that something ran, not what it found.
    - On a scratch branch (`git switch -c scratch/falsify`), remove or break the behavior that scenario protects. Run the named test.
    - Red: it protects the behavior. Green: the test is **tautological** (its expected value comes from the code under test), **vacuous** (it never runs, or checks nothing a bug would change) or a **success-only double** (a mock that can only succeed). Restore your change, `git switch -`, and write down which kind it was.

@@ -25,7 +25,7 @@ Your own case repo, or a repo you inherited. If you have neither, your facilitat
 
 ## Steps
 
-1. **Manual once: feel the boundary.** Two things you only learn by feeling them.
+1. **Manual: feel the boundary.** Two things you only learn by feeling them.
    - **The same small change twice.** Pick a change that touches one or two files (a created-at timestamp on each todo). Run it once at the end of a long, loaded session, and once in a fresh session that is given only the directly relevant files. Use `/context` before each to see how full the window is. Compare quality, speed and how much it re-explored. Write what you saw.
    - **A handoff by hand.** In `.agent_temp/x6-handoff.md` write: current state, key decisions, files changed, what's next, key constraints, open questions and dead ends. Run `/clear`, and resume from that file alone. Notice that some fields are **durable** (decisions, constraints: they belong in a permanent home) and some are **transient** (open questions, dead ends: they belong only in the resume note). That split is what `handoff` automates.
 2. **Make the code legible, and keep a typed model.**

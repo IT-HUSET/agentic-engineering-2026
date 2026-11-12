@@ -16,7 +16,7 @@ In the foundation, paths are relative to `todo-app/`, where you start Claude Cod
 
 | Step | Skills | You produce |
 |------|--------|-------------|
-| [F1 – Orient and set up](foundation.md#f1--orient-and-set-up) | `now-what`, `init`, `describe` | A project AndThen can navigate |
+| [F1 – Orientation and set up](foundation.md#f1--orientation-and-set-up) | `now-what`, `init`, `describe` | A project AndThen can navigate |
 | [F2 – Clarify](foundation.md#f2--clarify) | `clarify` | `prd.md` |
 | [F3 – Decide](foundation.md#f3--decide) | `decide`, `domain --mode glossary` | An ADR and a glossary |
 | [F4 – Plan](foundation.md#f4--plan) | `plan` | `plan.json` and a FIS |
