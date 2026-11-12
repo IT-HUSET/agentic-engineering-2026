@@ -153,11 +153,12 @@ Component: två tonade kort bredvid varandra med en pil och en etikett emellan (
 - Tint: teal
 - Arrow: avgör storleken
 - Text: Vad produkten är, och hur stort det som byggs får bli. Dokumentet ligger ovanför alla PRD:er.
-- Row: Innehåll · vision, målgrupper, värdeerbjudande, icke-mål och mått på framgång
+- Row: Innehåll · vision, principer, målgrupper, värdeerbjudande, icke-mål och mått på framgång
 - Row: Proportionality · fas, skala och tekniska icke-mål
-- Row: Skrivs av · `clarify` på produktnivå, eller den första av `clarify`, `decide`, `plan` och `architecture` som behöver uppgifterna under Proportionality
+- Row: Non-Goals · koncept som är uttryckligen avvisade. Varje `clarify` på funktionsnivå håller dem aktuella åt båda hållen: ett koncept som du avvisar får en daterad punkt, och ett som funktionen nu tillåter snävas in eller tas bort
+- Row: Skrivs av · `clarify` på produktnivå, eller den första av `clarify`, `decide`, `plan`, `architecture` och `domain` som behöver uppgifterna under Proportionality
 - Row: Läses av · alla skills som föreslår något
-- Note: Lever länge. Det ändras när fasen eller skalan ändras.
+- Note: Lever länge. Fasen och skalan ändras sällan, men icke-målen följer med de funktioner som `clarify` skriver.
 
 #### prd.md
 
@@ -168,7 +169,7 @@ Component: två tonade kort bredvid varandra med en pil och en etikett emellan (
 - Row: Skrivs av · `clarify` på funktionsnivå, som är standardläget
 - Row: Läses av · `plan`, som gör en FIS av den, och `review` med linsen outcome
 - Row: Shipped · `ship` lägger till en Shipped-rad när den tar bort planen. En ändring via `clarify` tar bort raden
-- Note: PRD:n förankras i produkten. I labbets PRD om delade listor faller e-post och notifieringar bort, eftersom `docs/PRODUCT.md` anger en prototyp med en enda SQLite-fil och inga externa tjänster. `clarify` stryker eller flaggar förmågor som de uppgifterna inte bär, och hänvisar till dem.
+- Note: PRD:n förankras i produkten. I labbets PRD om delade listor faller e-post och notifieringar bort, eftersom `docs/PRODUCT.md` anger en prototyp med en enda SQLite-fil och inga externa tjänster. `clarify` stryker eller flaggar förmågor som de uppgifterna inte bär, och hänvisar till dem. En beställning som går emot ett icke-mål lyfts fram i stället för att tyst diskuteras bort: i labbet är delning först ett icke-mål, så att gå emot det är ditt beslut, och du säger det uttryckligen.
 
 ### Så väljer clarify nivå
 

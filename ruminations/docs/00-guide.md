@@ -1,6 +1,6 @@
 ---
 title: AndThen Guide
-version: 1.56
+version: 1.57
 date: 2026-11-12
 status: published
 html: html/andthen-guide.html
