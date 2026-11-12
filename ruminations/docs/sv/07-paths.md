@@ -186,7 +186,7 @@ Component: vita kort i ett rutnät, tre i bredd (ett på en telefon). Varje kort
 
 Samma funktion som i Foundation Lab, men nu designas skärmarna före specen. Delningsdialogen har flera tillstånd som måste bli rätt, så den är värd wireframes. En enda dialog är inte värd ett designsystem.
 
-Component: ett vågrätt flöde av stegen som små piller med pilar (staplade på en telefon), sedan ett block i två kolumner: till vänster de numrerade stegen, vart och ett med sitt kommando dolt bakom en knapp ”Visa kommando”, och till höger filträdet i en mörk ruta med anteckningar i dämpad färg. Under det kommer ”Det här gör du med dem” som numrerade kort, och strukturkontrollen som en dämpad rad.
+Component: ett vågrätt flöde av stegen som små piller med pilar (staplade på en telefon), sedan ett block i två kolumner: till vänster de numrerade stegen, vart och ett med sitt kommando dolt bakom en knapp ”Visa kommando”, och till höger filträdet i en mörk ruta med anteckningar i dämpad färg. Under det kommer ”Det här gör du med dem” som numrerade kort, och storlekskontrollen som en dämpad rad.
 
 Flow: prd.md → research → wireframes → [designsystem] → plan → exec-plan → visual-validation
 
@@ -232,13 +232,13 @@ Note: Filnamnen på wireframes är exempel. Det är sidinventeringen som bestäm
 4. **Planera utifrån dem.** FIS:en anger wireframes som underlaget att bygga efter, och `exec-plan` bygger efter dem i stället för att gissa layouten.
 5. **Validera det som byggdes.** `visual-validation` listar varje avvikelse från wireframes innan den ger sitt utlåtande. Fynd med P1 och P2 blockerar, medan P3 rapporteras.
 
-Structure check: Ett fält som läggs till i ett befintligt formulär är inte värt några wireframes. En dialog med riktiga tillstånd är värd wireframes. En hel yta med många skärmar är värd ett designsystem. En API-ändring får ingenting från den här skillen.
+Sizing check: Ett fält som läggs till i ett befintligt formulär är inte värt några wireframes. En dialog med riktiga tillstånd är värd wireframes. En hel yta med många skärmar är värd ett designsystem. En API-ändring får ingenting från den här skillen.
 
 ## Genomarbetat exempel – decide, architecture och spike för todo-sökning
 
 Nästa funktion i todo-appen: sök bland dina egna todos och bland dem i listor som delas med dig. Hur sökningen ska gå till är ett verkligt val. Alternativen ligger nära varandra, ett av dem bryter mot ett gällande icke-mål, och en av frågorna kan bara körande kod besvara. PRD:n finns redan, i `docs/specs/search-todos/prd.md`.
 
-Component: samma layout som i ui-ux-design-exemplet: flödet som piller, de numrerade stegen med sina kommandon dolda bakom knappar ”Visa kommando” bredvid filträdet, sedan ”Det här gör du med dem” som numrerade kort och strukturkontrollen som en dämpad rad.
+Component: samma layout som i ui-ux-design-exemplet: flödet som piller, de numrerade stegen med sina kommandon dolda bakom knappar ”Visa kommando” bredvid filträdet, sedan ”Det här gör du med dem” som numrerade kort och storlekskontrollen som en dämpad rad.
 
 Flow: prd.md → architecture → decide → avvägning → spike → ADR → plan
 
@@ -284,7 +284,7 @@ Note: Namnen är exempel. `decide` väljer ADR:ens titel och ämnesmappen, och `
 4. **Ta bort spikekoden.** När utlåtandet är dokumenterat raderar du branchen `spike/<slug>`. Spikekod mergas eller återanvänds aldrig: den riktiga implementationen skrivs från grunden utifrån FIS:en.
 5. **Committa beslutet tillsammans med PRD:n.** `git add docs` tar med ADR:en, `DECISIONS.md` och utredningsmappen. `plan` och alla senare skills läser dem via indexet.
 
-Structure check: Ligger alternativen nära varandra och går beslutet att backa (en tvåvägsdörr) behövs ingen avvägning: välj ett. Ett bärande val utan något verkligt alternativ blir en rad under Still Current i `DECISIONS.md`. Ett omstritt val får avvägningen och en ADR. En fråga som bara mätningar kan avgöra får en spike, och bara då.
+Sizing check: Ligger alternativen nära varandra och går beslutet att backa (en tvåvägsdörr) behövs ingen avvägning: välj ett. Ett bärande val utan något verkligt alternativ blir en rad under Still Current i `DECISIONS.md`. Ett omstritt val får avvägningen och en ADR. En fråga som bara mätningar kan avgöra får en spike, och bara då.
 
 ## Härnäst
 

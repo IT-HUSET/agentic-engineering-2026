@@ -101,7 +101,8 @@ Den svenska guiden är samma sida som den engelska, i svenska meningar. Den här
 | fresh session | ny session |
 | role agents | rollagenter |
 | worked example | genomarbetat exempel |
-| structure check | strukturkontroll |
+| sizing check | storlekskontroll |
+| right-size | välja rätt storlek |
 
 ## Etiketter på sidan
 

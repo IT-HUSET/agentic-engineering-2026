@@ -15,7 +15,7 @@ Eyebrow: Labs · Part 1
 
 Component: "Core Loop" in the title is set in the accent colour.
 
-You build one real feature on the course's todo app, shared lists, from a one-line idea to a merged pull request. Every step leaves a file on disk that the next step reads, and ends with a checklist and a structure check.
+You build one real feature on the course's todo app, shared lists, from a one-line idea to a merged pull request. Every step leaves a file on disk that the next step reads, and ends with a checklist and a sizing check.
 
 Component: under the lead, three facts as small labelled chips, then a link button.
 
@@ -41,7 +41,7 @@ Component: one compact box holding a bulleted list, worded as in labs/foundation
 
 ## The seven steps (F1–F7)
 
-Interactive component: a rail of the seven steps, F1 to F7, with "/clear" between them and each step's output under its pill. Arrow keys move along the rail. Selecting a step shows its card, tinted by the step's Tint: the step number, Skills, Title, Input, a green start rule, the Steps as a numbered list, then a side column with the Output box (icon, title, text), a green start rule, the commands with copy buttons, any Prompt as plain text with no copy button, any Stop line as a red rule across the column with the stop icon before its text (the Steps list then carries a bare red rule at the same point). The start rules are 3 px in the green accent, the Stop rules 3 px in red; when the columns sit side by side, each pair is drawn level, the higher rule moving down, and any Example link, in their order, then, when the step has a Studio field, a lavender "In AndThen Studio · optional" box with the Studio command and its copy button, the text and a link to the Studio tab, the Verify checklist and the Structure check, and Previous / Next buttons. Each command box starts hidden behind a "Show command" button, as on the Setup tab.
+Interactive component: a rail of the seven steps, F1 to F7, with "/clear" between them and each step's output under its pill. Arrow keys move along the rail. Selecting a step shows its card, tinted by the step's Tint: the step number, Skills, Title, Input, a green start rule, the Steps as a numbered list, then a side column with the Output box (icon, title, text), a green start rule, the commands with copy buttons, any Prompt as plain text with no copy button, any Stop line as a red rule across the column with the stop icon before its text (the Steps list then carries a bare red rule at the same point). The start rules are 3 px in the green accent, the Stop rules 3 px in red; when the columns sit side by side, each pair is drawn level, the higher rule moving down, and any Example link, in their order, then, when the step has a Studio field, a lavender "In AndThen Studio · optional" box with the Studio command and its copy button, the text and a link to the Studio tab, the Verify checklist and the Sizing check, and Previous / Next buttons. Each command box starts hidden behind a "Show command" button, as on the Setup tab.
 
 Component: Verify items are checkboxes. Ticks are remembered in this browser only. A progress line above the rail counts the ticks across all steps, with a Reset button. Each pill shows its own count when at least one box is ticked.
 
@@ -51,7 +51,7 @@ Hint under the card: Pick a step on the rail, or use the arrow keys. Tick the ch
 
 - Tint: rust
 - Skills: now-what, init, describe
-- Input: A clone of your fork, Claude Code signed in, and AndThen installed as in the Setup tab.
+- Input: A clone of your own repo, created from the course repo, Claude Code signed in, and AndThen installed as in the Setup tab.
 - Output: folder · A project AndThen can navigate · A Document Index in CLAUDE.md, the Key Dev Commands document and two .gitignore entries, committed on your branch.
 - Command: `git switch -c feat/shared-lists` (1. Start a branch)
 - Command: `uv run pytest` (2. Check the tree is healthy)
@@ -64,12 +64,12 @@ Hint under the card: Pick a step on the rail, or use the arrow keys. Tick the ch
 - Example: 3. Worked example: how to judge the diff → (warmup)
 - Command: `git restore src/app/utils.py` (3. Discard the change when you're done)
 - Stop: **Stop.** Go on only when `git status --short src/` prints nothing and `uv run pytest` is green: from step 4 on, AndThen reads and writes this tree, so start it from a clean baseline.
-- Command: `/andthen:now-what` (4. Let it route the repo, and say yes to init)
+- Command: `/andthen:now-what` (4. From todo-app/, let it route the repo, and say yes to init)
 - Command: `/andthen:init` (5. now-what will suggest init; or run it yourself)
 - Command: `ls docs/KEY_DEVELOPMENT_COMMANDS.md` (5. Check the F1 verify point: CLAUDE.md has a Project Document Index, and its paths are real)
 - Example: 5. Worked example: what the Index looks like → (index)
-- Example: 7. Worked example: how much structure shared lists need → (dial)
-- Command: `git status --short` (8. See what init wrote: only CLAUDE.md, .gitignore and docs/ should show up)
+- Example: 7. Worked example: right-sizing shared lists → (dial)
+- Command: `git status --short` (8. See what init wrote: only CLAUDE.md, .gitignore and docs/KEY_DEVELOPMENT_COMMANDS.md should show up)
 - Command: `git add CLAUDE.md .gitignore docs` (8. Stage by path, never git add -A)
 - Command: `git commit -m "Set up AndThen"` (8. Commit the setup)
 - Command: `git log --oneline -1` (8. Check the commit: the latest one should be Set up AndThen)
@@ -85,10 +85,10 @@ Steps:
 
    Stop line: a bare red rule, level with the Stop line in the side column.
 
-4. **Let `now-what` route a bare repo.** Run `/andthen:now-what` in Claude Code, started in `todo-app/`. It prints the Core Loop and offers `init`; answer yes.
-5. **`init`.** It asks nothing here. It adds the Project Document Index to `CLAUDE.md`, writes the Key Dev Commands document and adds two `.gitignore` entries. Ignore the extra offers in its summary for now.
+4. **Let `now-what` route a bare repo.** Run `/andthen:now-what` in Claude Code, started in `todo-app/`. It prints the Core Loop and offers `init`; answer yes. (Started in the repository root instead, it reads the root `CLAUDE.md`, and `init` writes the Index there: restart in `todo-app/`.)
+5. **`init`.** It asks nothing here. It adds the Project Document Index to `CLAUDE.md`, with short Overview, Guidelines and Key Development Commands sections, writes the Key Dev Commands document and adds two `.gitignore` entries. `PRODUCT.md` and `ARCHITECTURE.md` get an Index entry too. Ignore the extra offers in its summary for now.
 6. **`describe`: read the map of the code.** Don't run it here. Read the prepared output in `docs/` while your facilitator runs it on screen. If `todo-app/docs/` is missing or empty, tell your facilitator before you go on.
-7. **Read (gauge) how much structure the work needs.** Learn the three paths and the entry test: if you can't list three acceptance criteria, start with `clarify`; otherwise start with `plan`.
+7. **Learn to right-size.** Learn the three sizes and the entry test: if you can't list three acceptance criteria, start with `clarify`; otherwise start with `plan`.
 8. **Commit the setup.** Stage by path, never `git add -A`: `git add CLAUDE.md .gitignore docs`, then `git commit -m "Set up AndThen"`.
 
 Verify:
@@ -98,25 +98,27 @@ Verify:
 - `docs/KEY_DEVELOPMENT_COMMANDS.md` lists a test command, and you ran it by hand.
 - `.gitignore` contains `.agent_temp/`.
 - You picked one discovered requirement you would confirm and one you would doubt.
-- You can state the entry test and the three paths.
+- You can state the entry test and the three sizes.
 
-Structure check: Did the app earn `init` and `describe`? A codebase you will live in for weeks earns both once, up front. A throwaway script earns neither.
+Sizing check: Did the app earn `init` and `describe`? A codebase you will live in for weeks earns both once, up front. A throwaway script earns neither.
 
 ### F2 – Clarify
 
 - Tint: red
 - Skills: clarify
 - Input: One line, "Let people share their lists." Nothing else.
-- Output: doc · prd.md · The PRD in your feature folder, plus the Proportionality facts in docs/PRODUCT.md.
+- Output: doc · prd.md · The PRD in your feature folder, plus the Proportionality facts and the amended Non-Goal in docs/PRODUCT.md.
 - Text: 2. Write three acceptance criteria by hand, in .agent_temp/f2-my-criteria.md
 - Example: 2. Worked example: three acceptance criteria → (criteria)
 - Stop: **Stop.** Go on only when your three criteria are in `.agent_temp/f2-my-criteria.md`: once `clarify` starts asking, yours can no longer be written unanchored.
 - Command: `/andthen:clarify "let people share their lists"` (3. Run the interview, in a fresh session)
+- Text: 3. Scope: ask for the whole sharing direction in phases, with view-only sharing as the first slice. Leave how access is modeled for F3
 - Command: `ls docs/specs/` (4. Find your <feature-dir>)
 - Example: 4. Worked example: where the PRD lands → (prd)
-- Command: `git add docs CLAUDE.md` (5. Optional: commit the PRD now. Stage by path; CLAUDE.md sits outside docs/)
-- Command: `git commit -m "Add shared-lists PRD"` (5. Optional: commit the PRD, PRODUCT.md and the new Index lines)
-- Studio: Reader: open `prd.md` under Requirements. Jump with the section list to Out of Scope and Open Questions for step 5. Pin a note on a section you doubt: copy your notes as markdown into the comparison, or send them and let `clarify` revise the PRD, then commit it again.
+- Text: 5. Check the Non-Goal in docs/PRODUCT.md, and ask the agent to amend the Value Propositions line and the Decisions Log row that still keep lists private
+- Command: `git add docs CLAUDE.md` (6. Optional: commit the PRD now. Stage by path; CLAUDE.md sits outside docs/)
+- Command: `git commit -m "Add shared-lists PRD"` (6. Optional: commit the PRD, PRODUCT.md and the new Index lines)
+- Studio: Reader: open `prd.md` under Requirements. Jump with the section list to Out of Scope and Open Questions for step 6. Pin a note on a section you doubt: copy your notes as markdown into the comparison, or send them and let `clarify` revise the PRD, then commit it again.
 
 Steps:
 
@@ -125,19 +127,20 @@ Steps:
 
    Stop line: a bare red rule, level with the Stop line in the side column.
 
-3. **With AndThen: run the interview.** In a fresh session, run `clarify`. Answer the questions and let it push back. Answer one thing vaguely on purpose and watch it probe.
-4. **Read the PRD.** It lands in `docs/specs/<slug>/prd.md`, and that folder is your `<feature-dir>`: write it down. The PRD outlives the branch, so read it carefully.
-5. **Compare with your hand-written criteria.** What did it ask that you missed, and the other way round? Read Out of Scope: what was parked so the first slice stays small?
+3. **With AndThen: run the interview.** In a fresh session, run `clarify`. Answer the questions and let it push back. Answer one thing vaguely on purpose and watch it probe. Its first scope is the smallest MVP: ask instead for the whole sharing direction (sharing, invitations, roles, notifications) in phases, with view-only sharing between registered users as the first slice, and leave how access is modeled for F3. A fresh reviewer then usually puts Notes to you, some blocking: answer them, they are often real contradictions with the code.
+4. **Read the PRD.** It lands in `docs/specs/<slug>/prd.md`, and that folder is your `<feature-dir>`: write it down. The PRD outlives the branch, so read it carefully. It is long for a one-line idea: start with the MVP boundary, Out of Scope and the `If` rules.
+5. **Check the Non-Goal, then finish the job.** `clarify` curates the Non-Goals in `docs/PRODUCT.md`, so the sharing bullet should now be narrowed to what you still reject, or gone. Two lines outside that section are still yours: the Value Propositions line "Lists stay private to their owner" and the Decisions Log row that says the same. Ask the agent to amend them, so the whole product document agrees with the PRD.
+6. **Compare with your hand-written criteria.** What did it ask that you missed, and the other way round? The PRD writes each criterion as a rule (`While …, when …, the system shall …`), with an `If …, then the system shall …` rule per unwanted condition: compare your awkward edge with those. Read Out of Scope: what was parked so the first slice stays small?
 
 Verify:
 
-- You can list three testable acceptance criteria from the PRD.
+- You can list three testable acceptance criteria from the PRD, including an `If` rule for an unwanted condition.
 - You can say what it will not do: invites, roles, notifications.
 - A smallest shippable slice is named: view-only, registered users.
 - The awkward edges have an expected behavior, or sit in Open Questions on purpose.
-- `docs/PRODUCT.md` has stage, scale and technical non-goals.
+- `docs/PRODUCT.md` has stage, scale and technical non-goals, and no longer says sharing is out.
 
-Structure check: Did shared lists earn a full `clarify`? Yes, one line fans out into a dozen forks. A sentence with no real unknowns goes to `implement-fix`.
+Sizing check: Did shared lists earn a full `clarify`? Yes, one line fans out into a dozen forks. A sentence with no real unknowns goes to `implement-fix`.
 
 ### F3 – Decide
 
@@ -146,11 +149,11 @@ Structure check: Did shared lists earn a full `clarify`? Yes, one line fans out 
 - Input: The PRD from F2, and the design fork in it: how is "this user may see that list" modeled?
 - Output: seal · ADR + glossary · An ADR in docs/adrs/ with its row in docs/DECISIONS.md, and docs/UBIQUITOUS_LANGUAGE.md.
 - Command: `/andthen:decide docs/specs/let-people-share-their-lists` (1. /andthen:decide <feature-dir>: settle the fork, in a fresh session)
-- Text: 2. Read the ADRs in docs/adrs/, and their rows in docs/DECISIONS.md
+- Text: 2. Read the ADRs in docs/adrs/ and their rows in docs/DECISIONS.md, then the PRD's Open Questions line, which now names the ADR
 - Stop: **Stop.** Go on only when you can name the ADR's Reversal line and the floor option it turned down: the glossary names what the ADR settled, so a wrong ADR spreads into every term.
-- Command: `/andthen:domain --mode glossary shared lists` (3. Name the terms, in a fresh session. AndThen may then suggest plan: skip it, steps 4 and 5 come first)
+- Command: `/andthen:domain --mode glossary shared lists` (3. Name the terms, in a fresh session. It asks nothing and prints no Next line)
 - Text: 4. Read the glossary in docs/UBIQUITOUS_LANGUAGE.md, and its Avoid column
-- Command: `git status --short` (5. See what F2 and F3 wrote: the PRD, PRODUCT.md, the ADR, DECISIONS.md, the glossary and CLAUDE.md)
+- Command: `git status --short` (5. See what F2 and F3 wrote: the PRD, the PRODUCT.md changes, the ADR, DECISIONS.md, the glossary and CLAUDE.md)
 - Command: `git add docs CLAUDE.md` (5. Stage by path; CLAUDE.md sits outside docs/, so name it)
 - Command: `git commit -m "Add shared-lists PRD, ADR and glossary"` (5. Commit the design artifacts)
 - Command: `git status --short` (5. Check the tree: no M or A lines left, only ?? for local files)
@@ -158,12 +161,12 @@ Structure check: Did shared lists earn a full `clarify`? Yes, one line fans out 
 
 Steps:
 
-1. **Settle the fork with `decide`.** Point it at the PRD. Confirm the options, criteria and weights before it researches; that gate is the point. You just decided, so the ADR goes in as `Accepted`.
-2. **Read the ADR.** It lands in `docs/adrs/` with a row in `docs/DECISIONS.md`. Find the Reversal line, a one-way or a two-way door, and Alternatives Considered, including the floor option.
+1. **Settle the fork with `decide`.** Point it at the PRD. Confirm how it sorts the decision points, then the options, criteria and weights before it researches; that gate is the point. After the research it recommends one option: accept it, refine it or go deeper. You just decided, so the ADR goes in as `Accepted`.
+2. **Read the ADR.** It lands in `docs/adrs/` with a row in `docs/DECISIONS.md`. Find the Reversal line, a one-way or a two-way door, and Alternatives Considered, including the floor option. Then open the PRD: its Open Questions line on the sharing model now names the ADR, with its own text intact.
 
    Stop line: a bare red rule, level with the Stop line in the side column.
 
-3. **Name the terms.** In a fresh session, run the glossary for shared lists. (AndThen may then suggest `plan` as the next step. Don't run it yet: read the glossary and commit in steps 4 and 5 first; planning is F4.)
+3. **Name the terms.** In a fresh session, run the glossary for shared lists. It asks nothing and prints no `Next` line.
 4. **Read the glossary.** It lands in `docs/UBIQUITOUS_LANGUAGE.md`. Its Avoid column bans the synonyms the spec must not use.
 5. **Commit the design artifacts.** Stage by path, never `git add -A`: `git add docs CLAUDE.md`, because the Index in `CLAUDE.md` gained lines too. Then `git commit -m "Add shared-lists PRD, ADR and glossary"`.
 
@@ -172,9 +175,10 @@ Verify:
 - The ADR states one option, with the criteria that decided it.
 - Alternatives Considered includes the floor option, and Reversal names the door type.
 - `docs/DECISIONS.md` has a row for the ADR.
+- The PRD's Open Questions row for the sharing model names the ADR, and reads as before otherwise.
 - The glossary has one name per concept, with banned synonyms under Avoid.
 
-Structure check: Did this fork earn an ADR? For the sharing model, yes. A question only running code can answer goes to `spike` instead.
+Sizing check: Did this fork earn an ADR? For the sharing model, yes. A question only running code can answer goes to `spike` instead.
 
 ### F4 – Plan
 
@@ -182,37 +186,34 @@ Structure check: Did this fork earn an ADR? For the sharing model, yes. A questi
 - Skills: plan
 - Input: The PRD, the ADR and the glossary. plan finds them through the Index, so you paste nothing in.
 - Output: stack · FIS + plan.json · One FIS for the vertical slice and a one-story plan.json, with story S01 pending. A vertical slice is a thin piece of the feature through every layer (data, routes, UI, tests) that you can demo on its own.
-- Command: `/andthen:plan docs/specs/let-people-share-their-lists` (1. /andthen:plan <feature-dir>: plan the whole PRD, in a fresh session. AndThen may then suggest exec-plan: skip it, this plan is only for reading)
+- Command: `/andthen:plan docs/specs/let-people-share-their-lists` (1. /andthen:plan <feature-dir>: plan the whole PRD, in a fresh session. The slowest run of the day: write your skeleton in step 2 while it works. Don't run exec-plan on it)
 - Example: 1. Worked example: what plan wrote → (plan-files)
 - Text: 1. Then park it: move plan.json and the FIS files to .agent_temp/whole-prd-plan/, and keep prd.md
 - Example: 1. Worked example: where the parked plan goes → (parked)
-- Text: 2. Try it by hand first: write your own FIS skeleton in .agent_temp/f4-my-fis.md
+- Text: 2. Manual: write your own FIS skeleton in .agent_temp/f4-my-fis.md
 - Example: 2. Worked example: a hand-written FIS skeleton → (fis)
 - Stop: **Stop.** Go on only when your own skeleton is in `.agent_temp/f4-my-fis.md` and the whole-PRD plan is parked: once `plan` writes its FIS, yours can no longer be written unanchored.
-- Command: `git status --short` (3. First, before plan: if prd.md shows M, plan wrote one of your answers into the PRD in step 1. Commit it, so the check after plan stays clean)
-- Command: `git add docs/specs/let-people-share-their-lists/prd.md` (3. Stage the PRD by path)
-- Command: `git commit -m "Amend the shared-lists PRD from planning"` (3. Commit the PRD change)
 - Command: `/andthen:plan "docs/specs/let-people-share-their-lists/ as one story: share a list view-only with a registered user, and revoke"` (3. /andthen:plan "<feature-dir>/ as one story: …": plan the vertical slice as one story, in a fresh session. Read the Decided: and Assumed: lists it closes with)
-- Command: `git status --short` (3. Check the tree: plan.json and the vertical slice's FIS are the only new files under docs/. If prd.md shows M again, plan amended it once more: step 5 commits it)
+- Command: `git status --short` (3. Check the tree: plan.json and the vertical slice's FIS are the only new files under docs/. prd.md may show M: step 5 deals with it)
 - Text: 4. Compare the FIS with your skeleton, and check that its Architecture Decision points at your ADR
 - Example: 4. Worked example: which files to compare → (compare)
-- Command: `git status --short` (5. Before F5, don't skip this: if prd.md shows M, plan wrote a decision from step 3 into the PRD, such as which refusal a request gets. Commit it, or F5 starts on a dirty tree)
-- Command: `git add docs/specs/let-people-share-their-lists/prd.md` (5. Stage the PRD by path)
-- Command: `git commit -m "Amend the shared-lists PRD from planning"` (5. Commit the PRD change)
-- Command: `git status --short` (5. Check the green tree: under docs/, only plan.json and the s01 FIS are uncommitted. __pycache__/ and todo.db may show too: leave them out of every commit)
+- Command: `git diff docs/specs/let-people-share-their-lists/prd.md` (5. Before F5, don't skip this: did planning change the PRD, such as which refusal a request gets?)
+- Command: `git add docs/specs/let-people-share-their-lists/prd.md` (5. If it changed and you agree, stage the PRD by path)
+- Command: `git commit -m "Amend shared-lists PRD from planning"` (5. Commit the PRD change)
+- Command: `git status --short` (5. Check the tree: under docs/, only plan.json and the s01 FIS are uncommitted. exec-plan commits them with the story)
 - Text: 5. Then tick off Verify below against the FIS, above all: every scenario has a proof and traces to an Expected Outcome, and plan.json has one story, S01, pending
 - Studio: Plan board: after step 1, the whole-PRD plan shows its stories as columns with their dependsOn edges. Count them before you park it; parked in `.agent_temp/`, it leaves the board. After step 3 the board shows one story, S01, pending: open it to read the FIS.
 
 Steps:
 
-1. **Plan the whole PRD, and only read it.** In a fresh session, run `plan` on your `<feature-dir>`. Read how many stories it makes, their `dependsOn` edges, and any `OVERSIZE:` line. Then move `plan.json` and the FIS files to `.agent_temp/whole-prd-plan/`; `prd.md` stays. (AndThen may then suggest `exec-plan`. Don't run it: this plan is only for reading.)
-2. **Try it by hand first: write your own FIS skeleton.** In `.agent_temp/f4-my-fis.md`: intent, outcomes, three scenarios, what you are not doing, and tasks with a Verify line.
+1. **Plan the whole PRD, and only read it.** In a fresh session, run `plan` on your `<feature-dir>`. It drafts the stories a batch at a time, so this is the slowest run of the day: start it, then write your skeleton in step 2 while it works. Its final round can ask twenty questions or more: take the recommendations unless one is wrong. Read how many stories it makes, their `dependsOn` edges, any `OVERSIZE:` line (a well-cut plan has none), and whether S01 is a walking skeleton, the thinnest end-to-end path the other stories build on. Then move `plan.json` and the FIS files to `.agent_temp/whole-prd-plan/`. `prd.md` stays, and a requirement the final round changed stays in it until step 5. (AndThen may then suggest `exec-plan`. Don't run it: this plan is only for reading.)
+2. **Manual: write your own FIS skeleton.** In `.agent_temp/f4-my-fis.md`: intent, outcomes, three scenarios, what you are not doing, and tasks with a Verify line.
 
    Stop line: a bare red rule, level with the Stop line in the side column.
 
-3. **Plan the vertical slice as one story.** First run `git status --short`: if `prd.md` shows as modified, `plan` wrote one of your answers into the PRD in step 1, so commit it by path. Then, in a fresh session, run `plan` with the vertical slice. Read the `Decided:` and `Assumed:` lists it closes with. (AndThen may then suggest `exec-plan`. That is F5, after step 5.)
+3. **Plan the vertical slice as one story.** In a fresh session, run `plan` with the vertical slice. Read the `Decided:` and `Assumed:` lists it closes with; `Assumed:` stays empty when you answered every item. (AndThen may then suggest `exec-plan`. That is F5, after step 5.)
 4. **Compare the FIS with your skeleton.** What did it add that you missed, and the other way round? Check that its Architecture Decision points at your ADR.
-5. **Before F5, leave a green tree and tick off Verify.** Run `git status --short` once more. If `prd.md` shows as modified, `plan` wrote a decision from step 3 into the PRD, so commit it by path. Then only `plan.json` and the FIS are uncommitted under `docs/` (`__pycache__/` and `todo.db` may show too: leave them out of every commit). Last, tick off Verify below against the FIS: every scenario has a proof and traces to an Expected Outcome, and `plan.json` has one story, S01, `pending`.
+5. **Commit any PRD change, and tick off Verify.** F5 starts with nothing uncommitted but the bundle. Read `git diff <feature-dir>/prd.md`: if planning changed it and you agree, commit it by path. Leave `plan.json` and the FIS uncommitted: `exec-plan` commits them with the story. Then tick off Verify below against the FIS: every scenario has a proof and traces to an Expected Outcome, and `plan.json` has one story, S01, `pending`.
 
 Verify:
 
@@ -220,25 +221,25 @@ Verify:
 - Each scenario traces to an Expected Outcome.
 - What We're NOT Doing is explicit.
 - The FIS follows your ADR and uses your glossary's terms.
-- No unresolved `OVERSIZE:`, and plan.json has one story, S01, pending.
+- No unresolved `OVERSIZE:`, and plan.json has one story, S01, pending, with no dependencies.
 
-Structure check: Was a FIS the right amount? For sharing that touches the data model and permissions, yes. If it comes out secretly huge, split it into stories instead of writing a bigger spec.
+Sizing check: Was a FIS the right amount? For sharing that touches the data model and permissions, yes. If it comes out secretly huge, split it into stories instead of writing a bigger spec.
 
 ### F5 – Implement
 
 - Tint: teal
 - Skills: exec-plan
-- Input: The FIS and plan.json from F4, on a green tree where only those two files are uncommitted.
+- Input: The FIS and plan.json from F4, with uv run pytest green and nothing else uncommitted: exec-plan commits the two with the story.
 - Output: code · Code + tests · The vertical slice committed, and story S01 done in plan.json with a verified summary.
 - Command: `pwd` (1. Check where you are: the path should end in todo-app)
 - Command: `cd todo-app` (1. If it doesn't, move there from the repository root)
 - Text: 2. Read ### Implementation Tasks in the FIS before you run it: one task and its Verify line
 - Example: 2. Worked example: one task and its Verify line → (task)
 - Stop: **Stop.** Go on only when you can say what one task's Verify line proves, and only the FIS and `plan.json` are uncommitted: `exec-plan` builds and commits the whole story in one run.
-- Command: `/andthen:exec-plan docs/specs/let-people-share-their-lists/s01-shared-lists.md` (3. /andthen:exec-plan <feature-dir>/s01-<name>.md: run the FIS, in a fresh session)
+- Command: `/andthen:exec-plan docs/specs/let-people-share-their-lists/s01-shared-lists.md` (3. /andthen:exec-plan <feature-dir>/s01-<name>.md: run the FIS, in a fresh session. Use the Next line at the very end of its report)
 - Text: 4. Read ## Implementation Observations at the end of the FIS, <feature-dir>/s01-<name>.md: review fixes, DRIFT lines, NOTICED BUT NOT TOUCHING
 - Example: 4. Worked example: what to point out → (observations)
-- Command: `uv run uvicorn app.main:app --reload` (5. Optional: start the app from todo-app/, then open the address it prints, usually http://localhost:8000. Stop it with Ctrl-C)
+- Command: `./run.sh` (5. The browser check is yours: start the app from todo-app/ and open http://localhost:8000. Stop it with Ctrl-C)
 - Text: 5. Or, in the Claude desktop app, ask Claude: start the app here and open it in the browser panel
 - Text: 5. Sign in as demo@example.com / demo123. In a private window of your own browser, sign up a second user with an @example.com email
 - Text: 5. As the demo user, share a list from its settings (the pencil). Reload the other window, check "Shared with me", then revoke
@@ -251,26 +252,27 @@ Steps:
 
    Stop line: a bare red rule, level with the Stop line in the side column.
 
-3. Run it. Watch the tasks run in order, each passing its check, then the full proof run and a fresh reviewer.
+3. **Run it.** Your session writes the code task by task, each passing its check before the next, so this is the long part. Then come the full proof run, a quick review by a fresh reviewer (findings, not a verdict: that is F6) and one simplify pass, which may add a `refactor` commit. Use the `Next` line at the very end of the report.
 4. **Read what the run left in the FIS.** Open `<feature-dir>/s01-<name>.md`, i.e. `docs/specs/let-people-share-their-lists/s01-shared-lists.md` in `todo-app/` – the same file you passed to `exec-plan` – and scroll to its last section, `## Implementation Observations`, with `## Discovered Requirements` above it if the run found a requirement the spec missed. It holds what the reviewer found and how it was fixed, each `#### DRIFT` line, if any, where the code knowingly differs from the spec (no DRIFT section means the run claims the code matches the spec, a claim F6 tests), the small tidies made on the way, `NOTICED BUT NOT TOUCHING` items left for later, and any check that did not run. Read the plain bullets too: a small reinterpretation can sit in one of them. For each, decide: accept it, take it to F6, or leave it for later. `ship` in F7 keeps what is worth keeping and drops the FIS.
-5. **Optional: try the app yourself.** Green tests are not the same as seeing it work. From `todo-app/`, start the app with `uv run uvicorn app.main:app --reload`, or, in the Claude desktop app, ask Claude to start it and open it in the browser panel. Use two users: sign in as the demo user, `demo@example.com` / `demo123`, in one window, and sign up a new user in a private window of your own browser, since the browser panel's tabs share one sign-in. Give the new user an `@example.com` email: registration refuses `.test`. As the demo user, open a list's settings with the pencil and share it with the new user's email. Reload the other window: the list sits under "Shared with me", with no change controls. Revoke, reload again, and it is gone. Stop the server with Ctrl-C, or ask Claude to stop it if Claude started it.
+5. **Run the browser check yourself.** Green tests are not the same as seeing it work, and the proof run records a check that needs a person in a browser as not run: that one is yours. From `todo-app/`, start the app with `./run.sh`, or, in the Claude desktop app, ask Claude to start it and open it in the browser panel. Use two users: sign in as the demo user, `demo@example.com` / `demo123`, in one window, and sign up a new user in a private window of your own browser, since the browser panel's tabs share one sign-in. Give the new user an `@example.com` email: registration refuses `.test`. As the demo user, open a list's settings with the pencil and share it with the new user's email. Reload the other window: the list sits under "Shared with me", with no change controls. Revoke, reload again, and it is gone. Stop the server with Ctrl-C, or ask Claude to stop it if Claude started it.
 
 Verify:
 
 - Story S01 is done, and verified.summary quotes a check that ran: command, exit status, result line.
 - You ran that command yourself and got the same result.
-- `git log -3` shows the `Story-ID: S01` and `Plan:` trailers, and `git status` is clean.
-- No task is checked without a passing Verify.
+- `git log -3` shows the `Story-ID: S01` and `Plan:` trailers, a `refactor` commit if the simplify pass changed something, and `git status` is clean.
+- S01's `completedTaskIds` in plan.json lists every task, each with a passing proof line in the report.
+- In the browser, the recipient can read the shared list but not change it, and loses it after a revoke.
 - The `Reviewed:` line says a fresh reviewer looked, and you know what it left open.
 
-Structure check: Tests pass is not it works. Green tests prove the scenarios you wrote. Whether they were the right ones is the question for F6.
+Sizing check: Tests pass is not it works. Green tests prove the scenarios you wrote. Whether they were the right ones is the question for F6.
 
 ### F6 – Verify and review
 
 - Tint: lav
 - Skills: review --fix
 - Input: The committed vertical slice (one thin piece of the feature through data, routes, UI and tests), plan.json with S01 done, and the FIS's acceptance scenarios as your own checklist.
-- Output: checklist · Review report · Findings sorted into Fix and Note, with the Fix ones applied in your working tree.
+- Output: checklist · Review report · Findings sorted into Fix and Note, with the Fix ones applied and committed.
 - Text: 1. Verify yourself: how could a viewer send a change without the button? Then find what refuses it, in the routes and in tests/test_sharing.py
 - Command: `uv run pytest` (2. Make one change route's check let a viewer through, then run the tests from todo-app/: at least one must fail)
 - Example: 2. Worked example: the three moves in the reference run → (falsify)
@@ -280,79 +282,80 @@ Structure check: Tests pass is not it works. Green tests prove the scenarios you
 - Example: 3. Worked example: what the review left behind → (review-output)
 - Text: 4. Decide every Note in the report yourself: fix it, record it as tech debt, or drop it. No "while I'm here" cleanup
 - Command: `/clear` (5. Does the report end on Next (fresh session): /andthen:review …? Then start a fresh session)
-- Command: `/andthen:review --fix docs/specs/let-people-share-their-lists/plan.json` (5. /andthen:review --fix <feature-dir>/plan.json: then run the follow-up review from todo-app/. Repeat 5 while it prints another)
+- Command: `/andthen:review --fix docs/specs/let-people-share-their-lists/plan.json` (5. /andthen:review --fix <feature-dir>/plan.json: then run the follow-up review from todo-app/)
 - Command: `uv run pytest` (6. No fix round left? Run the tests yourself from todo-app/)
-- Text: 7. Ready, with a Next line for ship? Go to F7. Not Ready? Read what still blocks it
+- Text: 7. PASS, or FAIL with a Remediated line and every finding resolved, and a Next line for ship? Go to F7. Otherwise read what still blocks it
 - Studio: Review report: open it under Review reports. The verdict, the finding index, the coverage matrix to spot-check a scenario, and Remediation Status at the end. A follow-up review shows up as a second report beside the first.
 
 Steps:
 
-1. **Look for a gap yourself:** can a viewer change a view-only list by sending the request directly? Check that the server refuses it, not just a hidden button.
+1. **Look for a gap yourself:** can a viewer change a view-only list by sending the request directly? Check that the server refuses it, not just a hidden button. One thing is not your bug: a stranger gets 403 on todo routes but 404 on list routes. That predates the feature (`GAP-D08` in `docs/requirements-discovered.md`).
 2. **Falsify the test.** Change the server-side check on one change route so that it lets a viewer through – for example, use the read check instead of the owner check. Keep the code running: commenting the check out only crashes the route, and a crash fails tests for the wrong reason. Run `uv run pytest`: at least one test must fail. Then put the check back with `git restore`. Green means the suite is lying.
 
    Stop line: a bare red rule, level with the Stop line in the side column.
 
-3. **Run the review**, and compare its report with what you found. The report is not all it leaves. With `--fix` it applies the Fix findings in your working tree, uncommitted, and marks each finding's outcome under `## Remediation Status` at the end of the report. A finding you defer goes into `docs/TECH-DEBT-BACKLOG.md` once you approve it. The run closes on a `Next` line: a follow-up review in a fresh session when it fixed a CRITICAL or HIGH finding, else `ship`. Your report will not match the reference run: other findings, other severities, maybe no fix at all. Steps 4–7 are the same whatever it found.
-4. **Decide every Note yourself:** fix it, record it as tech debt, or drop it. Resist "while I'm here" cleanup.
-5. **Run the follow-up review, if the report asks for one.** Does the run end on `Next (fresh session): /andthen:review … --fix`? Then type `/clear` (or open a new session) and paste that line from `todo-app/`. The session that applied a fix is not the one to judge it. The follow-up checks the fixes, can fix more, and may print another such line: then do step 5 again. No follow-up line means skip to step 6.
+3. **Run the review**, and compare its report with what you found. One reviewer runs every lens in one long pass, the heaviest step for your quota. The report is not all it leaves. With `--fix` it applies the Fix findings in one round, commits the verified change by path, and marks each finding's outcome under `## Remediation Status` at the end of the report. A finding you defer goes into `docs/TECH-DEBT-BACKLOG.md` once you approve it. The skill's final output, not the report, ends on the `Next` line: a follow-up review in a fresh session when it fixed a CRITICAL or HIGH finding, else `ship`. Your report will not match the reference run: other findings, other severities, maybe no fix at all. Steps 4–7 are the same whatever it found.
+4. **Decide every Note yourself.** The run ends on one question covering every Note: slow down here. Fix it, record it as tech debt, or drop it. Resist "while I'm here" cleanup.
+5. **Run the follow-up review, if the report asks for one.** Does the run end on `Next (fresh session): /andthen:review … --fix`? Then type `/clear` (or open a new session) and paste that line from `todo-app/`. The session that applied a fix is not the one to judge it. The follow-up checks the fixes. No follow-up line means skip to step 6.
 6. **Run `uv run pytest` yourself** from `todo-app/`, once no fix round is left. The agent ran the tests too; this is your own check of its claim, and a run before a later fix round no longer counts.
-7. **Go on to F7 when the last report says Ready** and ends on `Next (fresh session):` for `ship`. Not Ready? Its verdict and `## Remediation Status` say what still blocks it: an open CRITICAL or HIGH finding, a deferred one included. Settle that first.
+7. **Go on to F7 when the last report says PASS**, or FAIL with a `**Remediated**:` line under its title and every finding behind it resolved, and the output ends on `Next (fresh session):` for `ship`. Otherwise its verdict and `## Remediation Status` say what still blocks it: an open CRITICAL or HIGH finding, a deferred one included. Settle that first.
 
 Verify:
 
-- The last report says Ready, with no open CRITICAL or HIGH finding, and ends on a Next line for ship.
+- The last report says PASS, or FAIL with a Remediated line and every finding resolved; no CRITICAL or HIGH finding is open; the output ends on a Next line for ship.
 - Every scenario traces to evidence that ran, and you spot-checked one.
 - A direct request from a viewer is refused server-side, and a test would fail without the check.
 - Every Fix is resolved, and every Note is decided by you.
 - Any follow-up review the report asked for has run, and `uv run pytest` passes after the last fix round.
 
-Structure check: A full review fits a change to authorization on mutating routes. A one-line copy tweak needs only `review --quick`.
+Sizing check: A full review fits a change to authorization on mutating routes. A one-line copy tweak needs only `review --quick`.
 
 ### F7 – Ship and hand off
 
 - Tint: rust
 - Skills: ship, handoff
-- Input: A reviewed branch: plan.json with S01 done, a last review report that says Ready, and the Next line for ship it printed. The pull request goes to your fork.
+- Input: A reviewed branch: plan.json with S01 done, a clean last review, and the Next line for ship it printed. The pull request goes to your own repo.
 - Output: pr · Pull request + handoff · A merged pull request, new Learnings, and a handoff a fresh session can resume from.
-- Command: `git status --short` (1. From todo-app/: what is uncommitted? Only review fixes, if any; ship commits them)
+- Command: `git status --short` (1. From todo-app/: what is uncommitted? Usually nothing: review --fix committed its fixes)
 - Command: `git log --oneline main..HEAD` (1. The commits that will leave your machine)
 - Command: `git ls-files docs/specs/let-people-share-their-lists` (1. git ls-files <feature-dir>: tracked are prd.md, plan.json and the FIS. The review report is gitignored)
-- Stop: **Stop.** Go on only when step 1 looks right: `ship` commits, and deletes `plan.json` and the FIS, without asking.
+- Stop: **Stop.** Go on only when step 1 looks right: `ship` commits what is left, then asks once before it pushes and deletes `plan.json` and the FIS.
 - Command: `/clear` (2. Start a fresh session)
 - Command: `/andthen:ship docs/specs/let-people-share-their-lists/plan.json` (2. /andthen:ship <feature-dir>/plan.json: paste the Next line from F6's last report, from todo-app/)
 - Text: 3. Does it name open work? Answer no and go back to F6. Otherwise read which Learnings it writes and what it only recommends
-- Text: 4. Before you say yes, read the PR text: intent, outcomes, proof of each, one-way or two-way door, and what it leaves open
-- Text: 4. Your fork as the target? Say yes. No fork? Say no: it prints the title, the body and the commands to run later
-- Command: `git ls-files docs/specs/let-people-share-their-lists` (5. git ls-files <feature-dir>: only prd.md is left)
+- Text: 4. Before you say yes, read the PR text: intent, outcomes, proof of each, one-way or two-way door, where to read closely, what stays open, and the Ship summary
+- Text: 4. Your own repo as the target? Accept the recommended delete and say yes. A clone of the course repo? Say no: it prints the title, the body and the commands. No remote? Answer keep
+- Text: 4. Didn't push? Copy the title and body into .agent_temp/f7-pr.md now: the PR text exists only in this session
+- Command: `git ls-files docs/specs/let-people-share-their-lists` (5. git ls-files <feature-dir>: only prd.md is left, with a Shipped line at the top)
 - Command: `git log --oneline --stat -3` (5. The Learnings commit and the deletion of plan.json and the FIS)
 - Prompt: Show the Implementation Observations of the deleted FIS from git history next to the new bullets in docs/LEARNINGS.md. (5. Ask Claude Code; each new bullet should trace to one)
 - Stop: **Stop.** Go on only when each new Learnings bullet traces to an observation in the deleted FIS: once the branch is merged and deleted, that history is gone from your clone.
 - Text: 6. Merge on github.com: open the pull request, choose Squash and merge, confirm, then Delete branch
-- Command: `gh pr merge https://github.com/gregthebellringer/agentic-engineering-2026-G/pull/2 --squash --delete-branch` (6. Or from here: gh pr merge <PR URL> --squash --delete-branch, with the URL ship printed. In the reference run:)
+- Command: `gh pr merge <PR URL> --squash --delete-branch` (6. Or from here, with the URL ship printed)
 - Command: `git switch main` (6. After a merge on github.com, update your clone: you are still on the feature branch)
 - Command: `git pull` (6. Bring the squash commit into your main)
 - Command: `git branch -D feat/shared-lists` (6. Delete the local branch. -D, because git does not see the squash commit as the same changes)
-- Stop: **Stop.** Go on only when `git status -sb` prints `## main...origin/main` and `git branch` no longer lists `feat/shared-lists`: the handoff should describe the merged work. No fork, so no merge? Go on.
+- Stop: **Stop.** Go on only when `git status -sb` prints `## main...origin/main` and `git branch` no longer lists `feat/shared-lists`: the handoff should describe the merged work. Didn't push, so no merge? Go on.
 - Command: `/andthen:handoff "next: frame my case repo – init, describe, test command"` (7. Hand off, then open the file it writes under .agent_temp/handoff/)
 - Command: `/clear` (8. Start a fresh session)
 - Prompt: Resume from .agent_temp/handoff/handoff-<UTC-ts>.md (8. Paste the resume line handoff printed, with its timestamp)
 - Prompt: What is the state of the shared-lists work and what is the next step? (8. Then ask, without retyping any context)
-- Studio: Walkthroughs: before you merge in step 6, produce a walkthrough of the pull request by its number, or of the range `main...feat/shared-lists`. It is an agent run: give it a few minutes. Then go through its focus points and mark each file reviewed. After `ship` the home page shows 0 plans: `ship` deleted `plan.json`.
+- Studio: Walkthroughs: before you merge in step 6, produce a walkthrough of the pull request by its number, or of the range `main...feat/shared-lists`. It is an agent run: give it a few minutes. Then go through its focus points and mark each file reviewed. After a `ship` that deleted the bundle, the home page shows 0 plans.
 
 Steps:
 
-1. **Look before you ship.** From `todo-app/`, run `git status --short`, `git log --oneline main..HEAD` and `git ls-files <feature-dir>`. The only uncommitted changes should be review fixes, if any: `ship` commits those, and leaves alone anything it cannot tie to the branch. The log is what will leave your machine: the story commit and any fixes committed after the review. `plan.json` and the FIS are tracked, because `exec-plan` committed them with the story. The review report is not, because it is gitignored.
+1. **Look before you ship.** From `todo-app/`, run `git status --short`, `git log --oneline main..HEAD` and `git ls-files <feature-dir>`. The tree should be clean: `exec-plan` and `review --fix` committed their work, and `ship` leaves alone anything it cannot tie to the branch. The log is what will leave your machine: the story commit, any `refactor` commit and the review's fixes. `plan.json` and the FIS are tracked, because `exec-plan` committed them with the story. The review report is not, because it is gitignored.
 
    Stop line: a bare red rule, level with the Stop line in the side column.
 
 2. **Run `ship` in a fresh session.** Type `/clear` (or open a new session) and paste the `Next (fresh session):` line from F6's last report, from `todo-app/`.
-3. **Read what it does before it asks.** First it checks for open work: a story not done, or an open CRITICAL or HIGH finding, a deferred one included. If it names any, answer no and go back to F6. Shipping past a blocker is a decision, not a default. Then it lands what the FIS learned: the real traps in `## Implementation Observations` become `docs/LEARNINGS.md` bullets, and the rest it only recommends, such as a `Decisions` line or a `decide` run. It commits the Learnings and any fixes left in your tree, and deletes `plan.json` and the FIS, which govern one branch and never merge. `prd.md` stays. Nothing has left your machine yet.
-4. **Read the PR text before you say yes.** Once the FIS is deleted and the review report stays local, the PR is where the intent survives. Check that it puts the merge decision first: what the change is for, the outcomes, the proof of each (`verified.summary` and the review's verdict), whether it is a one-way or a two-way door and what breaks if it is wrong, and what it knowingly leaves open, such as the findings you deferred to tech debt. Commits made after the last review are marked: you should be able to say why they need no new review. Could a reviewer who never saw your chat tell what it is for and how it was proved? With your fork as the target, say yes. Without a fork, say no: `ship` prints the title, the body and the commands to run later.
-5. **Check what it left.** `git ls-files <feature-dir>` shows only `prd.md` (`ls` also shows the gitignored review report). `git log --oneline --stat -3` shows the Learnings commit and the deletion of `plan.json` and the FIS. Open `docs/LEARNINGS.md` and read the new bullets. The FIS is gone from the branch but not from history, so ask Claude to show its observations next to them: each bullet should trace to one.
+3. **Read what it does before it asks.** First it checks for open work: a story not done, or an open CRITICAL or HIGH finding, a deferred one included. If it names any, answer no and go back to F6. Shipping past a blocker is a decision, not a default. Then it lands what the FIS learned: the real traps in `## Implementation Observations` become `docs/LEARNINGS.md` bullets, and the rest it only recommends, such as a `Decisions` line or a `decide` run. It commits the Learnings and anything still uncommitted. Then it asks once before anything leaves the machine: the base branch, the commits leaving, the title and the body, and, for a ready plan, whether to delete `plan.json` and the FIS, which govern one branch and never merge. It recommends deleting them. `prd.md` stays.
+4. **Read the PR text before you say yes.** Once the FIS is deleted and the review report stays local, the PR is where the intent survives. Check that it puts the merge decision first: what the change is for, the outcomes, the proof of each (`verified.summary` and the review's verdict), whether it is a one-way or a two-way door and what breaks if it is wrong, and what it knowingly leaves open, such as the findings you deferred to tech debt. It names where a reviewer should read closely and ends on a `## Ship summary` section. The proof comes from `verified.summary`, written before F6's fixes, so its test count can be lower than your last run: the PR should say so. Could a reviewer who never saw your chat tell what it is for and how it was proved? Then answer. Your own repo as the target: accept the recommended delete and say yes. A clone of the course repo, which you cannot push to: say no, and `ship` prints the title, the body and the commands, and deletes nothing. No remote at all: answer keep. Didn't push? Copy the title and body into `.agent_temp/f7-pr.md` now: the PR text exists only in this session.
+5. **Check what it left.** If you said yes: `git ls-files <feature-dir>` shows only `prd.md`, which gains a `> **Shipped**:` line at the top (`ls` also shows the gitignored review report), and `git log --oneline --stat -3` shows the Learnings commit and the deletion of `plan.json` and the FIS. If you answered keep, the bundle stays with a `shipped` marker. Open `docs/LEARNINGS.md` and read the new bullets: often only one passes the test for a durable trap, and the output says why it left out the rest. The FIS is gone from the branch but not from history, so ask Claude to show its observations next to them: each bullet should trace to one.
 
    Stop line: a bare red rule, level with the Stop line in the side column.
 
-6. **Merge the pull request.** GitHub does not let you approve your own pull request, and your fork needs no approval, so merging is the decision. Merge on github.com or with `gh` from here: both give the same result. The web page is the recommendation: you see exactly what gets merged, you pick the merge method with one click, and it is how most teams work. Choose **Squash and merge**, confirm, and click **Delete branch**. The branch becomes one commit on `main`, and `plan.json` and the FIS, added and deleted on the branch, never reach `main`'s history. That is why step 5 comes first: once the branch is gone, the FIS lives on only in the pull request on GitHub. From here, `gh pr merge <PR URL> --squash --delete-branch` does the same with the URL `ship` printed. Then update your clone, because you are still on the feature branch: `git switch main`, `git pull`, and `git branch -D feat/shared-lists`. The last one needs `-D`, because git does not see the squash commit as the same changes. Merged with `gh … --delete-branch`? It has already switched you to `main` and deleted the local branch, so run only `git pull`. No pull request, because you have no fork? Skip this step.
+6. **Merge the pull request.** GitHub does not let you approve your own pull request, and your own repo needs no approval, so merging is the decision. Merge on github.com or with `gh` from here: both give the same result. The web page is the recommendation: you see exactly what gets merged, you pick the merge method with one click, and it is how most teams work. Choose **Squash and merge**, confirm, and click **Delete branch**. The branch becomes one commit on `main`, and `plan.json` and the FIS, added and deleted on the branch, never reach `main`'s history. That is why step 5 comes first: once the branch is gone, the FIS lives on only in the pull request on GitHub. From here, `gh pr merge <PR URL> --squash --delete-branch` does the same with the URL `ship` printed. Then update your clone, because you are still on the feature branch: `git switch main`, `git pull`, and `git branch -D feat/shared-lists`. The last one needs `-D`, because git does not see the squash commit as the same changes. Merged with `gh … --delete-branch`? It has already switched you to `main` and deleted the local branch, so run only `git pull`. Didn't push? Skip this step.
 
    Stop line: a bare red rule, level with the Stop line in the side column.
 
@@ -362,13 +365,13 @@ Steps:
 Verify:
 
 - The PR body states intent, outcomes, proof per outcome, and door type with blast radius, before any per-story detail.
-- plan.json and the FIS are gone from the branch, and prd.md remains.
+- If you said yes: plan.json and the FIS are gone from the branch, and prd.md remains with a Shipped line.
 - Each new Learnings bullet traces to an Implementation Observation in the FIS in git history.
-- The pull request is squash-merged, and your clone is on an up-to-date `main` with the feature branch deleted.
+- If you pushed: the pull request is squash-merged, and your clone is on an up-to-date `main` with the feature branch deleted.
 - The handoff names artifacts by path instead of pasting them.
 - A fresh session resumed from the handoff alone.
 
-Structure check: A plan earns the full close-out. A one-sentence fix runs `implement-fix`, then `ship`. A short task that finishes in one sitting needs no handoff.
+Sizing check: A plan earns the full close-out. A one-sentence fix runs `implement-fix`, then `ship`. A short task that finishes in one sitting needs no handoff.
 
 ## Worked example: judging the warm-up diff
 
@@ -459,13 +462,13 @@ The wording comes from AndThen's templates; the shortened lines above only show 
 
 The F1 check "its paths are real" means every path in the Index exists. Run `ls docs/KEY_DEVELOPMENT_COMMANDS.md` from `todo-app/`. `.agent_temp/` need not exist yet: the first skill that writes there creates it.
 
-## Worked example: how much structure shared lists need
+## Worked example: right-sizing shared lists
 
-Component: a dialog with the id `dial`, opened by the Example link on the F1 card, built like the other worked examples. Eyebrow "F1 · Step 7", a Close button, then the content below. The three paths are a three-column table that scrolls sideways on a narrow screen. The entry test sits in a highlighted box. The two questions under "How big is the work?" are a definition list.
+Component: a dialog with the id `dial`, opened by the Example link on the F1 card, built like the other worked examples. Eyebrow "F1 · Step 7", a Close button, then the content below. The three sizes are a three-column table that scrolls sideways on a narrow screen. The entry test sits in a highlighted box. The two questions under "How big is the work?" are a definition list.
 
-There are three paths, and the entry test tells you where to start. Here is the reasoning for this lab's feature.
+There are three sizes, and the entry test tells you where to start. Here is the reasoning for this lab's feature.
 
-### The three paths
+### The three sizes
 
 | Work | Path | Structure |
 |------|------|-----------|
@@ -479,7 +482,7 @@ The entry test: if you can't list three acceptance criteria, start with `clarify
 
 - **Can you state it as a fix in one sentence?** No. It touches the data model, permissions and the UI.
 - **Is it several separate features?** No. It is one thing: sharing a list.
-- **Path:** one real feature, the middle path.
+- **Size:** one real feature, the middle size.
 
 ### 2. Start with clarify or plan?
 
@@ -494,9 +497,9 @@ Until those are answered, three criteria won't hold. So you start with `clarify`
 
 ### Compare: a one-sentence fix
 
-A bug such as "Creating a todo leaves priority empty instead of low" fits in one sentence, with one clear right answer. That is the path with the least structure: `implement-fix`, then `ship`, with no spec.
+A bug such as "Creating a todo leaves priority empty instead of low" fits in one sentence, with one clear right answer. That is the smallest size: `implement-fix`, then `ship`, with no spec.
 
-Not sure which path? `/andthen:now-what` applies the entry test for you.
+Not sure which size? `/andthen:now-what` applies the entry test for you.
 
 ## Worked example: three acceptance criteria
 
@@ -785,12 +788,12 @@ Each line points at something the run left behind:
 | Where | What the reference run left | Then |
 |-------|-----------------------------|------|
 | **The report**, beside `plan.json` | The verdict first, `Overall readiness: Needs Fixes`, one label per lens (code, gap, security, outcome), a Coverage Matrix, and each finding routed Fix or Note. Gitignored, so it stays on your machine. | Compare the findings with what you found in steps 1–2. |
-| **Your working tree** | The two Fix findings applied, uncommitted: a colour check in `src/app/routes/todo_lists.py`, and tests in `tests/test_sharing.py` that failed before the check. `uv run pytest` passed with 102 tests. | Read `git diff`. `ship` commits it. |
+| **Your branch** | The two Fix findings applied: a colour check in `src/app/routes/todo_lists.py`, and tests in `tests/test_sharing.py` that failed before the check. `uv run pytest` passed with 102 tests. The reference run, on AndThen 1.0, left them uncommitted; from 1.1, `review --fix` commits the verified change by path. | Read the fix commit with `git show`. |
 | **`## Remediation Status`**, the report's last section | One line per finding: the two Fix findings RESOLVED with evidence, the three Notes SURFACED and untouched. The header gains a `**Remediated**:` line. | Decide each SURFACED Note in step 4. |
 | **`docs/TECH-DEBT-BACKLOG.md`** | Nothing yet: the review defers nothing on its own. Deferring the three Notes afterwards wrote three Low entries, each with its blocker and the report as source, and added a `Tech Debt` row to the Project Document Index. | Only what you approve is written. |
 | **The `Next` line** | A follow-up review, because the run fixed a HIGH finding, and the session that applied a fix is not the one to judge it. | Run it in a fresh session before `ship`. |
 
-**Needs Fixes is the verdict before the fixes.** The verdict line records what the reviewer found. The `**Remediated**:` line says fixes came after it, and only the follow-up review gives a new verdict.
+**The verdict is the one before the fixes.** The verdict line records what the reviewer found: Needs Fixes in the reference run, FAIL from AndThen 1.1. The `**Remediated**:` line says fixes came after it, and only the follow-up review gives a new verdict.
 
 ## What's next
 

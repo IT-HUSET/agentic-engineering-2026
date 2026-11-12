@@ -186,7 +186,7 @@ Component: white cards in a grid, three across (one on a phone). Each card has a
 
 The same feature as the Foundation Lab, now with its screens designed before the spec. The share dialog has real states to get right, so it earns wireframes. One dialog does not earn a design system.
 
-Component: a horizontal flow of the steps as small pills with arrows (stacked on a phone), then a two-column block: on the left the numbered steps, each with its command hidden behind a "Show command" button; on the right the file tree in a dark box with notes in muted colour. Under it, "What you do with them" as numbered cards, and the structure check as a muted line.
+Component: a horizontal flow of the steps as small pills with arrows (stacked on a phone), then a two-column block: on the left the numbered steps, each with its command hidden behind a "Show command" button; on the right the file tree in a dark box with notes in muted colour. Under it, "What you do with them" as numbered cards, and the sizing check as a muted line.
 
 Flow: prd.md → research → wireframes → [design system] → plan → exec-plan → visual-validation
 
@@ -232,13 +232,13 @@ Note: The wireframe file names are examples: the page inventory decides them.
 4. **Plan from them.** The FIS names the wireframes as the asset to build against, and `exec-plan` builds to them instead of guessing the layout.
 5. **Validate what was built.** `visual-validation` lists every difference from the wireframes before its verdict. P1 and P2 findings block; P3 is reported.
 
-Structure check: One field added to an existing form earns no wireframes. A dialog with real states earns wireframes. A whole surface across many screens earns a design system. An API change earns nothing from this skill.
+Sizing check: One field added to an existing form earns no wireframes. A dialog with real states earns wireframes. A whole surface across many screens earns a design system. An API change earns nothing from this skill.
 
 ## Worked example — decide, architecture and spike for todo search
 
 A next feature for the todo app: search your own todos and those in lists shared with you. How to search is a real choice: the options sit close, one breaks a standing non-goal, and one question only running code can answer. The PRD is already in place, in `docs/specs/search-todos/prd.md`.
 
-Component: the same layout as the ui-ux-design example: the flow as pills, the numbered steps with their commands hidden behind "Show command" buttons beside the file tree, then "What you do with them" as numbered cards and the structure check as a muted line.
+Component: the same layout as the ui-ux-design example: the flow as pills, the numbered steps with their commands hidden behind "Show command" buttons beside the file tree, then "What you do with them" as numbered cards and the sizing check as a muted line.
 
 Flow: prd.md → architecture → decide → trade-off → spike → ADR → plan
 
@@ -284,7 +284,7 @@ Note: The names are examples: `decide` picks the ADR title and the topic folder,
 4. **Remove the spike code.** With the verdict recorded, delete the `spike/<slug>` branch. Spike code is never merged or reused: the real implementation is written fresh from the FIS.
 5. **Commit the decision with the PRD.** `git add docs` takes the ADR, `DECISIONS.md` and the research folder. `plan` and every later skill read them through the Index.
 
-Structure check: Close options on a two-way door need no trade-off: pick one. A load-bearing choice with no real alternative is one Still Current line in `DECISIONS.md`. A contested choice gets the trade-off and an ADR. A question only measurement settles gets a spike, and only then.
+Sizing check: Close options on a two-way door need no trade-off: pick one. A load-bearing choice with no real alternative is one Still Current line in `DECISIONS.md`. A contested choice gets the trade-off and an ADR. A question only measurement settles gets a spike, and only then.
 
 ## Next
 

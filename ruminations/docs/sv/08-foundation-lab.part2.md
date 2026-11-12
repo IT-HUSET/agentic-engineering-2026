@@ -87,13 +87,13 @@ Formuleringarna kommer från AndThens mallar. De förkortade raderna ovan visar 
 
 Kontrollpunkten i F1, att sökvägarna finns, betyder att varje sökväg i indexet pekar på något som finns. Kör `ls docs/KEY_DEVELOPMENT_COMMANDS.md` från `todo-app/`. `.agent_temp/` behöver inte finnas än: den första skill som skriver där skapar katalogen.
 
-## Genomarbetat exempel: hur mycket struktur delade listor behöver
+## Genomarbetat exempel: rätt storlek för delade listor
 
-Component: en dialog med id:t `dial`, som öppnas från exempellänken på F1-kortet och är uppbyggd som de andra genomarbetade exemplen. Eyebrow ”F1 · Steg 7”, en Stäng-knapp och sedan innehållet nedan. De tre vägarna är en tabell med tre kolumner som rullar i sidled på en smal skärm. Ingångstestet står i en markerad ruta. De två frågorna under ”Hur stort är arbetet?” är en definitionslista.
+Component: en dialog med id:t `dial`, som öppnas från exempellänken på F1-kortet och är uppbyggd som de andra genomarbetade exemplen. Eyebrow ”F1 · Steg 7”, en Stäng-knapp och sedan innehållet nedan. De tre storlekarna är en tabell med tre kolumner som rullar i sidled på en smal skärm. Ingångstestet står i en markerad ruta. De två frågorna under ”Hur stort är arbetet?” är en definitionslista.
 
-Det finns tre vägar, och ingångstestet visar var du ska börja. Så här resonerar du för labbets funktion.
+Det finns tre storlekar, och ingångstestet visar var du ska börja. Så här resonerar du för labbets funktion.
 
-### De tre vägarna
+### De tre storlekarna
 
 | Arbete | Väg | Struktur |
 |------|------|-----------|
@@ -107,7 +107,7 @@ Ingångstestet: kan du inte räkna upp tre acceptanskriterier börjar du med `cl
 
 - **Kan du beskriva det som en rättelse i en mening?** Nej. Det berör datamodellen, behörigheterna och gränssnittet.
 - **Är det flera separata funktioner?** Nej. Det är en enda sak: att dela en lista.
-- **Väg:** en riktig funktion, alltså den mellersta vägen.
+- **Storlek:** en riktig funktion, alltså mellanstorleken.
 
 ### 2. Börja med clarify eller plan?
 
@@ -122,9 +122,9 @@ Så länge de frågorna är obesvarade håller inga tre kriterier. Därför bör
 
 ### Jämför: en rättelse på en mening
 
-En bugg som ”En ny todo får tom prioritet i stället för låg” ryms i en mening och har ett enda tydligt rätt svar. Det är vägen med minst struktur: `implement-fix` och sedan `ship`, utan spec.
+En bugg som ”En ny todo får tom prioritet i stället för låg” ryms i en mening och har ett enda tydligt rätt svar. Det är den minsta storleken: `implement-fix` och sedan `ship`, utan spec.
 
-Osäker på vägen? `/andthen:now-what` gör ingångstestet åt dig.
+Osäker på storleken? `/andthen:now-what` gör ingångstestet åt dig.
 
 ## Genomarbetat exempel: tre acceptanskriterier
 
@@ -413,12 +413,12 @@ Varje rad pekar på något som körningen lämnade efter sig:
 | Var | Det här lämnade referenskörningen | Sedan |
 |-------|-----------------------------|------|
 | **Rapporten**, bredvid `plan.json` | Utlåtandet först, `Overall readiness: Needs Fixes`, en etikett per lins (code, gap, security, outcome), en Coverage Matrix och varje fynd märkt Fix eller Note. Git ignorerar rapporten, så den stannar på din dator. | Jämför fynden med det du själv hittade i steg 1–2. |
-| **Din arbetskatalog** | De två Fix-fynden tillämpade men inte committade: en färgkontroll i `src/app/routes/todo_lists.py` och tester i `tests/test_sharing.py` som misslyckades före kontrollen. `uv run pytest` gick igenom med 102 tester. | Läs `git diff`. `ship` committar ändringarna. |
+| **Din branch** | De två Fix-fynden tillämpade: en färgkontroll i `src/app/routes/todo_lists.py` och tester i `tests/test_sharing.py` som misslyckades före kontrollen. `uv run pytest` gick igenom med 102 tester. Referenskörningen, med AndThen 1.0, lämnade dem ocommittade. Från 1.1 committar `review --fix` den verifierade ändringen per sökväg. | Läs rättelsecommitten med `git show`. |
 | **`## Remediation Status`**, rapportens sista avsnitt | En rad per fynd: de två Fix-fynden RESOLVED med bevis, de tre Note-fynden SURFACED och orörda. Rapportens huvud får en rad `**Remediated**:`. | Ta ställning till varje SURFACED Note i steg 4. |
 | **`docs/TECH-DEBT-BACKLOG.md`** | Inget än, eftersom granskningen inte skjuter upp något på egen hand. När de tre Note-fynden sköts upp efteråt blev det tre Low-poster, var och en med det som blockerar den och rapporten som källa, och en rad `Tech Debt` i Project Document Index. | Bara det du godkänner skrivs. |
 | **Raden `Next`** | En uppföljande granskning, eftersom körningen rättade ett HIGH-fynd, och sessionen som gjorde en rättelse är inte rätt session att bedöma den. | Kör den i en ny session före `ship`. |
 
-**Needs Fixes är utlåtandet före rättelserna.** Utlåtanderaden visar vad granskaren hittade. Raden `**Remediated**:` säger att rättelser kom efteråt, och först den uppföljande granskningen ger ett nytt utlåtande.
+**Utlåtandet gäller läget före rättelserna.** Utlåtanderaden visar vad granskaren hittade: Needs Fixes i referenskörningen, FAIL från AndThen 1.1. Raden `**Remediated**:` säger att rättelser kom efteråt, och först den uppföljande granskningen ger ett nytt utlåtande.
 
 ## Härnäst
 
