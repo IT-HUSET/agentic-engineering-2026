@@ -1,7 +1,7 @@
 # Foundation – the loop for one feature, once
 
 > **The loop:** `[clarify →] plan → exec-plan → review --fix → ship`, with design between `clarify` and `plan` when the work earns it.
-> **You'll produce:** one real feature on `todo-app/` (shared lists), from a one-line idea to an open pull request, with every step's artifact on disk and checked.
+> **You'll produce:** one real feature on `todo-app/` (shared lists), from a one-line idea to a merged pull request, with every step's artifact on disk and checked.
 
 This is Day 1's foundation. You run the whole loop for **one feature, once**, on the lab app, so that in the case work you can run it on your own case and spend your attention on judgment, not on commands. Each section below is one step. Each step takes the previous step's artifact as **input**, produces one **output**, and ends with a **verify** checklist and a **sizing check**: *was that the right amount of structure?*
 
@@ -9,19 +9,24 @@ The worked feature is **shared lists**: an owner lets another registered user se
 
 | Step | Skills | Output |
 |------|--------|--------|
-| [F1 – Orient and set up](#f1--orient-and-set-up) | `now-what`, `init`, `describe` | A project AndThen can navigate |
+| [F1 – Orientation and set up](#f1--orientation-and-set-up) | `now-what`, `init`, `describe` | A project AndThen can navigate |
 | [F2 – Clarify](#f2--clarify) | `clarify` | `prd.md` |
 | [F3 – Decide](#f3--decide) | `decide`, `domain --mode glossary` | An ADR and a glossary |
 | [F4 – Plan](#f4--plan) | `plan` | `plan.json` and a FIS |
 | [F5 – Implement](#f5--implement) | `exec-plan <FIS>` | Committed code, proven |
 | [F6 – Verify and review](#f6--verify-and-review) | `review --fix` | A review report, findings fixed |
-| [F7 – Ship and hand off](#f7--ship-and-hand-off) | `ship`, `handoff` | A pull request and a handoff |
+| [F7 – Ship and hand off](#f7--ship-and-hand-off) | `ship`, `handoff` | A merged pull request and a handoff |
 
 ## How to work through it
 
-- **Project root is `todo-app/`.** Start Claude Code there (`cd todo-app && claude`). Every path below, such as `docs/specs/...`, is relative to it.
+- **Project root is `todo-app/`.** Start Claude Code there, from the repository root:
+
+  1. `cd todo-app`
+  2. `claude`
+
+  Every path below, such as `docs/specs/...`, is relative to it.
 - **One fresh session per step.** Most pipeline steps end by printing a `Next (fresh session):` line with the full command (`init` and `decide` do so only in some cases, so use this lab's order when there is none). Run `/clear`, then paste it. Each step reads the files the previous one wrote, not the chat.
-- **`<feature-dir>`** is the directory `clarify` prints for your PRD in F2 (it looks like `docs/specs/<something>/`). Write it down. Later steps use it.
+- **`<feature-dir>`** is the directory `clarify` prints for your PRD in F2 (it looks like `docs/specs/<something>/`). For example, if it prints `Wrote docs/specs/shared-lists/prd.md`, your `<feature-dir>` is `docs/specs/shared-lists/`. Write it down. Later steps use it.
 - **Answer the questions.** `clarify`, `decide` and `plan` interview you, each question with a recommended answer. The recommendation is a starting point, not a default to accept unread.
 - **Joining late or stuck?** Your facilitator has a prepared version of each upstream artifact (PRD, ADR, glossary, FIS). Ask for the one you need, and do not paste them over your own. For F5 you need a **bundle**, not a bare FIS: `exec-plan` requires a FIS whose `**Plan**:` and `**Story-ID**:` header points at a `plan.json` that holds that story, so ask for the FIS and its `plan.json` together.
 - **Describe symptoms, not fixes**, when something is off ("the scenarios don't cover a non-registered email"). Better input gives better output.
@@ -30,7 +35,7 @@ The *Agentic Engineering Playbook* has a chapter behind each step if you want th
 
 ---
 
-## F1 – Orient and set up
+## F1 – Orientation and set up
 
 **Skills:** `now-what`, `init`, `describe`. You also meet **right-sizing**.
 
@@ -38,29 +43,29 @@ The *Agentic Engineering Playbook* has a chapter behind each step if you want th
 
 - A clone of your own repo created from this one (recommended, see the [README](../README.md#get-started)), Claude Code authenticated, AndThen installed as in the [README](../README.md#get-started).
 - The prep session (live or recorded).
+- **Check the install.** Open a terminal in `todo-app/`. In Claude Code run `/plugin` and confirm `andthen` is installed. If `/andthen:` commands are unknown, restart Claude Code.
 
 ### Steps
 
-1. **Check the install.** Open a terminal in `todo-app/`. In Claude Code run `/plugin` and confirm `andthen` is installed. If `/andthen:` commands are unknown, restart Claude Code.
-2. **Start a branch.** Everything ends in a pull request, and AndThen commits to the current branch.
+1. **Start a branch.** Everything ends in a pull request, and AndThen commits to the current branch.
    ```bash
    git switch -c feat/shared-lists
    ```
-3. **Warm up: know the ground.** The first move in any agentic session is to check the tree is healthy.
+2. **Warm up (A): know the ground.** The first move in any agentic session is to check the tree is healthy.
    ```bash
    uv run pytest
    ./run.sh        # runs in the foreground
    ```
-   Run `./run.sh` in its own terminal, open http://localhost:8000 (`demo@example.com` / `demo123`), and stop it with Ctrl-C when you're done. Click around. Lists belong to one owner. There is no sharing.
-4. **Warm up: one change, no skills.** Ask the agent for something tiny and safe, for example: *"Add a short module docstring to `src/app/utils.py` explaining what it's for."* Read the diff and re-run the tests. Say out loud what it got right and what you would have done differently. You own every line. When you've formed a view, discard the change: `git restore src/app/utils.py`.
-5. **Let `now-what` route a bare repo.** In Claude Code, started in `todo-app/`, run:
+   Run `./run.sh` in its own terminal (or `bash run.sh` if `./run.sh` won't start, for example on Windows), open http://localhost:8000 (`demo@example.com` / `demo123`), and stop it with Ctrl-C when you're done. Click around. Lists belong to one owner. There is no sharing.
+3. **Warm up (B): one change, no skills.** Ask the agent for something tiny and safe, for example: *"Add a short module docstring to `src/app/utils.py` explaining what it's for."* Read the diff and re-run the tests. Say out loud what it got right and what you would have done differently. You own every line. When you've formed a view, discard the change: `git restore src/app/utils.py`.
+4. **Let `now-what` route a bare repo.** In Claude Code, started in `todo-app/`, run:
    ```text
    /andthen:now-what
    ```
    It inspects the project (setup, codebase, workflow state), prints the chain `clarify (optional) → plan → exec-plan → review --fix → ship`, and offers `init` because the project has no Project Document Index yet. Answer yes. (Started in the repo root instead of `todo-app/`, it reads the root `CLAUDE.md` and `init` writes the Index there. Restart in `todo-app/`.)
-6. **`init`.** It asks nothing in an existing repository. It adds the **Project Document Index** to the `CLAUDE.md` in `todo-app/`, with short Overview, Guidelines and Key Development Commands sections, without rewriting what is there. It writes a `Key Dev Commands` document with the project's fast and full test commands (the same command here, because the suite has no slower tier), and adds two `.gitignore` entries (`.agent_temp/` and review reports). `PRODUCT.md` and `ARCHITECTURE.md` in `docs/` (see step 7) get an Index entry too. The two discovered files do not, because the Index has no entry for them. Its closing summary then offers extras one line each (role agents, critical rules, `describe`, more documents, a testing strategy, visual validation). **Ignore the offers for now.** An ignored offer writes nothing, and the catalog exercises pick them up when a case needs them.
-7. **`describe`: read the map of the code.** `describe` maps an existing codebase into `docs/ARCHITECTURE.md`, `docs/requirements-discovered.md` and `docs/decisions-discovered.md`. It fans out subagents, so **do not run it here**. The output of a prepared run is already committed in `todo-app/docs/`, and your facilitator re-runs `/andthen:describe` on screen. You run it yourself on your case repo in C1. If `todo-app/docs/` is missing or empty, tell your facilitator before you go on.
-8. **Learn to right-size.** Your facilitator introduces it. This is the whole course in one table:
+5. **`init`.** It asks nothing in an existing repository. It adds the **Project Document Index** to the `CLAUDE.md` in `todo-app/`, with short Overview, Guidelines and Key Development Commands sections, without rewriting what is there. It writes a `Key Dev Commands` document with the project's fast and full test commands (the same command here, because the suite has no slower tier), and adds two `.gitignore` entries (`.agent_temp/` and review reports). `PRODUCT.md` and `ARCHITECTURE.md` in `docs/` (see step 6) get an Index entry too. The two discovered files do not, because the Index has no entry for them. Its closing summary then offers extras one line each (role agents, critical rules, `describe`, more documents, a testing strategy, visual validation). **Ignore the offers for now.** An ignored offer writes nothing, and the catalog exercises pick them up when a case needs them.
+6. **`describe`: read the map of the code.** `describe` maps an existing codebase into `docs/ARCHITECTURE.md`, `docs/requirements-discovered.md` and `docs/decisions-discovered.md`. It fans out subagents, so **do not run it here**. The output of a prepared run is already committed in `todo-app/docs/`, and your facilitator re-runs `/andthen:describe` on screen. You run it yourself on your case repo in C1. If `todo-app/docs/` is missing or empty, tell your facilitator before you go on.
+7. **Learn to right-size.** Your facilitator introduces it. This is the whole course in one table:
 
    | Work | Path | Structure |
    |------|------|-----------|
@@ -71,7 +76,7 @@ The *Agentic Engineering Playbook* has a chapter behind each step if you want th
    The entry test: **if you can't list three acceptance criteria, start with `clarify`; otherwise start with `plan`.** `now-what` applies it for you. `--worktree` and `--auto` are switches, not sizes.
 
    **Proportionality** sizes the details within a size. `clarify`, `decide`, `plan` and the design skills size what they propose against three facts in `docs/PRODUCT.md`: the project's stage, its scale, and its standing technical non-goals. The first of them you run asks once if the facts are missing, and records your answers.
-9. **Commit the setup.** AndThen builds on a tree you can read at a glance, so commit what `init` wrote. Stage by path, never `git add -A`:
+8. **Commit the setup.** AndThen builds on a tree you can read at a glance, so commit what `init` wrote. Stage by path, never `git add -A`:
    ```bash
    git status --short
    git add CLAUDE.md .gitignore docs
@@ -93,7 +98,7 @@ A project AndThen can navigate: a Document Index in `todo-app/CLAUDE.md`, `docs/
 
 ### Sizing check
 
-*Did the app earn `init` and `describe`?* A throwaway script earns neither. A codebase you will live in for weeks, or one you inherited, earns both once, up front. The one-line docstring change in step 4 was the smallest size: no spec, just verify. `implement-fix` is the AndThen version of it.
+*Did the app earn `init` and `describe`?* A throwaway script earns neither. A codebase you will live in for weeks, or one you inherited, earns both once, up front. The one-line docstring change in step 3 was the smallest size: no spec, just verify. `implement-fix` is the AndThen version of it.
 
 ---
 
@@ -108,7 +113,7 @@ One line: **"Let people share their lists."** Nothing else. There is no prior PR
 ### Steps
 
 1. **Sit with the fuzzy idea.** Resist designing. Notice how many decisions that one line leaves open: who can you share with, what can they do, when does access end?
-2. **Manual once: write three acceptance criteria by hand.** Before running any skill, write three acceptance criteria for "share a list", in Given/When/Then form or plain sentences. Push one to an awkward edge: sharing with an email that has no account, sharing twice, sharing with yourself, revoking. Add one line on what you would leave **out**. Keep it in `.agent_temp/f2-my-criteria.md`.
+2. **Manual: write three acceptance criteria by hand.** Before running any skill, write three acceptance criteria for "share a list", in Given/When/Then form or plain sentences. Push one to an awkward edge: sharing with an email that has no account, sharing twice, sharing with yourself, revoking. Add one line on what you would leave **out**. Keep it in `.agent_temp/f2-my-criteria.md`.
 
    The criteria are the point, not the format. Writing them forces product decisions you would otherwise make by accident in code. The tool runs the interrogation faster; it does not replace your judgment about what matters.
 3. **With AndThen: run the interview.** In a fresh session:
@@ -229,7 +234,7 @@ An ADR in `docs/adrs/` with its row in `docs/DECISIONS.md`, and `docs/UBIQUITOUS
    mv <feature-dir>/plan.json <feature-dir>/s*.md .agent_temp/whole-prd-plan/
    ```
    A final-round answer that changes a requirement also edits `prd.md`. Leave it in place, and check it with `git diff <feature-dir>/prd.md` in step 5.
-2. **Manual once: write the FIS skeleton for the slice you will build.** The slice is **share a list, view-only**: an owner lets one registered user *read* one of their lists, and can revoke. Before running the skill, write in `.agent_temp/f4-my-fis.md`:
+2. **Manual: write the FIS skeleton for the slice you will build.** The slice is **share a list, view-only**: an owner lets one registered user *read* one of their lists, and can revoke. Before running the skill, write in `.agent_temp/f4-my-fis.md`:
    - **Intent**: one sentence, why this exists.
    - **Expected Outcomes**: two or three, one sentence each.
    - **Acceptance Scenarios**: three in Given/When/Then, including the awkward ones. What happens when the owner shares with an email that isn't registered? What can the recipient *not* do, and how would you observe that they can't?
@@ -330,7 +335,7 @@ The committed slice from F5, `plan.json` (story `S01` done) and the FIS. Re-read
 
 ### Steps
 
-1. **Manual once: hunt for a gap yourself.** Pick the acceptance scenario where a recipient must **not** be able to change a view-only list, *including by sending the request directly* (in the reference FIS this is scenario S03; yours may be numbered differently). Your repo ships no planted bug. The hunt is a test of your own implementation, in three moves, from a clean tree:
+1. **Manual: hunt for a gap yourself.** Pick the acceptance scenario where a recipient must **not** be able to change a view-only list, *including by sending the request directly* (in the reference FIS this is scenario S03; yours may be numbered differently). Your repo ships no planted bug. The hunt is a test of your own implementation, in three moves, from a clean tree:
    - **Try it as the viewer, bypassing the UI.** Open the mutating handlers (`src/app/routes/todos.py`, `src/app/routes/todo_lists.py`). Then send a mutating request as the recipient directly: replay an owner's request from the browser's network tab with the viewer's session cookie (*copy as cURL*), or write a few lines in a scratch test with the test client. Does the server refuse it (403), or is the only thing stopping a viewer a hidden button in the template?
    - **Read the scenario's test.** Does it drive the **route**, or only click the UI? A test that only clicks the UI never asked the real question.
    - **Falsify the test.** Comment out the server-side check in one handler, run `uv run pytest`, then put it back with `git restore <file>`. Red means a test protects the rule. **Green means the suite is lying**: it asserted what the UI shows, not the invariant the server must hold.
@@ -345,7 +350,7 @@ The committed slice from F5, `plan.json` (story `S01` done) and the FIS. Re-read
 4. **Settle the rest.** Open `## Remediation Status` in the report. Fix findings are resolved or deferred with a reason. **Note** findings are untouched until you decide: fix it, or defer it on purpose. The run ends on one question covering every Note: slow down here. A Fix blocked by an open decision lands in `docs/TECH-DEBT-BACKLOG.md` after you approve it. The skill's final output, not the report file, ends on the `Next (fresh session):` line. Usually that is `ship`. If it is a follow-up review (it fixed a CRITICAL or HIGH finding, so a session that did not apply the fixes should re-read), run it.
 
    Resist "while I'm here" cleanup. Findings are routed, not a flat to-do list. If you spot something out of scope, surface it; don't bundle it in.
-5. **Re-run the checks yourself** after the fixes: `uv run pytest`.
+5. **Re-run the checks yourself** after the last fix round, the follow-up review's included: `uv run pytest`. The agent ran the tests too; this is your own check of its claim, and a run before a later fix round no longer counts.
 
 ### Output
 
@@ -358,7 +363,7 @@ A review report beside `plan.json`, the Fix-routed findings applied and committe
 - [ ] The direct-request path is refused server-side, and a test that drives the route would fail if the check were removed.
 - [ ] Every **Fix** finding is resolved with evidence, and every **Note** is decided by you, not waved through.
 - [ ] No fix crept past the FIS (no editor roles, no notifications).
-- [ ] `uv run pytest` passes after the fixes, and you can say in one sentence how much you trust this change and why.
+- [ ] Any follow-up review the report asked for has run, and `uv run pytest` passes after the last fix round. You can say in one sentence how much you trust this change and why.
 
 ### Sizing check
 
@@ -394,12 +399,23 @@ A reviewed branch: `plan.json` with story `S01` done, a clean review, and the `N
 
    If you did not push, copy the title and body into `.agent_temp/f7-pr.md` now: the PR text exists only in this session. (`ship --auto` stops before anything leaves the machine and prints the same commands.)
 4. **Check the aftermath.** `git log` shows the Learnings commit. `docs/LEARNINGS.md` exists (`ship` creates it on first use) and holds what passed its test for a durable trap, often only one bullet. The output says why it left out the other observations. If you said yes: the bundle's deletion is committed before the push, `git ls-files <feature-dir>` shows only `prd.md` (a `ls` would also show the review report, which is gitignored), and `prd.md` gains a `> **Shipped**: ...` header line. If you answered keep, the bundle stays and `plan.json` carries a `shipped` marker. If you said no, the bundle is still there and nothing is stamped.
-5. **Hand off.** A session that has to end mid-work, or the end of a day, is a boundary your context does not survive. Run:
+5. **Merge the pull request.** Only if you said yes and the pull request is open in your own repo; otherwise skip this step. GitHub does not let you approve your own pull request, and your own repo needs no approval, so merging is the decision. Merge on github.com or with `gh` from here: both give the same result. The web page is the recommendation: you see exactly what gets merged, you pick the merge method with one click, and it is how most teams work. Choose **Squash and merge**, confirm, and click **Delete branch**. The branch becomes one commit on `main`, and `plan.json` and the FIS, added and deleted on the branch, never reach `main`'s history. From here, the same with the URL `ship` printed:
+   ```bash
+   gh pr merge <PR URL> --squash --delete-branch
+   ```
+   After a merge on github.com, update your clone, because you are still on the feature branch:
+   ```bash
+   git switch main
+   git pull
+   git branch -D feat/shared-lists
+   ```
+   The last one needs `-D`, because git does not see the squash commit as the same changes. Merged with `gh … --delete-branch`? It has already switched you to `main` and deleted the local branch, so run only `git pull`.
+6. **Hand off.** A session that has to end mid-work, or the end of a day, is a boundary your context does not survive. Run:
    ```text
    /andthen:handoff "next: frame my case repo – init, describe, test command"
    ```
    It sorts what the session knows by durability. Defensive knowledge goes to `docs/LEARNINGS.md`. A structural decision with real trade-offs is *recommended* to `decide`, never written as an ADR. Everything transient goes into `.agent_temp/handoff/handoff-<UTC-ts>.md`: next focus, where we are, open questions, what was tried, the recommended next skill, and an Index of artifacts by path. Secrets are redacted, but the file is not private.
-6. **The handoff test.** This is the check that your artifacts, not your chat, carry the work. Run `/clear` (or open a new session), and paste the resume line the skill printed:
+7. **The handoff test.** This is the check that your artifacts, not your chat, carry the work. Run `/clear` (or open a new session), and paste the resume line the skill printed:
    ```text
    Resume from .agent_temp/handoff/handoff-<UTC-ts>.md
    ```
@@ -407,13 +423,14 @@ A reviewed branch: `plan.json` with story `S01` done, a clean review, and the `N
 
 ### Output
 
-An open pull request (or its title, body and commands saved), new `docs/LEARNINGS.md` bullets, a branch whose plan bundle is deleted (if you pushed) or marked `shipped` (if you kept it), and a handoff a fresh session resumed from.
+A merged pull request (or, if you did not push, its title, body and commands saved), new `docs/LEARNINGS.md` bullets, the plan bundle deleted (if you pushed) or marked `shipped` (if you kept it), and a handoff a fresh session resumed from.
 
 ### Verify
 
 - [ ] The PR body states intent, outcomes, proof per outcome, and door type with blast radius, before any per-story detail.
 - [ ] If you said yes: `plan.json` and the FIS are gone from the branch; `prd.md` remains and carries a `> **Shipped**:` line. You know why: specs govern one branch and never merge, so the PR body and the PRD carry the intent afterwards. If you answered keep, `plan.json` has a top-level `shipped` entry. If you said no, the bundle is intact.
 - [ ] Each new Learnings bullet traces to an Implementation Observation you can find in the FIS in git history.
+- [ ] If you pushed: the pull request is squash-merged, and your clone is on an up-to-date `main` with the feature branch deleted.
 - [ ] The handoff names artifacts **by path**; it does not paste them.
 - [ ] The fresh session passed the handoff test.
 
@@ -425,4 +442,4 @@ An open pull request (or its title, body and commands saved), new `docs/LEARNING
 
 ## What's next
 
-You have run the whole loop once, and it ends at a pull request. The case work is the same loop on a case you are handed or one of your own, with your sizing choices written down and a gate at each artifact. You repeat F1 on the case repo as the first part of C1. See [`labs/README.md`](README.md).
+You have run the whole loop once, and it ends at a merged pull request. The case work is the same loop on a case you are handed or one of your own, with your sizing choices written down and a gate at each artifact. You repeat F1 on the case repo as the first part of C1. See [`labs/README.md`](README.md).

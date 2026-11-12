@@ -27,7 +27,7 @@ The domain-heavy case your team works on: its PRD, and `docs/UBIQUITOUS_LANGUAGE
 ## Steps
 
 1. **Decide whether to model, in writing.** One line in `.agent_temp/x3-decision.md`: "This deserves / does not deserve a Domain Map because ____." If the answer is no, the exercise ends here, and that is a good result.
-2. **Manual once: storm it on paper.** List the domain events in past tense, in order, and circle the **pivotal** ones (the events that change pace or ownership). For shared lists:
+2. **Manual: storm it on paper.** List the domain events in past tense, in order, and circle the **pivotal** ones (the events that change pace or ownership). For shared lists:
    `ListCreated` → `TodoAdded` → **`ListShared`** → **`InviteAccepted`** → **`TodoAssigned`** → **`ReminderSent`** → `ShareRevoked`.
    Cluster the pivotal events into subdomains and classify each as core, supporting or generic. Note one **hotspot**: a question the events raise that you cannot answer yet (*can a viewer be assigned a todo?*). When two subdomains are both plausibly core, the honest move is to record that as a hotspot, not to force a verdict.
 3. **Event storming.** In a fresh session:
