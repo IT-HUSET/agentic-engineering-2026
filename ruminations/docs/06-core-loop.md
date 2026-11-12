@@ -153,11 +153,12 @@ Component: two tinted cards side by side, joined by a labelled arrow (stacked, w
 - Tint: teal
 - Arrow: sizes
 - Text: What the product is, and how big what gets built may be. It sits above every PRD.
-- Row: Holds · vision, target users, value propositions, non-goals and success metrics
+- Row: Holds · vision, principles, target users, value propositions, non-goals and success metrics
 - Row: Proportionality · stage, scale and standing technical non-goals
-- Row: Written by · `clarify` at product scope, or the first of `clarify`, `decide`, `plan` and `architecture` that needs the Proportionality facts
+- Row: Non-Goals · firmly rejected concepts. Each `clarify` at feature scope brings them up to date in both directions: a concept you reject gets a dated bullet, and one the feature now allows is narrowed or removed
+- Row: Written by · `clarify` at product scope, or the first of `clarify`, `decide`, `plan`, `architecture` and `domain` that needs the Proportionality facts
 - Row: Read by · every skill that proposes something
-- Note: Long-lived. It changes when the stage or the scale changes.
+- Note: Long-lived. The stage and the scale change rarely; the Non-Goals move with the features `clarify` writes.
 
 #### prd.md
 
@@ -168,7 +169,7 @@ Component: two tinted cards side by side, joined by a labelled arrow (stacked, w
 - Row: Written by · `clarify` at feature scope, the default
 - Row: Read by · `plan`, which turns it into the FIS, and the outcome lens of `review`
 - Row: Shipped · `ship` adds a Shipped line when it deletes the plan; an amendment through `clarify` removes it
-- Note: The PRD is anchored in the product. In the lab’s shared-lists PRD, email and notifications are out because `docs/PRODUCT.md` says prototype, one SQLite file and no external services. `clarify` drops or flags a capability those facts don’t carry, citing the anchor.
+- Note: The PRD is anchored in the product. In the lab’s shared-lists PRD, email and notifications are out because `docs/PRODUCT.md` says prototype, one SQLite file and no external services. `clarify` drops or flags a capability those facts don’t carry, citing the anchor. A request that contradicts a Non-Goal is surfaced, not quietly argued away: sharing starts as a Non-Goal in the lab, so contradicting it is your call, said out loud.
 
 ### How clarify picks the level
 

@@ -44,8 +44,8 @@ ruminations/
 
 | Sida | Källa | HTML | Artifact | Status |
 | - | - | - | - | - |
-| AndThen Guide | `docs/00-guide.md` + `01`–`10` + `shared/` | `html/andthen-guide.html` | [AndThen Guide](https://claude.ai/artifact/HAVpWj74fHd8ZMU5xyUJyT) | v1.56 · publicerad |
-| AndThen-guiden (svenska) | `docs/sv/` | `html/andthen-guide.sv.html` | samma artifact, fil `andthen-guide.sv.html` | v1.56 · publicerad |
+| AndThen Guide | `docs/00-guide.md` + `01`–`10` + `shared/` | `html/andthen-guide.html` | [AndThen Guide](https://claude.ai/artifact/HAVpWj74fHd8ZMU5xyUJyT) | v1.57 · publicerad |
+| AndThen-guiden (svenska) | `docs/sv/` | `html/andthen-guide.sv.html` | samma artifact, fil `andthen-guide.sv.html` | v1.57 · publicerad |
 
 Publiceras en sida som artifact skrivs URL:en in i ramfilens frontmatter (`artifact`) och i tabellen ovan. Därefter republiceras alltid mot samma URL. Artifacten har den engelska sidan som huvudsida och båda sidorna som filer (`andthen-guide.html` och `andthen-guide.sv.html`), så att växlarens länkar fungerar åt båda hållen.
 
