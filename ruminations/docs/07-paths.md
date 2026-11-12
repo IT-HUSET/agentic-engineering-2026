@@ -4,7 +4,7 @@ tab: Paths
 token: paths
 order: 7
 depends_on: []
-source: AndThen 1.0.0-rc.7 – plugin/README.md and COOKBOOK.md (https://github.com/IT-HUSET/andthen), labs/x2-ui-ux.md
+source: AndThen 1.1.0 – plugin/README.md and COOKBOOK.md (https://github.com/IT-HUSET/andthen), labs/x2-ui-ux.md
 ---
 
 # AndThen Paths
@@ -35,7 +35,7 @@ Interactive component: a list of situation buttons on the left and a card on the
 
 - Situation: A fix you can say in one sentence
 - Chain: implement-fix, ship
-- Text: No spec. `implement-fix` makes the smallest safe change, re-validates it and leaves it in your working tree. `ship` commits it and opens the pull request after your yes.
+- Text: No spec. `implement-fix` makes the smallest safe change, re-validates it and commits it. On `main` it first asks whether to start a feature branch. `ship` writes the pull request and pushes it after your yes.
 - You get: A verified change and a pull request. Nothing else is written.
 - Command: `/andthen:implement-fix "<request>"`
 - Command: `/andthen:ship`
@@ -64,7 +64,7 @@ Interactive component: a list of situation buttons on the left and a card on the
 - Situation: A technical choice that is costly to reverse
 - Chain: decide, plan
 - Text: `decide` lists the decision points and interviews you on those that bind beyond one story. Ask for a comparison and it runs a weighted trade-off. A question only measurement can settle goes to `spike` instead.
-- You get: One ADR per decision in `docs/adrs/`, each with a row in `docs/DECISIONS.md`. No code changes.
+- You get: One ADR per decision in `docs/adrs/`, each with a row in `docs/DECISIONS.md`, and the PRD rows it settles now cite it. No code changes.
 - Command: `/andthen:decide docs/specs/<feature>/`
 - Command: `/andthen:decide "compare three options for <the choice>"`
 - Link: See the worked example → (#paths-decide)
@@ -74,7 +74,7 @@ Interactive component: a list of situation buttons on the left and a card on the
 - Situation: Screens that don't exist yet
 - Chain: ui-ux-design, plan, exec-plan, visual-validation
 - Text: Design comes before the spec, so the FIS can point at the wireframes instead of inventing the screens. The worked example below walks it through for shared lists.
-- You get: Wireframes in `docs/wireframes/`, and for a broad surface a design system in `docs/design-system/`.
+- You get: Wireframes in `docs/wireframes/<feature>/`. For a broad surface, a design system in `docs/design-system/`, and then clickable mockups in `docs/mockups/<feature>/`.
 - Command: `/andthen:ui-ux-design "wireframe <the screens>, all states" docs/specs/<feature>/prd.md`
 - Link: See the worked example → (#paths-ui)
 
@@ -150,19 +150,19 @@ Interactive component: a timeline with one column per stage and one row per arti
 | Artifact | Path | Written by | Read by | From | To | Kind | Note |
 | - | - | - | - | - | - | - | - |
 | Product facts | `docs/PRODUCT.md` | `clarify`, or the first of `decide`, `plan` or `architecture` to need the stage and scale | every skill that proposes something | req | after | kept | The anchor that sizes what gets built: stage, scale and technical non-goals. |
-| PRD | `docs/specs/<feature>/prd.md` | `clarify` | `plan`, `review` (gap and outcome) | req | after | kept | The product record. It survives the merge, so the why is still there next year. |
+| PRD | `docs/specs/<feature>/prd.md` | `clarify` | `plan`, `review` (gap and outcome) | req | after | kept | The product record. It survives the merge, so the why is still there next year. When `ship` deletes the plan, it gains a Shipped line. |
 | ADRs and Decisions | `docs/adrs/`, `docs/DECISIONS.md` | `decide` | every skill at task start | design | after | kept | One ADR per costly choice, with its alternatives and what reversing takes. |
 | Glossary | `docs/UBIQUITOUS_LANGUAGE.md` | `domain --mode glossary`, and `clarify` for settled terms | every skill that names things | design | after | kept | One name per concept, and the synonyms to avoid. |
-| Wireframes and design system | `docs/wireframes/`, `docs/design-system/` | `ui-ux-design` | `plan`, `exec-plan`, `visual-validation` | design | after | kept | Committed with the docs. The FIS cites them, and the built screens are checked against them. |
+| Wireframes and design system | `docs/wireframes/`, `docs/design-system/` | `ui-ux-design` | `plan`, `exec-plan`, `visual-validation` | design | after | kept | The FIS cites them, and the built screens are checked against them. The design system stays; `ship` asks whether to delete the feature's wireframe and mockup folders, and recommends it once the screens are built. |
 | Trade-off research | `docs/research/<topic>/` | `decide`, for a contested decision | the ADR, your reviewers | design | after | kept | The evidence behind an ADR: the research, the weighted matrix and the recommendation. Committed with the ADR. |
 | Spike | branch `spike/<slug>` | `spike` | `decide` and `plan`, through its verdict | design | after | local | Never merged. AndThen keeps the branch as evidence; delete it once the verdict is recorded in the ADR. |
-| Plan | `docs/specs/<feature>/plan.json` | `plan`, then `exec-plan` for each story's status | `exec-plan`, `review`, `ship` | plan | ship | branch | The stories, their dependencies and status. `ship` deletes it: a plan governs one branch. |
-| FIS | `docs/specs/<feature>/s01-<name>.md` | `plan` | `exec-plan`, `review`, `ship` | plan | ship | branch | Deleted by `ship`, after its Implementation Observations have become Learnings. The PR and git history keep it. |
-| Code and tests | the source tree | `exec-plan`, one commit per story | `review`, your team | build | after | kept | One squash commit on `main` after the merge. |
+| Plan | `docs/specs/<feature>/plan.json` | `plan`, then `exec-plan` for each story's status | `exec-plan`, `review`, `ship` | plan | ship | branch | The stories, their dependencies and status. `ship` asks whether to delete it, and recommends it: a plan governs one branch. Kept, it gets a `shipped` marker. |
+| FIS | `docs/specs/<feature>/s01-<name>.md` | `plan` | `exec-plan`, `review`, `ship` | plan | ship | branch | Deleted by `ship` on your yes, after its Implementation Observations have become Learnings. The PR and git history keep it. |
+| Code and tests | the source tree | `exec-plan`, one commit per story plus any `refactor` commit; `review --fix` and `implement-fix` commit their fixes | `review`, your team | build | after | kept | One squash commit on `main` after the merge. |
 | Review report | beside the reviewed spec, else `.agent_temp/reviews/` | `review` | `implement-fix`, `ship` | review | after | local | Gitignored by default: a working file for one run. Its verdict goes into the PR text. |
 | Tech Debt | `docs/TECH-DEBT-BACKLOG.md` | `review --fix` and `implement-fix` for findings you defer, `triage` | the skill working in that area | review | after | kept | Each entry names its blocker. Only what you approve is written. |
 | Learnings | `docs/LEARNINGS.md` | `ship`, from the FIS observations; also `triage` and `handoff` | every skill at task start | ship | after | kept | The traps worth remembering, one bullet each. |
-| Pull request | on GitHub | `ship`, after your yes | your reviewers | ship | after | kept | Intent, outcomes, the proof of each, and the door type. With a squash merge it is where the FIS's story lives on. |
+| Pull request | on GitHub | `ship`, after your yes | your reviewers | ship | after | kept | Intent, outcomes, the proof of each, the door type, where to read closely, and a closing Ship summary. With a squash merge it is where the FIS's story lives on. |
 | Handoff | `.agent_temp/handoff/` | `handoff` | the next fresh session | req | after | local | Written at any step. Under `.agent_temp/`, so never committed. |
 
 ### After ship
@@ -171,13 +171,13 @@ Component: three columns under the timeline (stacked on a phone), built from the
 
 ## After ship — What you can do next
 
-The branch is merged and `plan.json` is gone. The documents that stayed point to what comes next.
+The branch is merged, and `plan.json` is gone unless you kept it at ship. The documents that stayed point to what comes next.
 
 Component: white cards in a grid, three across (one on a phone). Each card has a title, the text and its command, hidden behind a "Show command" button.
 
 1. **Build the next feature** · The PRD's Out of Scope and Open Questions are a ready backlog. Start a new branch from `main` and pick one. · `/andthen:clarify "<the next idea>"`
 2. **Pay down tech debt** · Every deferred finding sits in `docs/TECH-DEBT-BACKLOG.md` with its blocker. An entry you can state in one sentence is an `implement-fix`. · `/andthen:implement-fix "<an entry from docs/TECH-DEBT-BACKLOG.md>"`
-3. **Act on what ship recommended** · `ship` writes only Learnings. It recommends the rest, such as a `decide` run for a design change no ADR records yet. · `/andthen:decide "<the change ship named>"`
+3. **Act on what ship recommended** · `ship` writes only Learnings and the PRD's Shipped line. It recommends the rest, such as a `decide` run for a design change no ADR records yet. · `/andthen:decide "<the change ship named>"`
 4. **Check the outcome** · Did the feature solve the PRD's problem for its users? The outcome lens reads the PRD against what was built. · `/andthen:review --mode outcome docs/specs/<feature>/prd.md`
 5. **Triage the incoming issues** · New ideas and bugs pile up in the tracker. `tracker triage` labels and routes each one; you ratify every write. · `/andthen:tracker triage "the ten oldest"`
 6. **Stop for the day** · Hand off with the next focus, so tomorrow's fresh session starts from files, not memory. · `/andthen:handoff "next: <the focus>"`
@@ -196,19 +196,19 @@ Flow: prd.md → research → wireframes → [design system] → plan → exec-p
    Command: `/andthen:ui-ux-design "research the shared-lists flows" docs/specs/let-people-share-their-lists/prd.md`
 2. **Wireframe every screen and state.** It writes a page inventory first, then one grayscale HTML page per screen and state, then checks them at four viewports.
    Command: `/andthen:ui-ux-design "wireframe the share dialog and the member list, all states" docs/specs/let-people-share-their-lists/prd.md`
-3. **A design system, only for a broad surface.** A whole collaboration area across many screens earns tokens and component styles. One dialog does not.
+3. **A design system, only for a broad surface.** A whole collaboration area across many screens earns tokens and component styles. One dialog does not. Once `DESIGN.md` exists, asking it to mock up the screens builds clickable mockups from its tokens in `docs/mockups/<feature>/`.
    Command: `/andthen:ui-ux-design "create a design system for the collaboration screens" docs/specs/let-people-share-their-lists/prd.md`
 4. **Plan from the design.** `ui-ux-design` closes on this command. The FIS cites the wireframes, so `exec-plan` builds to them.
    Command: `/andthen:plan docs/specs/let-people-share-their-lists/`
 5. **Check the built screens.** Set up the capture procedure once, then compare the built screens with the wireframes.
    Command: `/andthen:visual-validation --mode setup`
-   Command: `/andthen:visual-validation "share dialog and member list, mobile and desktop" docs/wireframes/`
+   Command: `/andthen:visual-validation "share dialog and member list, mobile and desktop" docs/wireframes/shared-lists/`
 
 ### The artifacts
 
 ```
 docs/
-├── wireframes/
+├── wireframes/shared-lists/   one folder per feature
 │   ├── index.html              ← open this: every wireframe as a preview
 │   ├── page-inventory.md       every screen and state, checked off
 │   ├── share-dialog.html       one page per screen…
@@ -226,13 +226,13 @@ Note: The wireframe file names are examples: the page inventory decides them.
 
 ### What you do with them
 
-1. **Open `docs/wireframes/index.html` in a browser.** Every screen should be there, and every state: empty, error ("no account for that email"), already shared, loading.
+1. **Open `docs/wireframes/shared-lists/index.html` in a browser.** Every screen should be there, and every state: empty, error ("no account for that email"), already shared, loading.
 2. **Hold it against `page-inventory.md`.** No page skipped for looking "similar" to another. A missing state is a screen the agent will invent later.
-3. **Commit them with the PRD.** They are design records, kept on `main` after `ship` like the PRD and the ADRs.
+3. **Commit them with the PRD.** The FIS cites them while the branch builds. At ship, `ship` asks whether to delete the feature's wireframe folder, and recommends it once the screens are built and validated. The design system stays.
 4. **Plan from them.** The FIS names the wireframes as the asset to build against, and `exec-plan` builds to them instead of guessing the layout.
 5. **Validate what was built.** `visual-validation` lists every difference from the wireframes before its verdict. P1 and P2 findings block; P3 is reported.
 
-Sizing check: One field added to an existing form earns no wireframes. A dialog with real states earns wireframes. A whole surface across many screens earns a design system. An API change earns nothing from this skill.
+Sizing check: One field added to an existing form earns no wireframes. A dialog with real states earns wireframes. A whole surface across many screens earns a design system, and mockups once you want those screens approved in its look. An API change earns nothing from this skill.
 
 ## Worked example — decide, architecture and spike for todo search
 

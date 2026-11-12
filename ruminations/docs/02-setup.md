@@ -14,35 +14,40 @@ Eyebrow: Setup
 
 Component: "AndThen" in the title is set in the accent colour.
 
-Tell us about your setup, and the steps below show exactly the commands you need. Copy each one into Claude Code in order.
+Tell us about your setup, and the steps below show exactly the commands you need. Run them in order.
 
 ## Your setup
 
-Interactive component: a muted box titled "Your setup" with two controls. The steps below rebuild whenever one changes.
+Interactive component: a muted box titled "Your setup" with two checkboxes. The second is enabled only when the first is ticked. The steps below rebuild whenever one changes.
 
-- Checkbox: I have an older AndThen (0.x) installed
-- Text field: Release tag from your facilitator, shown as `v1.0.0-rc.` followed by a short field for N (digits only, placeholder N). Empty means the course branch `develop`.
+- Checkbox: AndThen is already installed
+- Checkbox: I added it from a tag or `@develop`
 
 ## Steps
 
-Component: numbered white cards (01, 02, …), each with title, text and the command in a dark box with a copy button. The command box starts hidden: a small outlined "Show command" button with a terminal icon reveals it, and then reads "Hide command". A revealed box stays open when the steps rebuild. A conditional step has a dashed border and the tag "only if you have 0.x". Numbers follow the steps actually shown.
+Component: numbered white cards (01, 02, …), each with title, text and the command in a dark box with a copy button. The command box starts hidden: a small outlined "Show command" button with a terminal icon reveals it, and then reads "Hide command". A revealed box stays open when the steps rebuild. A conditional step has a dashed border and its condition as a tag. Numbers follow the steps actually shown.
 
-1. **Remove the old version** — only when the 0.x checkbox is ticked. AndThen 0.x and 1.0 share the marketplace name andthen, so the old marketplace has to go first.
+1. **Create your own repo.** On GitHub, open the course repo and choose Use this template, then Create a new repository. Pick your account and tick Include all branches. Clone it and work there: your changes are saved, and your pull request opens in your own repo.
+   Command: `gh repo clone <your-account>/<your-repo>`
+2. **Remove the old marketplace** – only if already installed and added from a tag or `@develop`. A marketplace stays on the ref it was added with, so a tag or @develop has to go before you add the latest release.
    Command: `/plugin marketplace remove andthen`
-2. **Add the AndThen marketplace.**
-   - With no tag: Tells Claude Code where to find AndThen. @develop follows the course branch. If your facilitator gives you a release tag, enter it above.
-     Command: `/plugin marketplace add IT-HUSET/andthen@develop`
-   - With tag N: Tells Claude Code where to find AndThen, pinned to the release your facilitator gave you.
-     Command: `/plugin marketplace add IT-HUSET/andthen@v1.0.0-rc.N`
-3. **Install the plugin.** Installs the plugin from the marketplace you just added. The name reads plugin@marketplace:
+3. **Update the marketplace** – only if already installed, not from a tag. Fetches the latest AndThen release.
+   Command: `/plugin marketplace update andthen`
+4. **Update the plugin** – only if already installed, not from a tag. Updates AndThen from the marketplace. Restart Claude Code afterwards.
+   Command: `/plugin update andthen@andthen`
+5. **Add the AndThen marketplace** – unless you just updated. Tells Claude Code where to find AndThen. It follows the latest release. The course is based on AndThen 1.0.0 and rechecked against 1.1.0, so a later release may differ in details.
+   Command: `/plugin marketplace add IT-HUSET/andthen`
+6. **Install the plugin** – unless you just updated. Installs the plugin from the marketplace you just added. The name reads plugin@marketplace:
    Component: annotated name, `andthen` labelled "plugin", `@`, `andthen` labelled "marketplace".
    Command: `/plugin install andthen@andthen`
-4. **Ask where to start.** When you are unsure where to start, run now-what. It inspects the project and routes you to the right skill.
+7. **Check your setup.** In a terminal, from the repo root. It checks git, gh, Claude Code with AndThen, and the todo-app tests, and ends on GREEN or RED. Fix every FAIL before Day 1.
+   Command: `uv run check.py`
+8. **Ask where to start.** When you are unsure where to start, run now-what. It inspects the project and routes you to the right skill.
    Command: `/andthen:now-what`
 
 ## Where to type this
 
-These are slash commands. Type them at the Claude Code prompt in a terminal session started with `claude`, one at a time.
+Commands that start with `/` are slash commands: type them at the Claude Code prompt in a terminal session started with `claude`, one at a time. The others, such as `uv run check.py`, run in an ordinary terminal from the repo root.
 
 ## Troubleshooting
 
@@ -50,12 +55,12 @@ Component: a collapsed details box.
 
 Summary: Adding the marketplace fails with “its source doesn’t match its extraKnownMarketplaces entry”
 
-Your user settings already list a marketplace named `andthen`, pointing at a different source. Open `~/.claude/settings.json` and make that entry match the line you are adding. For the course branch, add `"ref": "develop"`:
+Your user settings already list a marketplace named `andthen`, pointing at a different source. Open `~/.claude/settings.json` and make that entry match the line you are adding. For the latest release, leave out `ref`:
 
 ```json
 "extraKnownMarketplaces": {
   "andthen": {
-    "source": { "source": "github", "repo": "IT-HUSET/andthen", "ref": "develop" }
+    "source": { "source": "github", "repo": "IT-HUSET/andthen" }
   }
 }
 ```

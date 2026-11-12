@@ -4,7 +4,7 @@ tab: Anatomy
 token: anatomy
 order: 5
 depends_on: []
-source: AndThen 1.0.0-rc.7 – plugin/README.md, skills/init/references/offers.md, skills/init/templates/, hooks/README.md, permissions/README.md (https://github.com/IT-HUSET/andthen); the plugin folders under ~/.claude/plugins/
+source: AndThen 1.1.0 – plugin/README.md, skills/init/references/offers.md, skills/init/templates/, hooks/README.md, permissions/README.md (https://github.com/IT-HUSET/andthen); the plugin folders under ~/.claude/plugins/
 ---
 
 # AndThen Anatomy
@@ -42,13 +42,13 @@ Interactive component: three white cards side by side (stacked on a phone), one 
 | `agents/` | 1 | Role agents for every project (user level): `oracle`, `implementer`, `reviewer` and `worker`, each pinning a model and effort. Empty until you accept `init`'s offer or copy the templates here. | `init`, when you accept the role-agents offer at user level | To change which model a role uses everywhere. See Models. |
 | `output-styles/` | 1 | Your own output styles. Needed only if your Claude Code version does not list `andthen:concise-critical`. | you | Rarely. |
 | `plugins/` | 1 | Every plugin and marketplace Claude Code knows about. | the `/plugin` commands | Never by hand. Read the two JSON files to see what you run. |
-| `known_marketplaces.json` | 2 | Each marketplace and the source it follows: for AndThen, `IT-HUSET/andthen` on `develop` or a release tag. | `/plugin marketplace add` | Read it to see which branch or tag you follow. |
+| `known_marketplaces.json` | 2 | Each marketplace and the source it follows: for AndThen, `IT-HUSET/andthen`: the latest release by default, `@develop` for pre-releases, or a release tag. | `/plugin marketplace add` | Read it to see which branch or tag you follow. |
 | `installed_plugins.json` | 2 | Each installed plugin, its version and the folder it loads from. | `/plugin install` | Read it to see which AndThen version is installed. |
 | `marketplaces/andthen/` | 2 | A clone of the whole AndThen repository: the plugin plus the README, COOKBOOK, CHANGELOG, hooks and permissions. | `/plugin marketplace add`, and each update | Read the COOKBOOK here, and copy hooks or permissions from it. |
 | `COOKBOOK.md` | 3 | Recipes: which path for which situation, and the artifact table the Paths tab is built from. | AndThen's authors | When you wonder how the skills fit together. |
 | `hooks/` | 3 | Optional Claude Code hooks: one blocks destructive shell commands, one hints when the context is getting large, two notify you. | AndThen's authors | Copy the ones you want into your settings. Nothing is installed for you. |
 | `permissions/` | 3 | Example permission and sandbox settings that keep shell commands away from your secrets and the network. | AndThen's authors | Copy what you need. Nothing is installed for you. |
-| `cache/andthen/andthen/1.0.0-rc.7/` | 2 | The installed copy that Claude Code actually loads, one folder per version. Its contents are the middle card. | `/plugin install`, and each update | Never. An update replaces it. |
+| `cache/andthen/andthen/1.1.0/` | 2 | The installed copy that Claude Code actually loads, one folder per version. Its contents are the middle card. | `/plugin install`, and each update | Never. An update replaces it. |
 
 ### plugin
 
@@ -66,7 +66,7 @@ Interactive component: three white cards side by side (stacked on a phone), one 
 | `<skill>/agents/openai.yaml` | 2 | The skill's display name and default prompt in Codex. It is not a model setting. | AndThen's release | Never. |
 | `init/templates/` | 2 | What `init` copies into your project or your machine. | AndThen's release | Read it to see what an offer installs. |
 | `CLAUDE.template.md` | 3 | The starting point for a project's `CLAUDE.md`: the Project Document Index, project rules and Conventions. | AndThen's release | Never: `init` copies it. |
-| `agents/claude/` | 3 | The four role agents with their model and effort pins, ready to copy. `agents/codex/` holds the same for Codex. | AndThen's release | Never: `init` copies them, and you edit the copies. |
+| `agents/claude/` | 3 | The four role agents with their model and effort pins, ready to copy. `agents/codex/` and `agents/copilot/` hold the same for Codex and Copilot CLI. | AndThen's release | Never: `init` copies them, and you edit the copies. |
 | `guidelines/CRITICAL-RULES-AND-GUARDRAILS.md` | 3 | The critical-rules starter `init` offers for your `CLAUDE.md`. | AndThen's release | Never: once adopted, the copy in `CLAUDE.md` is yours. |
 | `output-styles/concise-critical.md` | 3 | Brief, plain, critical answers, answer first. The plugin registers it as `andthen:concise-critical`. | AndThen's release | Never: you turn it on in `settings.json`. |
 | `references/` | 1 | Contracts several skills share: `plan.schema.json`, `fis-contract.md`, `review-calibration.md`, `unattended-runs.md`, `project-document-templates.md`. | AndThen's release | Read it when you wonder what a `plan.json` or a FIS must contain. |
@@ -84,13 +84,13 @@ Interactive component: three white cards side by side (stacked on a phone), one 
 | `.claude/agents/` | 1 | Role agents for this project only (project level), shared with the team through git. A project agent wins over a user agent with the same name. | `init`, when you accept the role-agents offer at project level, or you, copying the templates | To pin models for the whole team. See Models. |
 | `docs/` | 1 | The documents the Index names. Each is created by the first skill that writes to it. | the skills | Read them; edit them when the project changes. |
 | `KEY_DEVELOPMENT_COMMANDS.md` | 2 | The dev, test and build commands, including the `fast` and `full` check tiers `exec-plan` runs. | `init` | When a test or build command changes. |
-| `PRODUCT.md` | 2 | Vision, non-goals and the Proportionality facts (stage, scale, technical non-goals) that size every proposal. | the first of `clarify`, `decide`, `plan` or `architecture` to need them | When the stage or scale changes. |
+| `PRODUCT.md` | 2 | Vision, principles, non-goals and the Proportionality facts (stage, scale, technical non-goals) that size every proposal. | the first of `clarify`, `decide`, `plan` or `architecture` to need them | When the stage or scale changes. |
 | `DECISIONS.md` and `adrs/` | 2 | The ADR index, Still Current lines and the ADRs themselves. | `decide` | Read before reopening a choice. |
 | `UBIQUITOUS_LANGUAGE.md` | 2 | One name per concept, and the synonyms to avoid. | `domain --mode glossary`, `clarify` | When a term settles. |
 | `LEARNINGS.md` | 2 | Traps worth remembering: “watch out for X”, a non-obvious failure that bit someone. Why a choice was made belongs in `DECISIONS.md`. | `ship`, `triage`, `handoff` | Read at the start of a task. |
 | `TECH-DEBT-BACKLOG.md` | 2 | Fixes deferred with their blockers, by severity, so a finding you put off is not lost. | `review --fix` and `implement-fix` for a finding you defer, `triage` | Read when you work in an area with a listed item. An entry you can state in one sentence is an `implement-fix`. |
-| `specs/<feature>/` | 2 | The PRD, and while the branch lives, `plan.json`, the FIS files and review reports. | `clarify`, `plan`, `exec-plan`, `review` | Read the PRD; let the skills own the rest. |
-| `research/`, `models/`, `wireframes/`, `design-system/` | 2 | Trade-off analyses, typed models, wireframes and the design system, each when its skill runs. | `decide`, `describe --model`, `domain`, `ui-ux-design` | Commit them; read them before revisiting. |
+| `specs/<feature>/` | 2 | The PRD, and while the branch lives, `plan.json`, the FIS files and review reports. `ship` deletes the plan files on your yes, or keeps them marked `shipped`. | `clarify`, `plan`, `exec-plan`, `review` | Read the PRD; let the skills own the rest. |
+| `research/`, `models/`, `wireframes/`, `design-system/` | 2 | Trade-off analyses, typed models, wireframes, clickable mockups (in `mockups/`, one folder per feature) and the design system, each when its skill runs. | `decide`, `describe --model`, `domain`, `ui-ux-design` | Commit them; read them before revisiting. |
 | `REVIEW-POLICY.md`, `ISSUE-TRACKER.md`, `VISUAL-VALIDATION.md`, `TESTING-STRATEGY.md` | 2 | Optional settings documents for reviews, the issue tracker, screen capture and tests. | you (Review Policy), `tracker setup`, `visual-validation --mode setup`, `testing --mode strategy` | When you want to change how that skill behaves. |
 | `.agent_temp/` | 1 | Scratch space, never committed: `reviews/`, `handoff/`, `spike/`, `visualize/`, and Studio's notes. | the skills, and Studio | Read handoffs and reports; clean it out when you like. |
 | `.gitignore` | 1 | `init` adds `.agent_temp/` and the review-report pattern. | `init` | Delete the review-report line to commit reports. |
@@ -109,7 +109,7 @@ Component: a table with three columns, Question, Where and How, in a white box t
 | Where a document lives | `CLAUDE.md`, Project Document Index | Move the file and edit its Index line. Skills find documents by entry name, so keep the names. |
 | Which commands prove the code works | `docs/KEY_DEVELOPMENT_COMMANDS.md` | Edit the `fast` and `full` rows. `exec-plan` runs `fast` per story and `full` on the final tree. |
 | Rules every session must follow | `CLAUDE.md` | Add them under Project-Specific Guidelines and Rules, or adopt the Critical Rules section `init` offers. |
-| Which AndThen version you run | `~/.claude/plugins/known_marketplaces.json` and `installed_plugins.json` | Change it with `/plugin marketplace add IT-HUSET/andthen@<ref>` and `/plugin install andthen@andthen`, as on the Setup tab. |
+| Which AndThen version you run | `~/.claude/plugins/known_marketplaces.json` and `installed_plugins.json` | Update with `/plugin marketplace update andthen` and `/plugin update andthen@andthen`, then restart. To switch branch or tag, remove the marketplace and add it again as `IT-HUSET/andthen@<ref>`. |
 | What a review skips or adds | `docs/REVIEW-POLICY.md` | Write it from the starter in AndThen's README, then run `/andthen:init seed Review Policy` to add its Index line. |
 | Your issue tracker, and where requirements live after a merge | `docs/ISSUE-TRACKER.md` | Run `/andthen:tracker setup`. `Record: repo` keeps `prd.md`; `Record: tracker` keeps it in the issues. |
 | Whether review reports are committed | `.gitignore` | Delete the review-report line `init` added. |
@@ -124,7 +124,7 @@ Component: four white cards side by side (two by two on a tablet, stacked on a p
 
 | Role | Model | Effort | Used for |
 | - | - | - | - |
-| `oracle` | opus | xhigh | Judgment you assign it, such as a design or a second opinion, and hard problems another agent hands over because they exceed its tier. |
+| `oracle` | fable | high | Judgment you assign it, such as a design or a second opinion, and hard problems another agent hands over because they exceed its tier. |
 | `implementer` | sonnet | high | One medium or large unit of pinned work: building a story, writing a plan story's FIS, research that weighs sources. |
 | `reviewer` | opus | medium | Every review, of any target, returning findings and a verdict. |
 | `worker` | haiku | high | Small, well-specified subtasks: lookups, scans, mechanical edits. |

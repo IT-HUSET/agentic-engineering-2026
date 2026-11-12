@@ -65,7 +65,7 @@ Source: Based on the init skill in AndThen {andthen_version}.
 
 Format: id · Kind · Path · Text, then an optional Example. The card shows the Label as title.
 
-- **start** · Start · `/andthen:init [project name]` · You run it once per project, from its root folder. Without a name it takes the folder's or the manifest's. It never overwrites: your content is kept, and it replaces only what you pick.
+- **start** · Start · `/andthen:init [project name]` · You run it once per project, from its root folder. Without a name it takes the folder's or the manifest's. It never overwrites your content: beyond the Index preamble that step 2b brings in line with the template, it replaces only what you pick.
   Example:
   ```
   /andthen:init
@@ -111,8 +111,9 @@ Format: id · Kind · Path · Text, then an optional Example. The card shows the
   Example:
   ```
   Claude Code only   →  CLAUDE.md
-  Codex only         →  AGENTS.md
-  both, or unclear   →  AGENTS.md, and a CLAUDE.md whose first line is @AGENTS.md
+  Codex or Copilot   →  AGENTS.md
+  Claude Code plus another, or unclear
+                     →  AGENTS.md, and a CLAUDE.md whose first line is @AGENTS.md
   ```
 - **s2b** · Step · `Step 2b: an instruction file exists` · Keeps your content and adds only what is missing, without asking: Index lines for unlisted documents, the Index preamble, an empty Project Overview, missing sections, Key Dev Commands and the .gitignore entries. Two changes are only offered, at step 3: converting CLAUDE.md and AGENTS.md to the shared layout, and adding a missing counterpart file.
 - **g3** · Gateway · `2a and 2b meet` · Whichever path ran, init goes on to the extras.
@@ -139,7 +140,7 @@ Format: id · Kind · Path · Text, then an optional Example. The card shows the
   ```
   ## Project Document Index
 
-  Documents here are read whole when their trigger matches, so keep them short …
+  Read a document whole when its trigger matches, because a grep finds only what you already suspect …
 
   - **Key Dev Commands** – `docs/KEY_DEVELOPMENT_COMMANDS.md`: dev, test, build, deploy commands. Read before running verification; update when a command changes.
   - **Agent Temp** – `.agent_temp/`: scratch workspace for reviews, research, and QA; never ship from it.

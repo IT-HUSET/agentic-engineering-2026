@@ -1,13 +1,13 @@
 ---
 title: AndThen skills
-andthen_version: 1.0.0-rc.7
+andthen_version: 1.1.0
 source: ~/.claude/plugins/marketplaces/andthen/plugin/skills/*/SKILL.md
 used_by: [03-init, 04-skills, 06-core-loop]
 ---
 
 # AndThen skills
 
-The registry of every skill in AndThen 1.0.0-rc.7. The number of skills shown on the page is counted from this file, never typed by hand.
+The registry of every skill in AndThen 1.1.0. The number of skills shown on the page is counted from this file, never typed by hand.
 
 ## Groups
 
@@ -139,12 +139,12 @@ Fields per skill: Group, Role (the short line on the map), Optional, Map (x, y, 
 - Group: design
 - Role: screens & flows
 - Map: 1043, 194, 180, 50
-- Summary: UI and UX design: research, design systems and wireframes, one at a time or chained.
+- Summary: UI and UX design: research, design systems, wireframes and clickable mockups, one at a time or chained.
 - When: When the feature has screens or flows worth sketching before they are specified.
 - Reads: Requirements and existing UI
 - Command: `/andthen:ui-ux-design`
 - Works with: plan, visual-validation
-- Result: wireframe · Wireframes · Screens and flows, plus a design system when you need one.
+- Result: wireframe · Wireframes · Screens and flows as wireframes, or as clickable mockups once a design system exists.
 
 ### clarify
 
@@ -173,7 +173,7 @@ Fields per skill: Group, Role (the short line on the map), Optional, Map (x, y, 
 - Reads: The PRD or the open question
 - Command: `/andthen:decide`
 - Works with: clarify, plan, architecture, domain, spike
-- Result: seal · ADR · An Architecture Decision Record for each settled choice. domain adds a glossary.
+- Result: seal · ADR · An Architecture Decision Record for each settled choice, and the PRD rows it settles now cite it. domain adds a glossary.
 - Tag: ADR
 
 ### plan
@@ -197,10 +197,10 @@ Fields per skill: Group, Role (the short line on the map), Optional, Map (x, y, 
 - Map: 737, 318, 140, 64
 - Document: code + tests
 - Summary: Builds a FIS, or runs a plan directory with one fresh subagent per story. A story is done only on executed proof, and a fresh reviewer checks each one.
-- When: Always. --worktree runs independent stories in parallel, --tdd works test-first. Don't hand-edit mid-run.
+- When: Always. --worktree runs independent stories in parallel. Stories go test-first where the Testing Strategy or your request requires it. Don't hand-edit mid-run.
 - Reads: A FIS or a plan directory
 - Command: `/andthen:exec-plan <FIS | dir>`
-- Works with: plan, review, testing, visual-validation
+- Works with: plan, review, testing, simplify-code, visual-validation
 - Result: code · Code + tests · Working code, each story marked done on a check that actually ran.
 - Tag: code + tests
 
@@ -215,7 +215,7 @@ Fields per skill: Group, Role (the short line on the map), Optional, Map (x, y, 
 - Reads: The change, its FIS and its PRD
 - Command: `/andthen:review --fix`
 - Works with: exec-plan, ship, implement-fix, simplify-code, visual-validation
-- Result: checklist · Review report · Findings sorted into Fix and Note. --fix applies the Fix ones.
+- Result: checklist · Review report · Findings sorted into Fix and Note, with a PASS or FAIL verdict. --fix applies and commits the Fix ones.
 - Tag: review report
 
 ### ship
@@ -224,12 +224,12 @@ Fields per skill: Group, Role (the short line on the map), Optional, Map (x, y, 
 - Role: opens the PR
 - Map: 1085, 318, 140, 64
 - Document: pull request
-- Summary: Keeps the implementation observations worth keeping, deletes the plan bundle, commits, then pushes and opens the pull request on one ask.
+- Summary: Keeps the implementation observations worth keeping and commits. Then, on one ask, it pushes, opens the pull request, and deletes or keeps the plan bundle.
 - When: Last. Nothing is pushed until you say yes.
 - Reads: The branch and its plan
 - Command: `/andthen:ship`
 - Works with: review, implement-fix
-- Result: pr · Pull request · Learnings kept, plan files removed, and the PR opened after your yes.
+- Result: pr · Pull request · Learnings kept, and after your yes the PR opened and the plan files removed. prd.md stays, stamped Shipped.
 - Tag: pull request
 
 ### testing
@@ -237,24 +237,24 @@ Fields per skill: Group, Role (the short line on the map), Optional, Map (x, y, 
 - Group: quality
 - Role: tests & TDD
 - Map: 215, 499, 180, 50
-- Summary: Test strategy, coverage and test authoring at every level, including test-first (red-green-refactor) and the Prove-It bugfix flow.
+- Summary: Test strategy, coverage and test authoring at every level, test-first where required, and the Prove-It bugfix flow.
 - When: When you want a test strategy, or a failing test before a fix.
 - Reads: Code and FIS scenarios
-- Command: `/andthen:testing --mode tdd`
+- Command: `/andthen:testing --mode prove-it`
 - Works with: exec-plan, triage
-- Result: checksq · Tests · Tests at the right level, written test-first when you ask for it, plus a strategy.
+- Result: checksq · Tests · Tests at the right level, written test-first when you or the Testing Strategy require it, plus a strategy.
 
 ### visual-validation
 
 - Group: quality
 - Role: UI vs design
 - Map: 410, 499, 190, 50
-- Summary: Checks UI screenshots against wireframes or design specs and runs visual regression checks.
+- Summary: Checks UI screenshots against mockups, wireframes or design specs and runs visual regression checks.
 - When: When the change has a UI that must match a design.
-- Reads: Screenshots and wireframes
+- Reads: Screenshots, mockups and wireframes
 - Command: `/andthen:visual-validation`
 - Works with: ui-ux-design, exec-plan, review
-- Result: eye · Validation report · Where the built UI differs from the wireframes or the design.
+- Result: eye · Validation report · Where the built UI differs from its feature's mockup or wireframe, or from the design system.
 
 ### simplify-code
 
@@ -265,8 +265,8 @@ Fields per skill: Group, Role (the short line on the map), Optional, Map (x, y, 
 - When: When working code has grown more complex than it needs to be.
 - Reads: Code in scope
 - Command: `/andthen:simplify-code`
-- Works with: review
-- Result: simplify · Simpler code · Less complexity, exactly the same behavior.
+- Works with: review, exec-plan
+- Result: simplify · Simpler code · Less complexity, exactly the same behavior, committed once the checks are green.
 
 ### triage
 
@@ -279,7 +279,7 @@ Fields per skill: Group, Role (the short line on the map), Optional, Map (x, y, 
 - Reads: Symptoms: errors, logs, failing tests
 - Command: `/andthen:triage`
 - Works with: implement-fix, testing, now-what
-- Result: search · Diagnosis · The root cause, found before anything is changed.
+- Result: search · Diagnosis · The root cause, found before anything is changed, and the fix committed once green.
 - Tag: diagnosis
 
 ### implement-fix
@@ -289,9 +289,9 @@ Fields per skill: Group, Role (the short line on the map), Optional, Map (x, y, 
 - Map: 1060, 499, 165, 50
 - Summary: Implements a small feature or fix, or a review report's actionable findings, with minimal verified changes.
 - When: When you can state the change in one sentence.
-- Reads: Your request or a review report
+- Reads: Your request, a review report or a tracker item
 - Command: `/andthen:implement-fix "<request>"`
 - Works with: triage, review, ship
-- Result: check · Verified fix · A minimal change, checked with the real build and tests.
+- Result: check · Verified fix · A minimal change, checked with the real build and tests, then committed.
 - Tag: verified fix
 

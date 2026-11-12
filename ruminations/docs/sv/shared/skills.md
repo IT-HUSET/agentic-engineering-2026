@@ -1,13 +1,13 @@
 ---
 title: Skills i AndThen
-andthen_version: 1.0.0-rc.7
+andthen_version: 1.1.0
 source: ~/.claude/plugins/marketplaces/andthen/plugin/skills/*/SKILL.md
 used_by: [03-init, 04-skills, 06-core-loop]
 ---
 
 # Skills i AndThen
 
-Förteckningen över alla skills i AndThen 1.0.0-rc.7. Antalet skills som sidan visar räknas fram ur den här filen och skrivs aldrig in för hand.
+Förteckningen över alla skills i AndThen 1.1.0. Antalet skills som sidan visar räknas fram ur den här filen och skrivs aldrig in för hand.
 
 ## Grupper
 
@@ -139,12 +139,12 @@ Fält per skill: Group, Role (den korta raden på kartan), Optional, Map (x, y, 
 - Group: design
 - Role: skärmar & flöden
 - Map: 1043, 194, 180, 50
-- Summary: UI- och UX-design: research, designsystem och wireframes, var för sig eller i en kedja.
+- Summary: UI- och UX-design: research, designsystem, wireframes och klickbara mockups, var för sig eller i en kedja.
 - When: När funktionen har skärmar eller flöden som är värda att skissa innan de specificeras.
 - Reads: Krav och befintligt UI
 - Command: `/andthen:ui-ux-design`
 - Works with: plan, visual-validation
-- Result: wireframe · Wireframes · Skärmar och flöden, plus ett designsystem när du behöver ett.
+- Result: wireframe · Wireframes · Skärmar och flöden som wireframes, eller som klickbara mockups när det finns ett designsystem.
 
 ### clarify
 
@@ -173,7 +173,7 @@ Fält per skill: Group, Role (den korta raden på kartan), Optional, Map (x, y, 
 - Reads: PRD:n eller den öppna frågan
 - Command: `/andthen:decide`
 - Works with: clarify, plan, architecture, domain, spike
-- Result: seal · ADR · En Architecture Decision Record för varje val som är avgjort. domain lägger till en ordlista.
+- Result: seal · ADR · En Architecture Decision Record för varje val som är avgjort, och PRD-raderna som den avgör hänvisar nu till den. domain lägger till en ordlista.
 - Tag: ADR
 
 ### plan
@@ -197,10 +197,10 @@ Fält per skill: Group, Role (den korta raden på kartan), Optional, Map (x, y, 
 - Map: 737, 318, 140, 64
 - Document: kod + tester
 - Summary: Bygger en FIS, eller kör en plankatalog med en ny subagent per story. En story är done först när ett bevis faktiskt har körts, och en ny granskare kontrollerar var och en.
-- When: Alltid. --worktree kör oberoende stories parallellt, --tdd arbetar test först. Redigera inte för hand mitt i en körning.
+- When: Alltid. --worktree kör oberoende stories parallellt. Stories skrivs test först där teststrategin eller din beställning kräver det. Redigera inte för hand mitt i en körning.
 - Reads: En FIS eller en plankatalog
 - Command: `/andthen:exec-plan <FIS | dir>`
-- Works with: plan, review, testing, visual-validation
+- Works with: plan, review, testing, simplify-code, visual-validation
 - Result: code · Kod + tester · Fungerande kod, där varje story är markerad done på en kontroll som faktiskt kördes.
 - Tag: kod + tester
 
@@ -215,7 +215,7 @@ Fält per skill: Group, Role (den korta raden på kartan), Optional, Map (x, y, 
 - Reads: Ändringen, dess FIS och dess PRD
 - Command: `/andthen:review --fix`
 - Works with: exec-plan, ship, implement-fix, simplify-code, visual-validation
-- Result: checklist · Granskningsrapport · Fynd sorterade i Fix och Note. --fix genomför Fix-fynden.
+- Result: checklist · Granskningsrapport · Fynd sorterade i Fix och Note, med utlåtandet PASS eller FAIL. --fix genomför och committar Fix-fynden.
 - Tag: granskningsrapport
 
 ### ship
@@ -224,12 +224,12 @@ Fält per skill: Group, Role (den korta raden på kartan), Optional, Map (x, y, 
 - Role: öppnar PR:en
 - Map: 1085, 318, 140, 64
 - Document: pull request
-- Summary: Sparar det som är värt att behålla ur Implementation Observations, raderar planpaketet och committar. Sedan pushar den och öppnar pull requesten efter en enda fråga.
+- Summary: Sparar det som är värt att behålla ur Implementation Observations och committar. Efter en enda fråga pushar den, öppnar pull requesten och raderar eller behåller planpaketet.
 - When: Sist. Ingenting pushas förrän du säger ja.
 - Reads: Branchen och dess plan
 - Command: `/andthen:ship`
 - Works with: review, implement-fix
-- Result: pr · Pull request · Lärdomarna sparade, planfilerna borttagna och PR:en öppnad efter ditt ja.
+- Result: pr · Pull request · Lärdomarna sparade, och efter ditt ja är PR:en öppnad och planfilerna borttagna. prd.md ligger kvar, märkt Shipped.
 - Tag: pull request
 
 ### testing
@@ -237,24 +237,24 @@ Fält per skill: Group, Role (den korta raden på kartan), Optional, Map (x, y, 
 - Group: quality
 - Role: tester & TDD
 - Map: 215, 499, 180, 50
-- Summary: Teststrategi, täckning och testskrivande på alla nivåer, inklusive test först (red-green-refactor) och Prove-It-flödet för buggrättningar.
+- Summary: Teststrategi, täckning och testskrivande på alla nivåer, test först där det krävs, och Prove-It-flödet för buggrättningar.
 - When: När du vill ha en teststrategi, eller ett test som fallerar innan du rättar.
 - Reads: Kod och FIS-scenarier
-- Command: `/andthen:testing --mode tdd`
+- Command: `/andthen:testing --mode prove-it`
 - Works with: exec-plan, triage
-- Result: checksq · Tester · Tester på rätt nivå, skrivna test först när du ber om det, plus en strategi.
+- Result: checksq · Tester · Tester på rätt nivå, skrivna test först när du eller teststrategin kräver det, plus en strategi.
 
 ### visual-validation
 
 - Group: quality
 - Role: UI mot design
 - Map: 410, 499, 190, 50
-- Summary: Jämför skärmbilder av UI:t med wireframes eller designspecar och kör visuella regressionskontroller.
+- Summary: Jämför skärmbilder av UI:t med mockups, wireframes eller designspecar och kör visuella regressionskontroller.
 - When: När ändringen har ett UI som måste stämma med en design.
-- Reads: Skärmbilder och wireframes
+- Reads: Skärmbilder, mockups och wireframes
 - Command: `/andthen:visual-validation`
 - Works with: ui-ux-design, exec-plan, review
-- Result: eye · Valideringsrapport · Var det byggda UI:t skiljer sig från wireframes eller designen.
+- Result: eye · Valideringsrapport · Var det byggda UI:t skiljer sig från funktionens mockup eller wireframe, eller från designsystemet.
 
 ### simplify-code
 
@@ -265,8 +265,8 @@ Fält per skill: Group, Role (den korta raden på kartan), Optional, Map (x, y, 
 - When: När fungerande kod har blivit mer komplex än den behöver vara.
 - Reads: Koden inom omfånget
 - Command: `/andthen:simplify-code`
-- Works with: review
-- Result: simplify · Enklare kod · Mindre komplexitet, exakt samma beteende.
+- Works with: review, exec-plan
+- Result: simplify · Enklare kod · Mindre komplexitet, exakt samma beteende, committat när kontrollerna är gröna.
 
 ### triage
 
@@ -279,7 +279,7 @@ Fält per skill: Group, Role (den korta raden på kartan), Optional, Map (x, y, 
 - Reads: Symptom: fel, loggar, tester som fallerar
 - Command: `/andthen:triage`
 - Works with: implement-fix, testing, now-what
-- Result: search · Diagnos · Grundorsaken, hittad innan något ändras.
+- Result: search · Diagnos · Grundorsaken, hittad innan något ändras, och rättelsen committad när testerna är gröna.
 - Tag: diagnos
 
 ### implement-fix
@@ -289,8 +289,8 @@ Fält per skill: Group, Role (den korta raden på kartan), Optional, Map (x, y, 
 - Map: 1060, 499, 165, 50
 - Summary: Implementerar en liten funktion eller rättelse, eller de fynd i en granskningsrapport som går att åtgärda, med minimala verifierade ändringar.
 - When: När du kan beskriva ändringen i en mening.
-- Reads: Det du ber om, eller en granskningsrapport
+- Reads: Det du ber om, en granskningsrapport eller ett ärende i trackern
 - Command: `/andthen:implement-fix "<request>"`
 - Works with: triage, review, ship
-- Result: check · Verifierad rättelse · En minimal ändring, kontrollerad med det riktiga bygget och testerna.
+- Result: check · Verifierad rättelse · En minimal ändring, kontrollerad med det riktiga bygget och testerna och sedan committad.
 - Tag: verifierad rättelse
