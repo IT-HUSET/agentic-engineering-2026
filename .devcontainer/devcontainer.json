@@ -18,7 +18,8 @@
   },
   "portsAttributes": {
     "2222": { "label": "SSH", "onAutoForward": "silent" },
-    "8000": { "label": "App", "onAutoForward": "notify" }
+    "8000": { "label": "App", "onAutoForward": "notify" },
+    "7420": { "label": "AndThen Studio", "onAutoForward": "notify" }
   },
   "customizations": {
     "vscode": { "extensions": ["anthropic.claude-code", "ms-python.python"] }

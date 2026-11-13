@@ -1,6 +1,6 @@
 # Dev container
 
-An alternative to installing everything on your own machine, and the way to run on Windows without WSL2. It has Claude Code, Codex CLI, GitHub Copilot CLI, AndThen, `gh`, `uv`, Node and `tmux`, and it installs the `todo-app` dependencies.
+An alternative to installing everything on your own machine, and the way to run on Windows without WSL2. It has Claude Code, Codex CLI, GitHub Copilot CLI, AndThen, [AndThen Studio](#andthen-studio), `gh`, `uv`, Node and `tmux`, and it installs the `todo-app` dependencies.
 
 Use it in one of three ways: run your agent in the container's terminal (VS Code, or the codespace in your browser) after signing in there, for example `claude auth login`; connect the Claude app to a codespace over SSH; or follow a session with Remote Control.
 
@@ -93,6 +93,22 @@ Remote Control lets you steer a session in the container from your phone or [cla
    ```
 3. Open the URL it prints, or press space for a QR code.
 4. Leave `tmux` with `Ctrl-b` and then `d`. Run `tmux attach -t rc` to get back.
+
+## AndThen Studio
+
+[AndThen Studio](https://github.com/IT-HUSET/andthen-studio-releases) shows a project's AndThen artifacts in your browser: plans as a board, FIS and review reports, PRDs, and walkthroughs of a pull request. Pages update as files and git change. Start it from the project root, `todo-app/` in the foundation lab:
+
+```bash
+cd todo-app && andthen_studio --no-open
+```
+
+It listens on port 7420 inside the container, or the next free port up to 7429 if another Studio has it. VS Code and Codespaces forward the port and offer to open it. Connected from the Claude app over SSH, forward it yourself, then open `http://localhost:7420`:
+
+```bash
+ssh -N -L 7420:localhost:7420 course-codespace
+```
+
+Its AI actions (Explain, Send notes, Produce walkthrough) need Claude Code or Codex signed in inside the container, for example `claude auth login`. Without that, Studio starts with them off and says so. To update, run the install line from `setup.sh` again.
 
 ## Stopped codespaces, and ones that won't stop
 

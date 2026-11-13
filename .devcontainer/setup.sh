@@ -15,6 +15,13 @@ echo "Installing Codex CLI and Copilot CLI..."
 npm install -g @openai/codex @github/copilot >/dev/null 2>&1 \
   || echo "Note: install failed. Retry: npm install -g @openai/codex @github/copilot"
 
+# /usr/local/bin, because shells that skip /etc/bash.bashrc (SSH commands, login shells) lack ~/.local/bin.
+# pipefail, so a failed download is not hidden by sh running an empty script.
+echo "Installing AndThen Studio (latest release)..."
+studio_install=https://github.com/IT-HUSET/andthen-studio-releases/releases/latest/download/install.sh
+(set -o pipefail; curl -fsSL "$studio_install" | sudo ANDTHEN_STUDIO_INSTALL_DIR=/usr/local/bin sh) \
+  || echo "Note: install failed. Retry: curl -fsSL $studio_install | sudo ANDTHEN_STUDIO_INSTALL_DIR=/usr/local/bin sh"
+
 if [ -f todo-app/pyproject.toml ]; then
   echo "Installing todo-app dependencies..."
   (cd todo-app && uv sync) || echo "Note: uv sync failed. Retry: cd todo-app && uv sync"
