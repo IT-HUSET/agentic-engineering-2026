@@ -1,4 +1,4 @@
-# TEMPLATE ONLY. Adapt on the default branch after the live activation checklist.
+# TEMPLATE ONLY. Adapt on the default branch after the activation checklist.
 name: X12 plan to PR
 
 on:
@@ -21,13 +21,14 @@ on:
         type: boolean
         default: false
       publish:
-        description: Invoke ship after all gates (also needs host config activation)
+        description: Run ship and open the PR (off ends after all gates, nothing pushed)
         type: boolean
         default: false
 
 permissions:
   contents: read
 
+# One job per branch at a time; a repeat dispatch after a PR exists stops at run.py's existing-PR check.
 concurrency:
   group: x12-${{ github.repository }}-${{ inputs.branch }}
   cancel-in-progress: false
@@ -35,7 +36,7 @@ concurrency:
 jobs:
   inner-loop:
     # Configure this variable and runner label before copying the template.
-    if: github.repository == vars.X12_REPOSITORY && github.ref == format('refs/heads/{0}', github.event.repository.default_branch) && inputs.c2_approved
+    if: github.repository == vars.X12_REPOSITORY && github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
     runs-on: [self-hosted, linux, x64, x12]
     timeout-minutes: 150
     env:
@@ -44,8 +45,13 @@ jobs:
       X12_PLAN: ${{ inputs.plan }}
       X12_PUBLISH: ${{ inputs.publish }}
       X12_JOB: ${{ github.run_id }}-${{ github.run_attempt }}
-      X12_DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+      X12_HOST: /var/lib/x12/host-jobs/${{ github.run_id }}-${{ github.run_attempt }}
     steps:
+      - name: Require C2 approval for this SHA
+        if: ${{ !inputs.c2_approved }}
+        run: echo "C2 not approved for this source SHA" >&2 && exit 1
+
+      # The controller comes from the default branch, never from the workload the agent edits.
       - name: Read the trusted controller from the default branch
         uses: actions/checkout@v4
         with:
@@ -59,7 +65,6 @@ jobs:
           set -euo pipefail
           git check-ref-format --branch "$X12_BRANCH"
           [[ "$X12_SHA" =~ ^[0-9a-f]{40}$ ]]
-          [[ "$X12_BRANCH" != "$X12_DEFAULT_BRANCH" ]]
 
       - name: Check out the approved source into a fresh retained workspace
         uses: actions/checkout@v4
@@ -69,7 +74,7 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
 
-      - name: Create the named local branch and container override
+      - name: Create the named local branch and the container
         shell: bash
         env:
           X12_GIT_NAME: ${{ vars.X12_GIT_NAME }}
@@ -81,130 +86,81 @@ jobs:
           git -C "$x12_work" config user.name "${X12_GIT_NAME:?Set X12_GIT_NAME}"
           git -C "$x12_work" config user.email "${X12_GIT_EMAIL:?Set X12_GIT_EMAIL}"
           git -C "$x12_work" config credential.https://github.com.helper '!gh auth git-credential'
-          mkdir -p "/var/lib/x12/host-jobs/$X12_JOB"
+          mkdir -p "$X12_HOST"
+          # Control, plugin and config are mounted read-only, so the agent cannot edit its own controller.
           python3 - <<'PY'
           import json, os
           from pathlib import Path
           root = Path(os.environ['GITHUB_WORKSPACE'])
-          job = os.environ['X12_JOB']
           config = json.loads((root / 'x12-control/.devcontainer/devcontainer.json').read_text())
           mounts = [
-              (str(root / 'x12-control'), '/opt/x12-control', True),
-              ('/opt/x12/andthen/plugin', '/opt/andthen', True),
-              ('/etc/x12', '/opt/x12-config', True),
-              ('/var/lib/x12/state', '/x12-state', False),
+              (str(root / 'x12-control'), '/opt/x12-control', ',readonly'),
+              ('/opt/x12/andthen/plugin', '/opt/andthen', ',readonly'),
+              ('/etc/x12', '/opt/x12-config', ',readonly'),
+              ('/var/lib/x12/state', '/x12-state', ''),
           ]
-          args = config.setdefault('runArgs', [])
-          for source, target, readonly in mounts:
-              if ',' in source:
-                  raise SystemExit('Comma in bind-mount source is unsupported')
-              args.extend(['--mount', f'type=bind,source={source},target={target}' + (',readonly' if readonly else '')])
-          # Override contents, while preserving the workload config's path for relative Dockerfile resolution.
-          Path('/var/lib/x12/host-jobs', job, 'devcontainer.override.json').write_text(json.dumps(config, indent=2))
+          for source, target, mode in mounts:
+              config.setdefault('runArgs', []).extend(['--mount', f'type=bind,source={source},target={target}{mode}'])
+          Path(os.environ['X12_HOST'], 'devcontainer.override.json').write_text(json.dumps(config, indent=2))
           PY
           devcontainer up --workspace-folder "$x12_work" \
-            --override-config "/var/lib/x12/host-jobs/$X12_JOB/devcontainer.override.json" \
-            > "/var/lib/x12/host-jobs/$X12_JOB/container.json"
+            --override-config "$X12_HOST/devcontainer.override.json" > "$X12_HOST/container.json"
 
-      - name: Verify the actual mounts before providing credentials
+      - name: Verify the read-only mounts before providing credentials
         shell: bash
         run: |
           set -euo pipefail
           python3 - <<'PY'
           import json, os, subprocess
           from pathlib import Path
-          host = Path('/var/lib/x12/host-jobs', os.environ['X12_JOB'])
-          info = json.loads((host / 'container.json').read_text())
+          info = json.loads(Path(os.environ['X12_HOST'], 'container.json').read_text())
           if info.get('outcome') != 'success':
               raise SystemExit('Container startup failed')
           actual = json.loads(subprocess.check_output(['docker', 'inspect', info['containerId']], text=True))[0]
           if actual['HostConfig']['Privileged']:
               raise SystemExit('Privileged container is outside the X12 boundary')
-          allowed = {
-              str(Path(os.environ['GITHUB_WORKSPACE']) / ('x12-work-' + os.environ['X12_JOB'])),
-              str(Path(os.environ['GITHUB_WORKSPACE']) / 'x12-control'),
-              '/opt/x12/andthen/plugin', '/etc/x12', '/var/lib/x12/state',
-          }
-          for mount in actual['Mounts']:
-              if mount['Type'] == 'bind' and mount['Source'] not in allowed:
-                  raise SystemExit('Unexpected bind mount: ' + mount['Source'])
-              if mount['Destination'] in ('/opt/x12-control', '/opt/andthen', '/opt/x12-config') and mount['RW']:
-                  raise SystemExit('Controller, plugin and configuration mounts must be read-only')
-          (host / 'inspect.json').write_text(json.dumps(actual, indent=2))
+          guarded = {'/opt/x12-control', '/opt/andthen', '/opt/x12-config'}
+          mounted = {m['Destination']: m['RW'] for m in actual['Mounts']}
+          if not guarded <= set(mounted) or any(mounted[d] for d in guarded):
+              raise SystemExit('Controller, plugin and configuration must be mounted read-only')
           PY
 
-      - name: Run the bounded inner loop
+      - name: Run the inner loop
         shell: bash
         env:
           GH_TOKEN: ${{ secrets.X12_GITHUB_TOKEN }}
-          ANTHROPIC_API_KEY: ${{ secrets.X12_ANTHROPIC_API_KEY }}
+          # Your own subscription token from `claude setup-token`, stored as a secret of your own repo. Never also
+          # set ANTHROPIC_API_KEY here: in -p mode an API key wins over this token.
+          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.X12_CLAUDE_CODE_OAUTH_TOKEN }}
         run: |
           set -euo pipefail
-          mapfile -t x12_container < <(python3 - <<'PY'
-          import json, os
-          from pathlib import Path
-          value = json.loads(Path('/var/lib/x12/host-jobs', os.environ['X12_JOB'], 'container.json').read_text())
-          print(value['containerId'])
-          print(value['remoteUser'])
-          print(value['remoteWorkspaceFolder'])
-          PY
-          )
-          x12_stop() { docker stop --time 10 "${x12_container[0]}" >/dev/null 2>&1 || true; }
-          trap x12_stop EXIT
-          trap 'exit 130' INT
-          trap 'exit 143' TERM
-          x12_args=(--config /opt/x12-config/config.json --branch "$X12_BRANCH" --sha "$X12_SHA" --plan "$X12_PLAN" --base main --c2-approved)
+          field() { python3 -c 'import json, sys; print(json.load(open(sys.argv[1]))[sys.argv[2]])' "$X12_HOST/container.json" "$1"; }
+          x12_args=(--config /opt/x12-config/config.json --branch "$X12_BRANCH" --sha "$X12_SHA" --plan "$X12_PLAN" --c2-approved)
           if [[ "$X12_PUBLISH" == true ]]; then x12_args+=(--publish); fi
-          # Docker reads these values from this step's environment; no token is a literal argument.
-          docker exec --user "${x12_container[1]}" --workdir "${x12_container[2]}" \
-            --env GH_TOKEN --env ANTHROPIC_API_KEY --env GITHUB_SERVER_URL --env GITHUB_REPOSITORY --env GITHUB_RUN_ID --env X12_JOB \
-            "${x12_container[0]}" python3 /opt/x12-control/labs/x12-plan-to-pr/run.py "${x12_args[@]}"
+          # Docker reads the secrets from this step's environment; none is a literal argument.
+          docker exec --user "$(field remoteUser)" --workdir "$(field remoteWorkspaceFolder)" \
+            --env GH_TOKEN --env CLAUDE_CODE_OAUTH_TOKEN --env GITHUB_SERVER_URL --env GITHUB_REPOSITORY --env GITHUB_RUN_ID --env X12_JOB \
+            "$(field containerId)" python3 /opt/x12-control/labs/x12-plan-to-pr/run.py "${x12_args[@]}"
 
+      # A foreground `docker exec` neither runs bash traps nor forwards signals, so a cancelled job is stopped here.
       - name: Stop only this job's retained container
         if: always()
         shell: bash
         run: |
-          set -euo pipefail
-          python3 - <<'PY'
-          import json, os, re, subprocess
-          from pathlib import Path
-          path = Path('/var/lib/x12/host-jobs', os.environ['X12_JOB'], 'container.json')
-          if path.is_file():
-              container = json.loads(path.read_text()).get('containerId', '')
-              if re.fullmatch('[0-9a-f]{64}', container):
-                  subprocess.run(['docker', 'stop', '--time', '10', container], check=False, timeout=20)
-          PY
+          if [[ -f "$X12_HOST/container.json" ]]; then
+            docker stop --time 10 "$(python3 -c 'import json, sys; print(json.load(open(sys.argv[1]))["containerId"])' "$X12_HOST/container.json")" || true
+          fi
 
-      - name: Collect only this job's retained evidence
-        if: always()
-        shell: bash
-        run: |
-          set -euo pipefail
-          python3 - <<'PY'
-          import json, os, shutil
-          from pathlib import Path
-          host = Path('/var/lib/x12/host-jobs', os.environ['X12_JOB'])
-          if not (host / 'container.json').is_file():
-              raise SystemExit(0)
-          info = json.loads((host / 'container.json').read_text())
-          for status in Path('/var/lib/x12/state/runs').glob('*/status.json'):
-              value = json.loads(status.read_text())
-              if value.get('job_id') == os.environ['X12_JOB']:
-                  for source in status.parent.rglob('*'):
-                      selected = source.name == 'status.json' or source.suffix == '.md' or source.name.startswith(('final-check-', 'post-ship-check-'))
-                      if source.is_file() and not source.is_symlink() and selected:
-                          target = host / 'evidence' / source.relative_to(status.parent)
-                          target.parent.mkdir(parents=True, exist_ok=True)
-                          shutil.copy2(source, target)
-          PY
-
-      - name: Upload evidence even when a gate fails
+      - name: Upload the run record and reports even when a gate fails
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: x12-${{ github.run_id }}-${{ github.run_attempt }}
           path: |
-            /var/lib/x12/host-jobs/${{ github.run_id }}-${{ github.run_attempt }}/
+            /var/lib/x12/state/${{ github.run_id }}-${{ github.run_attempt }}/status.json
+            /var/lib/x12/state/${{ github.run_id }}-${{ github.run_attempt }}/**/*.md
+            /var/lib/x12/state/${{ github.run_id }}-${{ github.run_attempt }}/final-check-*
+            /var/lib/x12/state/${{ github.run_id }}-${{ github.run_attempt }}/post-ship-check-*
           retention-days: 7
           if-no-files-found: warn
 
