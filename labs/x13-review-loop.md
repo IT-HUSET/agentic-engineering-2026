@@ -57,7 +57,7 @@ A `Note` finding is one no fix round may apply without you. One open `Note` can 
 
 Measured once per variant, so read these as a pattern, not a benchmark.
 
-- **"Until PASS" on Claude Code:** fixed all four planted bugs, three reviews, 25 minutes, about 6 USD. The coordinator ran the reviews in its own session and changed the reviewer's FAIL to PASS itself.
+- **"Until PASS" on Claude Code:** fixed all four planted bugs, three reviews, 25 minutes. The coordinator ran the reviews in its own session and changed the reviewer's FAIL to PASS itself.
 - **The recipe as a skill on Claude Code:** fixed all four bugs, kept the coordinator's context small (10 turns), and reported the reviewer's FAIL as written. A first version of the skill stopped too early on MEDIUM findings moved to the backlog: the wording left out "CRITICAL or HIGH".
 - **The recipe as a skill on Codex:** fixed all four bugs and committed each fix round. It was stopped by hand after four reviews and 90 minutes, because each review found a smaller issue further from the bugs. A small target keeps the loop short.
 
