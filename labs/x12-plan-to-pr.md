@@ -14,14 +14,14 @@ Pull X12 when this is true for your team:
 
 Start with one small plan run sequentially. Independent stories and parallel worktrees are not needed here.
 
-**Status: preparation for AndThen 1.2.0.** The release is expected to make `ship --auto` publish a PR. The preparation kit must be checked against that release and rehearsed on the remote VM before this lab is offered. Offline tests exercise the orchestrator with fake tools; they do not prove that a model, the container wiring or GitHub publishing works. Publishing is disabled in the example configuration.
+**Status, 2026-11-15: AndThen 1.2.0 is available on `develop`.** Its installed `ship` skill confirms that `--auto` authorises branch push and PR creation. Pin the source revision and verify the remote installation, then complete the live rehearsal before this lab is offered. Offline tests exercise the orchestrator with fake tools; they do not prove that a model, the container wiring or GitHub publishing works. Publishing is disabled in the example configuration.
 
 ## Input
 
 - [X5's unattended-run boundary and policy](x5-parallel-autonomy.md#going-further), plus an [X11 remote environment](x11-remote-environment.md) that has passed its own checks. Azure is the main path; Hetzner uses the same job contract.
 - A trusted course repo and a pushed feature branch. Commit the complete plan bundle, its FIS files and referenced requirements. **A human approves C2 before the job starts.** Record the approved commit SHA and plan path in the team's gate log. The job cannot verify that a checkbox represents a real conversation.
 - A green baseline and concrete full-check commands. Use a small case plan with no unresolved scope decisions, initially a server-side or CLI slice. A UI plan also needs actual browser evidence. The facilitator may supply X5's prepared workload, copied to the course repo and reviewed for C2; X5's local clones without a remote are not ready for this lab.
-- A runner restricted to the course repo, model access, project-scoped GitHub access, git identity and a pinned AndThen plugin directory. Live execution requires a released AndThen version of at least 1.2.0. Do not edit a version string to bypass the check.
+- A runner restricted to the course repo, model access, project-scoped GitHub access, git identity and a pinned AndThen plugin directory. Live execution requires AndThen of at least 1.2.0 at a recorded source revision; 1.2.0 from `develop` is available for rehearsal. Do not edit a version string to bypass the check.
 - The [preparation kit](x12-plan-to-pr/README.md), with a workflow template, configuration, permission settings, orchestrator and offline tests.
 
 ## Output
@@ -50,7 +50,7 @@ Write down the exact source commit, target base and plan path. List the conditio
 
 The runner is a service on the VM host, outside the agent container. It starts a separate workspace/container per job using the repo's devcontainer configuration. The agent receives the workload and the credentials deliberately assigned to it; it receives no host Docker socket, SSH agent or Azure management login. A container is not an approval of arbitrary fork code: the main exercise accepts only the team's trusted repo and branch.
 
-The orchestrator and its configuration come from the trusted control revision, not from the branch the agent is implementing. A reviewed start SHA pins the input. A final remote-tip check detects intervening pushes, but does not make `ship`'s subsequent push atomic. Test the release's behaviour for a concurrent push and never permit force-push as a workaround.
+The orchestrator and its configuration come from the trusted control revision, not from the branch the agent is implementing. A reviewed start SHA pins the input. A final remote-tip check detects intervening pushes, but does not make `ship`'s subsequent push atomic. Test the pinned version's behaviour for a concurrent push and never permit force-push as a workaround.
 
 </details>
 
@@ -86,13 +86,13 @@ The orchestrator starts a fresh agent invocation for each stage. The skill seque
 
 The separate review without `--fix` confirms the result of the fixes. Repeat only within the chosen limit, initially at most three fix rounds. Run the configured full checks against the final tree independently of the agent's prose summary. A wrapper's structured stage result is not a new native AndThen artifact format; compare it with the actual plan and review reports.
 
-After 1.2.0 is released, the facilitator checks the release contract and completes the live rehearsal. Only then enable publication in the trusted configuration and trigger a publishing run. The last skill call uses the same plan:
+With 1.2.0 available on `develop`, the facilitator verifies the pinned source and remote installation and completes the live rehearsal. Only then enable publication in the trusted configuration and trigger a publishing run. The last skill call uses the same plan:
 
 ```text
 /andthen:ship --auto <plan-path> Keep the plan bundle and design folders. Retain the committed review evidence. Target the configured base branch. Open a PR; do not merge it or force-push.
 ```
 
-The kit passes this mandate to `ship`; it does not replace it with a separate PR publisher. Check the actual PR's repo, head, base and revision after the call. A reported success without that PR is a failed release-contract check.
+The kit passes this mandate to `ship`; it does not replace it with a separate PR publisher. Check the actual PR's repo, head, base and revision after the call. A reported success without that PR is a failed publication-contract check.
 
 ### 5. Try the failure paths
 
@@ -121,7 +121,7 @@ Record one change to the team's unattended-run policy based on the failure probe
 
 - [ ] The approved source SHA, plan path, checks and target branch are recorded before execution.
 - [ ] Offline orchestration tests pass and are labelled separately from live results.
-- [ ] Live execution uses the released plugin and the intended remote container, with measured tool versions and access checks.
+- [ ] Live execution uses the pinned plugin and the intended remote container, with measured tool versions and access checks.
 - [ ] Every required story has executed proof; the final review passes and configured full checks are green.
 - [ ] Duplicate and changed-branch probes prevent a second or stale publication.
 - [ ] The successful PR retains the plan and review evidence and points to the expected base and source result.
@@ -140,4 +140,4 @@ After the manual-dispatch path passes, add an intentional push trigger or a webh
 
 - [GitHub: manually running a workflow](https://docs.github.com/en/actions/how-tos/manage-workflow-runs/manually-run-a-workflow), [self-hosted runner requirements](https://docs.github.com/en/actions/reference/runners/self-hosted-runners), [workflow concurrency](https://docs.github.com/en/actions/how-tos/write-workflows/choose-when-workflows-run/control-workflow-concurrency).
 - [Claude Code: headless execution](https://code.claude.com/docs/en/headless), [permissions](https://code.claude.com/docs/en/permissions).
-- AndThen: [`exec-plan`](https://github.com/IT-HUSET/andthen/blob/main/plugin/skills/exec-plan/SKILL.md), [`review`](https://github.com/IT-HUSET/andthen/blob/main/plugin/skills/review/SKILL.md), [`ship`](https://github.com/IT-HUSET/andthen/blob/main/plugin/skills/ship/SKILL.md). Verify the released 1.2.0 contract before activation; `main` may move.
+- AndThen: [`exec-plan`](https://github.com/IT-HUSET/andthen/blob/develop/plugin/skills/exec-plan/SKILL.md), [`review`](https://github.com/IT-HUSET/andthen/blob/develop/plugin/skills/review/SKILL.md), [`ship`](https://github.com/IT-HUSET/andthen/blob/develop/plugin/skills/ship/SKILL.md). Verify the pinned 1.2.0 source and remote installation before activation; `develop` may move.

@@ -1,6 +1,6 @@
 # X12 preparation kit: plan to PR
 
-**Status, 2026-11-15:** prepared for **AndThen 1.2.0**, whose forthcoming `ship --auto` publication behaviour is the release owner's stated contract. The available 1.1.0 release stops before publication. Live runs therefore reject versions below 1.2.0 and prereleases. No model, GitHub PR, Actions runner or remote container has been exercised by this kit's offline tests. Complete the activation checklist before offering the exercise.
+**Status, 2026-11-15:** **AndThen 1.2.0 is available on `develop` and, according to the owner, is installed in both Claude Code and Codex on the instructor's workstation.** Its installed `ship` skill confirms that `--auto` authorises pushing the branch and opening the PR; incomplete publication ends with `BLOCKED:`. This is a source check, not a live publication test or evidence of a release tag on `main`. Pin the source commit used for rehearsal and verify the remote container's installation separately. Versions below 1.2.0 and prereleases remain rejected. No model, GitHub PR, Actions runner or remote container has been exercised by this kit's offline tests. Complete the activation checklist before offering the exercise.
 
 The controller runs inside the disposable devcontainer from [X11](../x11-remote-environment.md). GitHub's self-hosted runner runs **outside** that container on the VM. The controller starts a fresh headless Claude Code session for each stage:
 
@@ -59,7 +59,7 @@ sudo install -d -o "$x12_runner_user" -g "$x12_runner_user" /var/lib/x12/state /
 sudo install -d -m 0755 /etc/x12
 ```
 
-Once the release exists, install a reviewed, pinned AndThen checkout at `/opt/x12/andthen`, with its plugin at `/opt/x12/andthen/plugin`. Record the release tag, resolved commit and manifest version. Do not edit that checkout from a workload run. The container receives it read-only at `/opt/andthen`; `--plugin-dir` selects it explicitly. Each stage verifies that exactly one AndThen plugin loaded from that path and rejects plugin/MCP startup errors. CLI-local plugins replace same-name marketplace plugins, but managed `enabledPlugins` policy can prevent an override; check the actual startup metadata in the pilot.
+Install a reviewed, pinned AndThen 1.2.0 checkout from `develop` at `/opt/x12/andthen`, with its plugin at `/opt/x12/andthen/plugin`. Record the resolved commit and manifest version, and the tag when using a tagged release. The instructor's local installations do not provision or update this VM. Do not edit that checkout from a workload run. The container receives it read-only at `/opt/andthen`; `--plugin-dir` selects it explicitly. Each stage verifies that exactly one AndThen plugin loaded from that path and rejects plugin/MCP startup errors. CLI-local plugins replace same-name marketplace plugins, but managed `enabledPlugins` policy can prevent an override; check the actual startup metadata in the pilot.
 
 Copy `config.example.json` to `/etc/x12/config.json` and edit the **host** copy:
 
@@ -68,7 +68,7 @@ Copy `config.example.json` to `/etc/x12/config.json` and edit the **host** copy:
 - `plugin_dir`, `settings` and `state_dir`: keep the container paths shown in the example.
 - `checks`: replace the example with the application's real build/test/lint/type-check commands as argv arrays, run from its root. Commands do not pass through a shell. Configure every gate needed by the approved work, including browser checks when required. No UI check is implied by `pytest`.
 - `timeout_seconds`, `stage_budget_usd`, `max_budget_usd` and `max_fix_rounds`: explicit operational limits. The model CLI receives the lesser of its stage allowance and the remaining total. Startup, local checks and GitHub calls share the controller's runtime limit.
-- Leave **`publish_enabled: false`** until the release and live rehearsal checks pass.
+- Leave **`publish_enabled: false`** until source/version verification and the live rehearsal checks pass.
 
 Configuration and control code are mounted read-only. Shared state is writable and outside the workload repo. Ensure the container's actual `remoteUser` UID can write `/var/lib/x12/state` through that mount; Dev Container CLI normally adjusts it to the host user, but the pilot must demonstrate this.
 
@@ -99,7 +99,7 @@ The policy uses `dontAsk` and an explicit tool list. The controller adds push/PR
 
 ## 4. Dispatch and inspect
 
-The workflow's required inputs are `branch`, `source_sha`, `plan` and the C2 checkbox. Leave **publish off** for the first real model pilot after installing 1.2.0. From an already prepared container, the equivalent invocation is:
+The workflow's required inputs are `branch`, `source_sha`, `plan` and the C2 checkbox. Leave **publish off** for the first real model pilot after verifying the remote container's pinned 1.2.0 installation. From an already prepared container, the equivalent invocation is:
 
 ```bash
 python3 /opt/x12-control/labs/x12-plan-to-pr/run.py \
@@ -127,9 +127,9 @@ The final read-only review binds a clean code SHA. The controller copies its nat
 - A failure during or after `ship` can leave a pushed branch or PR even though the job reports `blocked`. Inspect GitHub and the local ledger before retrying. The controller marks `published` only after checking one open PR in the expected repository with the expected base, branch and final head SHA, the retained plan, clean tree and post-ship checks.
 - Archive the owned work and proof before the operator removes that job's container, unique workspace and volumes. Remove only resources identified in its saved Docker inspection and job directory. Do not sweep the VM while another team/job is using it. X11's provider cleanup still applies.
 
-## Activation checklist when 1.2.0 is available
+## Activation checklist with 1.2.0 from develop
 
-- [ ] Read the released `ship` skill and plugin documentation. Confirm `--auto` actually publishes, honours explicit keep instructions and reports failure without pretending success. Record tag, commit, manifest version and Claude Code version.
+- [ ] Pin the `develop` commit and read its `ship` skill and plugin documentation. Confirm the remote installation matches that source. Record commit, manifest version and Claude Code version, plus a tag when using a tagged release. The installed local skill already confirms the publication mandate; actual publishing, keep instructions and failure handling still need the live pilot.
 - [ ] Run the offline suite again and validate the copied workflow with actionlint/ShellCheck, including the custom `x12` label. Pin reviewed action revisions according to the organisation's policy before activation.
 - [ ] Rehearse the real VM service account, full devcontainer build, mounts, UID/state writes, plugin `system/init` metadata, authentication, Git helper and all application checks. This kit's offline suite does not prove those integrations.
 - [ ] Run one bounded plan with publication disabled. Compare every structured projection with its native reports. Confirm all three lenses ran, the native report parser matches 1.2.0 and the committed evidence contains the reviewed SHA.
@@ -141,10 +141,10 @@ The final read-only review binds a clean code SHA. The controller copies its nat
 
 ## References
 
-Checked 2026-11-15. AndThen 1.2.0 publication remains to be verified against the release.
+Updated 2026-11-15: 1.2.0 is available on `develop` and installed locally in Claude Code and Codex, as reported by the owner. Its publication mandate is source-checked; live publication and the complete remote chain remain untested.
 
 - [Claude Code headless execution](https://code.claude.com/docs/en/headless): structured output in `structured_output`, `system/init` plugin/error fields and noninteractive execution.
 - [Claude Code CLI reference](https://code.claude.com/docs/en/cli-reference), [permission modes](https://code.claude.com/docs/en/permission-modes), [plugin name conflicts](https://code.claude.com/docs/en/plugins/loading#name-conflicts): `--plugin-dir`, `--json-schema`, `--max-budget-usd`, `dontAsk` and managed plugin precedence.
 - [Dev Container CLI](https://github.com/devcontainers/cli), [CLI source](https://github.com/devcontainers/cli/blob/main/src/spec-node/devContainersSpecCLI.ts), [configuration source](https://github.com/devcontainers/cli/blob/main/src/spec-node/configContainer.ts): `up`, `--override-config` and original config-path resolution. CLI `--mount` does not accept `readonly`; the template uses Docker `runArgs` mounts instead.
 - [Manual workflow dispatch](https://docs.github.com/en/actions/how-tos/manage-workflow-runs/manually-run-a-workflow), [self-hosted runner communication](https://docs.github.com/en/actions/reference/runners/self-hosted-runners), [GitHub token behaviour](https://docs.github.com/en/actions/concepts/security/github_token).
-- [AndThen plugin contracts](https://github.com/IT-HUSET/andthen/blob/main/plugin/README.md), [plan schema](https://github.com/IT-HUSET/andthen/blob/main/plugin/references/plan-schema.md), [native review report template](https://github.com/IT-HUSET/andthen/blob/main/plugin/skills/review/references/report-template.md). The current 1.1.0 contracts informed execution/review parsing; the 1.2.0 activation checks cover the publication change.
+- [AndThen plugin contracts](https://github.com/IT-HUSET/andthen/blob/develop/plugin/README.md), [plan schema](https://github.com/IT-HUSET/andthen/blob/develop/plugin/references/plan-schema.md), [native review report template](https://github.com/IT-HUSET/andthen/blob/develop/plugin/skills/review/references/report-template.md). The original 1.1.0 contracts informed execution/review parsing. The installed 1.2.0 `ship` skill confirms the publication change; the activation checks must still exercise it and check the parsers against the pinned revision.
