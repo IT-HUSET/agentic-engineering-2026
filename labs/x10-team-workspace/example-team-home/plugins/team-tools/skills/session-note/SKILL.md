@@ -35,5 +35,5 @@ disable-model-invocation: true
    NOTE
    ```
 
-   The script runs gitleaks, puts the note on its own branch in a temporary worktree of team-home, pushes and opens a PR. It never touches team-home's working tree.
+   The script finds team-home through `TEAM_HOME` and falls back to `~/team-home`. Set `TEAM_HOME` if the clone lives elsewhere. It runs gitleaks, puts the note on its own branch in a temporary worktree of team-home, pushes and opens a PR. It never touches team-home's working tree.
 5. Print the PR link. Do not merge the PR: a human approves it.

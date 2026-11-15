@@ -6,6 +6,7 @@
 # Between work and tag, S01 and S02 are run in $X5/work (see the lab, "Who holds the plan?").
 # The unattended-pipeline deepening needs only work. To do both, build a second workload: X5=$HOME/x5-pipeline SOL=... ./setup.sh work
 set -euo pipefail
+unset UV_PROJECT_ENVIRONMENT   # the dev container sets it to one shared venv; each clone needs its own
 X5=${X5:-$HOME/x5}
 D=docs/specs/let-people-share-their-lists
 

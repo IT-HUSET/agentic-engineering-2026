@@ -5,7 +5,7 @@ Files for the two deepenings in [`../x5-parallel-autonomy.md`](../x5-parallel-au
 | File | What it does | Used in |
 |---|---|---|
 | `setup.sh` | `work` builds `$X5/work` (default `$HOME/x5`) as its own repo with the PRD, ADR, glossary and plan committed, `.claude/settings.json` with `worktree.baseRef: "head"` and `.claude/worktrees/` in `.gitignore`. `tag` checks that S01 and S02 are `done` in `plan.json`, that tracked files are clean and that the tests pass, then sets the tag `x5-start`. `clones` makes `x5-a1`, `x5-b1` and `x5-c1` from the tag, without `origin`, and prints three SHAs | Both |
-| `settings.json` | The fence for unattended runs: `dontAsk` allowlist, `.env` denied, sandbox with no network, write access to the repo's `.git` and uv's cache. Replace the two placeholders. Passed to every run with `--settings` | Pipeline |
+| `settings.json` | The fence for unattended runs, used with `--permission-mode auto`: no allow rules, so the classifier reviews every shell command; `.env` denied, bypass mode disabled, `git push` asks, sandbox with no network and `autoAllowBashIfSandboxed` off (sandboxed commands still reach the classifier), token variables unset inside it, write access to the repo's `.git` and uv's cache. Replace the two placeholders. Copy it to `.claude/settings.json` | Pipeline |
 | `fence-check.sh` | Checks in the container that the host's credentials did not follow you in: `SSH_AUTH_SOCK`, `ssh-add -l`, `credential.helper`, `git credential fill`, `gh auth status` and token variables. OK or WARNING per check, never prints a secret | Who holds the plan |
 | `overlap.sh` | Load with `source`. `areas <fis>` lists the files under `### Work Areas`, `overlap <clone> <range>` the files both S03 and S04 committed | Who holds the plan |
 | `templates.md` | The guess and the rule | Who holds the plan |
@@ -28,6 +28,7 @@ Not checked:
 
 - All three forms (A, B, C) and `/andthen:review` on their results.
 - `setup.sh` with a real `uv` and in the real container. `fence-check.sh` in a real container with the host's credentials forwarded.
+- `settings.json` under `--permission-mode auto` in a real `claude -p` run (2026-11-16): the classifier's verdicts on `uv run pytest`, `git commit` and subagent spawns, and whether `autoAllowBashIfSandboxed: false` sends sandboxed commands to the classifier. The shape follows the Claude Code documentation, not a run.
 - `story-pipeline.js` against the real workflow runtime, and whether a workflow subagent can reach `andthen:exec-plan`. It uses `isolation: 'worktree'` on parallel agents, while AndThen's `story-worktrees.md` (v1.1.0) has the orchestrator create worktrees itself.
 - That a rerun of `exec-plan` resumes after a manual merge, `claude --bg` with a skill as the prompt from the shell, which branch name a background session's worktree gets, and that `/usage` carries the subagents' cost.
 

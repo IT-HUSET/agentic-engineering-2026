@@ -26,7 +26,7 @@ The domain-heavy case your team works on: its PRD, and `docs/UBIQUITOUS_LANGUAGE
 ## Output
 
 - An event-storm board under `docs/models/event-storms/` and a report under `.agent_temp/reviews/` (`<scope>-domain-<agent>-<date>.md`).
-- `docs/DOMAIN-MAP.md`: classified subdomains with a rationale each, bounded contexts with their owning team, and an integration pattern per pair of contexts (current and target when the code exists).
+- `docs/DOMAIN-MAP.md`: classified subdomains with a rationale each, bounded contexts with their owning team, and an integration pattern per channel between contexts that exchange data (current and target when the code exists).
 - An HTML page of the map from `visualize`, in `.agent_temp/visualize/`.
 
 ## Steps
@@ -61,7 +61,7 @@ The domain-heavy case your team works on: its PRD, and `docs/UBIQUITOUS_LANGUAGE
 
 - [ ] Every subdomain is classified (core, supporting or generic) with a one-line rationale, not just a name.
 - [ ] Each bounded context is sized so you could name one team to own it, with no catch-all context.
-- [ ] Each pair of contexts has a **named integration pattern**, not a bare arrow. That is the difference between a diagram and a design.
+- [ ] Each pair of contexts that exchange data has a **named integration pattern**, one row per channel, not a bare arrow. That is the difference between a diagram and a design.
 - [ ] A contested call (the two-cores tension) is recorded in the map's Open Questions or as a hotspot, not forced.
 - [ ] Terms that mean two things across contexts are in the glossary's **Overloaded Terms**, spelled exactly as the map spells the context.
 - [ ] The map holds no glossary terms (the glossary holds each term once), and the story boundaries in `plan.json` follow the context boundaries.

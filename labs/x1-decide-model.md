@@ -6,7 +6,7 @@
 
 **What you have at the end:** one ADR per real decision, a glossary that the PRD, the FIS files and the code agree with, and a spike verdict for any question only code could answer.
 
-> **Skills:** `decide`, `domain --mode glossary`, `spike` · You apply what the Day 1 talks covered. This exercise does not re-teach the theory.
+> **Skills:** `decide`, `domain --mode glossary`, `spike` · You apply what F3 and the Day 1 architect-role talk covered. This exercise does not re-teach the theory.
 
 ## When to pull it
 
@@ -25,7 +25,7 @@ Your team's `<feature-dir>/prd.md`, plus `docs/DECISIONS.md` and `docs/UBIQUITOU
 ## Output
 
 - One ADR per real decision in `docs/adrs/`, each with a row in `docs/DECISIONS.md`, or a one-line *Still Current* entry for a load-bearing choice with no real alternative.
-- For a contested decision, trade-off artifacts under `docs/research/` (or `--output-dir`): `research.md`, `tradeoff-matrix.md`, `recommendation.md`.
+- For a contested decision, trade-off artifacts under `docs/research/<topic>/` (or `<--output-dir>/<topic>/`): `research.md`, `tradeoff-matrix.md`, `recommendation.md`.
 - A curated `docs/UBIQUITOUS_LANGUAGE.md`.
 - For an empirical question, a **Spike Verdict** in chat and throwaway code on a `spike/<slug>` branch.
 
@@ -38,14 +38,14 @@ Your team's `<feature-dir>/prd.md`, plus `docs/DECISIONS.md` and `docs/UBIQUITOU
    ```
    It opens with its own sorted list; add, drop or move points. It asks one decision per question, recommendation first.
    - A **contested** decision (no option stands out, or the evidence is missing) runs a weighted trade-off. Confirm the options, criteria and weights **before** it researches: wrong weights waste the research. Name a count if you want fewer than five ("compare three options").
-   - Close options on a **two-way door** skip the analysis. That is the skill telling you the fork is not worth one.
+   - Close options on a **two-way door** are not contested and skip the weighted trade-off. A decision with real alternatives still gets an ADR. A load-bearing choice with no real alternative ("SQLite stays the store") gets a *Still Current* line, and a choice local to one story is left to `plan`.
    - A decision it labels **one-way** (costly to reverse) deserves the slowest read. Check the *Reversal* line says what reversing would take.
    - You choose `Accepted` or `Proposed` when it plays the settled set back. Choose `Proposed` when someone else must sign off.
-3. **When running code is the only answer: spike.** If `decide` says a question needs measurement, or you hit one yourself:
+3. **When running code is the only answer: spike.** `decide` normally hands such a question to `spike` itself and folds the verdict back in as evidence. Outside `decide`, or when you hit the question yourself, run:
    ```text
    /andthen:spike "does the SQLite query for 'lists shared with me' stay fast with 10k shares?"
    ```
-   It confirms the question with you, builds throwaway code in its own worktree under `.agent_temp/spike/`, and reports a verdict: the answer, the evidence, and what the spike did **not** cover. The code stays on a `spike/<slug>` branch as evidence and is never merged or reused. Fold the verdict back into `decide` as evidence.
+   Then run `/andthen:decide <feature-dir>` again with the Spike Verdict. Invoked directly, `spike` confirms the question with you. It builds throwaway code in its own worktree under `.agent_temp/spike/` and reports a verdict: the answer, the evidence, and what the spike did **not** cover. The code stays on a `spike/<slug>` branch as evidence and is never merged or reused.
 4. **Curate the glossary.** The foundation produced a first glossary. Here you tend it on your case:
    ```text
    /andthen:domain --mode glossary <focus area>
@@ -58,10 +58,10 @@ Your team's `<feature-dir>/prd.md`, plus `docs/DECISIONS.md` and `docs/UBIQUITOU
 - [ ] Each ADR states one decision plainly, names the criteria that decided it, and includes the floor option (do nothing, or extend what exists) among the alternatives.
 - [ ] Each ADR's **Reversal** line says one-way or two-way and what reversing takes.
 - [ ] `docs/DECISIONS.md` has a row per ADR with the status you chose.
-- [ ] Every decision you sorted as "binds beyond one story" has a record; every one you sorted "local to a story" does not have an ADR.
+- [ ] Every decision you sorted as "binds beyond one story" has a record (an ADR, or a *Still Current* line when there is no real alternative). None you sorted "local to a story" has an ADR.
 - [ ] A spike verdict, if you ran one, names what it did not cover.
 - [ ] Glossary: one canonical term per concept, banned synonyms in **Avoid**, no rationale or mechanism in a cell, and the FIS files use the terms.
 
 ## Sizing check
 
-*Did this fork earn an ADR, and did the vocabulary earn a glossary?* A real fork with different long-term consequences does. A choice that is cheap to undo either way does not: record it as a *Still Current* line or leave it to `plan`. Do not decide design the code has already settled, and do not compare five options when two are obviously dominated. When the "decision" is really a tangle of subdomains across many features, one ADR is the wrong tool: see X3.
+*Did this fork earn an ADR, and did the vocabulary earn a glossary?* A real fork with different long-term consequences does, and a close call on a two-way door still gets its ADR, just without the weighted trade-off. A load-bearing choice with no real alternative is a *Still Current* line, and a choice local to one story is left to `plan`. Do not decide design the code has already settled, and do not compare five options when two are obviously dominated. When the "decision" is really a tangle of subdomains across many features, one ADR is the wrong tool: see X3.

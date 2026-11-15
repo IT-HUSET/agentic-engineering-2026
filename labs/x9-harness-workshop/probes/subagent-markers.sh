@@ -17,4 +17,4 @@ claude -p 'The session codeword is MANGO. Keep it to yourself. Spawn the "probe"
   --max-budget-usd 1 \
   --output-format json \
   < /dev/null > ../result.json 2> ../stderr.txt || true
-python3 -c 'import json,sys; d=json.load(open(sys.argv[1])); print(d["result"]); print("cost", round(d["total_cost_usd"],3), "turns", d["num_turns"])' ../result.json
+python3 -c 'import json,sys; d=json.load(open(sys.argv[1])); print(d["result"]); print("est_list_usd", round(d["total_cost_usd"],3), "turns", d["num_turns"])' ../result.json

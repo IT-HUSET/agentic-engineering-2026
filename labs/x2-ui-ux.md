@@ -16,7 +16,7 @@ Pull X2 when one of these is true for your case:
 - **`clarify` pointed you here.** *Check:* its `Next (fresh session):` line named `ui-ux-design`, or the PRD's *Decisions Log* records that design runs before planning. If that line asks for a design system first and you have only one or two screens, ask for wireframes instead (step 4).
 - **A built screen needs checking** against a wireframe or a design reference.
 
-**Skip it** when the work has no UI surface: an API, a script or a logic change. Designing screens that do not exist is the design version of writing an ADR for a typo.
+**Skip it** when the work has no UI surface: an API, a script or a logic change. Designing screens for a case with no UI is the design version of writing an ADR for a typo.
 
 ## Input
 
@@ -33,7 +33,7 @@ Your team's `<feature-dir>/prd.md` (requirements as text, a file or a PRD is req
 ## Steps
 
 1. **Gate it.** Write one line: "This work has a UI surface because ____." If you cannot finish the sentence, stop here.
-2. **Manual: sketch the riskiest screen by hand.** For the share dialog, in `.agent_temp/x2-sketch.md` or on paper: the fields, the **empty** state, the **error** state ("no account for that email"), the **already shared** state, and the member list with a revoke control. Then name which existing component you would reuse (look in `src/app/templates/` and `src/app/static/`) before you invent a new one. The drawing is easy. The states it forces you to confront are the skill.
+2. **Manual: sketch the riskiest screen by hand.** For the share dialog, in `.agent_temp/x2-sketch.md` or on paper: the fields, the **empty** state, the **error** state ("no account for that email"), the **already shared** state, and the member list with a revoke control. Then name which existing component you would reuse (in your app's templates and static assets; in `todo-app/` that is `src/app/templates/` and `src/app/static/`) before you invent a new one. The drawing is easy. The states it forces you to confront are the skill.
 3. **Flows, if they are unclear.** In a fresh session:
    ```text
    /andthen:ui-ux-design "research the shared-lists flows" <feature-dir>/prd.md

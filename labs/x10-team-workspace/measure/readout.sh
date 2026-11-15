@@ -1,3 +1,4 @@
+printf 'run\tresult\test_list_usd\tturns\tseconds\tfiles_read\tgrep_glob_calls\tread_outside_catalog\n'
 for f in ~/x10/runs/*.jsonl; do jq -s -r --arg run "$(basename "$f" .jsonl)" '
   (map(select(.type=="result"))[0]) as $r
   | [.[] | select(.type=="assistant") | .message.content[]? | select(.type=="tool_use")] as $t

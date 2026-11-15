@@ -1,6 +1,6 @@
 # X11 preparation and operations
 
-X11 is individual. The first advanced group has four people: `p01`–`p04`, with VMs `x11-p01`–`x11-p04` in the shared temporary resource group `agentic-engineering-2026`. Participants are in **Seoul**. There is no automatic daily shutdown. The facilitator starts the VMs before the course, keeps them running while jobs need them, and manually deallocates them only after work is saved and no jobs are active. All course resources are removed after the course.
+X11 is individual. The first advanced group has four people: `p01`–`p04`, with VMs `x11-p01`–`x11-p04` in the shared temporary resource group `agentic-engineering-2026`. There is no automatic daily shutdown. The facilitator starts the VMs before the course, keeps them running while jobs need them, and manually deallocates them only after work is saved and no jobs are active. All course resources are removed after the course.
 
 Everything needed to operate or use the environments is in this folder: this runbook, [participant access](access.md), `azure.bicep`, `cloud-init.yaml` and `prepare-course.py`. The only durable local secret file is ignored `.agent_temp/x11-access.json`; it contains only each ID's IP and private key. Never commit it, copy it to a VM or attach it to a model prompt.
 
@@ -18,9 +18,9 @@ Reuse the full dev-container configuration. A Dockerfile-only build omits Featur
 - Use `IT-Huset MPN Gold`, Sweden Central, and name the cleanup owner. Confirm the selected subscription ID before creating anything.
 - Register `Microsoft.Compute` and `Microsoft.Network` if needed.
 - Confirm policy allows the VM/public IP with restricted SSH and the package/container registries. Participants need no Azure account, RBAC role, Entra invitation or Azure CLI. If they must manage Azure resources themselves, grant access to a separate per-person group such as `agentic-engineering-2026-p01`, not Contributor on the shared course group.
-- Check quota and size availability. The pilot used `Standard_D2s_v6` (2 vCPU, 8 GiB); D2s v5 had zero family quota. Ten regional vCPUs fit four personal VMs plus one rebuild VM. Recheck before the course.
-- Use the facilitator's current public IPv4 for preparation, then update SSH access to the Seoul venue's source address. Do not open SSH to every address. Use an approved private network instead if policy requires it.
-- Agree the cost owner and budget notifications. A budget alert is not a spending cap. Model usage is billed through the participant's agent subscription/API arrangement separately.
+- Check quota and size availability. The pilot used `Standard_D2s_v6` (2 vCPU, 8 GiB); D2s v5 had zero family quota. Ten regional vCPUs fit four personal VMs plus one rebuild VM at a time. Recheck before the course.
+- Use the facilitator's current public IPv4 for preparation, then update SSH access to the venue's source address. Do not open SSH to every address. Use an approved private network instead if policy requires it.
+- Agree the cost owner and budget notifications. A budget alert is not a spending cap. Azure pays only for the VMs; model usage comes from each participant's Claude plan (IT-HUSET team seat or own plan, D11).
 
 ## 1. Prepare the one local access file
 
@@ -39,6 +39,14 @@ This creates four distinct temporary ED25519 keys in `.agent_temp/x11-access.jso
 Only `ip` and `privateKey` are stored per ID. The file is owner-only (`600` on POSIX; a user-only ACL on Windows). Intermediate key files are generated in a protected transient directory and removed on success or failure. An existing destination is never overwritten. `create --count N --output-file .agent_temp/another-access.json` supports a separate rehearsal; the first group uses the default four-person file.
 
 The course-only keys are generated **without a passphrase** to allow preparation. Protect this file, hand each key only to its assigned person through the approved personal channel, and never share one key between people. Recipients may add a passphrase with `ssh-keygen -p`. Do not centrally sign into participants' model or GitHub accounts.
+
+**Participant-supplied key (preferred).** `prepare-course.py` has no command for a supplied public key: `create` generates every key, and each record in the access file must hold an OpenSSH private key. For a participant who sends a `.pub` file, pass that file's contents as `sshPublicKey` in step 2 instead of the generated one. For an already deployed VM, replace the key and keep file ownership:
+
+```bash
+az vm run-command invoke --resource-group "$x11_group" --name "$x11_vm" --command-id RunShellScript --scripts "printf '%s\n' '<participant-public-key>' > /home/course/.ssh/authorized_keys; ls -l /home/course/.ssh/authorized_keys"
+```
+
+Hand out no generated key for that ID, and record its IP in the public table. The generated key is then no longer authorised.
 
 The helper also supports:
 
@@ -74,7 +82,7 @@ Record the resolved image version and repo commit in the public preparation reco
 ```bash
 x11_participant='p01'
 x11_vm="x11-${x11_participant}"
-x11_public_key=$(uv run labs/x11-remote-environment/prepare-course.py public-key "$x11_participant")
+x11_public_key=$(uv run labs/x11-remote-environment/prepare-course.py public-key "$x11_participant")   # or the contents of the participant's own .pub file
 az deployment group what-if --resource-group "$x11_group" --template-file labs/x11-remote-environment/azure.bicep --parameters vmName="$x11_vm" vmSize="$x11_size" sshSourceIpv4="$x11_source_ip" sshPublicKey="$x11_public_key" imageVersion="$x11_image_version"
 ```
 
@@ -107,7 +115,7 @@ Then run the following **on each VM as `course`**, through an approved facilitat
 ```bash
 git clone https://github.com/<owner>/<repo>.git course-repo
 cd course-repo
-git switch --detach <recorded-course-commit>
+git switch -c x11-course <recorded-course-commit>
 devcontainer up --workspace-folder "$PWD"
 devcontainer exec --workspace-folder "$PWD" bash -lc 'cd todo-app && uv run pytest'
 docker ps
@@ -170,9 +178,22 @@ Test SSH from the venue before closing the old connection. Do not replace `/32` 
 
 ## 5. Rebuild proof and final cleanup
 
-To prove a replacement works, use the same repo commit, exact Ubuntu image version and public key, changing only `vmName` to `x11-p01-rebuild`. Keep the first machine until the second passes the same container/test/boundary checks. Do not copy disks, Docker volumes or credential caches.
+The rebuild is a **per-participant sequence**, because the regional quota holds four participant VMs plus one rebuild VM. For each participant in turn: deploy `x11-pNN-rebuild` with the same repo commit, exact Ubuntu image version and **that participant's public key**, changing only `vmName`. The participant transfers the source and repeats the checks with their own key. When their proof is saved, delete the rebuild before the next participant's starts. Keep the first machine throughout. Do not copy disks, Docker volumes or credential caches.
 
-The current prepared export is private and **not published upstream**. To rebuild it, transfer its git history without copying the container or credentials. On the original VM host:
+Put each rebuild in its own temporary group, so one deletion removes all of it:
+
+```bash
+x11_participant='p01'
+x11_vm="x11-${x11_participant}-rebuild"
+x11_rebuild_group="agentic-engineering-2026-${x11_participant}-rebuild"
+az group create --name "$x11_rebuild_group" --location "$x11_location" --tags course=agentic-engineering-2026 lifecycle=temporary
+x11_public_key=$(uv run labs/x11-remote-environment/prepare-course.py public-key "$x11_participant")   # or the participant's own .pub contents
+az deployment group what-if --resource-group "$x11_rebuild_group" --template-file labs/x11-remote-environment/azure.bicep --parameters vmName="$x11_vm" vmSize="$x11_size" sshSourceIpv4="$x11_source_ip" sshPublicKey="$x11_public_key" imageVersion="$x11_image_version"
+```
+
+After reviewing the preview, run the same command as `az deployment group create --name "$x11_vm" …`. Wait for `cloud-init status --wait` and verify the replacement's host fingerprint through Azure management, as in step 3, before the first SSH connection.
+
+The current prepared export is private and **not published upstream**, so transfer its git history without copying the container or credentials. On the original VM host:
 
 ```bash
 cd /home/course/course-repo
@@ -180,7 +201,7 @@ git bundle create /home/course/x11-source.bundle x11-course-20261115
 git bundle verify /home/course/x11-source.bundle
 ```
 
-On your own computer, use your assigned key and the public IPs for the original and replacement VM. Replace both placeholders; the facilitator verifies the replacement host fingerprint through Azure before its first SSH connection:
+The participant, on their own computer, with their own key (authorised on both VMs) and the two public IPs; both placeholders must be replaced:
 
 ```bash
 scp -i "$x11_private_key" -o ForwardAgent=no course@<original-public-ip>:/home/course/x11-source.bundle ./x11-source.bundle
@@ -192,14 +213,19 @@ On the replacement VM host as `course`, with no existing `course-repo` directory
 ```bash
 git clone /home/course/x11-source.bundle /home/course/course-repo
 cd /home/course/course-repo
-git switch -c x11-work x11-course-20261115
+git switch -c x11-course x11-course-20261115
 git remote remove origin
 devcontainer up --workspace-folder "$PWD"
 ```
 
-Then repeat the tests, mount/boundary probes and fresh personal sign-ins. This bundle contains only the recorded source tree and git history, not uncommitted work or containers. Push/save participant changes separately before deleting any machine. Remove the transfer bundle from both VM homes and your computer after the replacement is verified. When using a published case commit instead, the normal permitted clone route in step 3 applies.
+Then the participant repeats the tests, mount/boundary probes and fresh sign-ins. The bundle holds only the recorded source tree and history, not uncommitted work or containers. Push or save the participant's changes before deleting anything. After the proof is saved, remove the bundle from both VM homes and the participant's computer, then delete the rebuild group as a separate interactive action and confirm it is gone:
 
-Four 2-vCPU participant VMs plus this rebuild use the ten-vCPU regional quota. Deallocate the rebuild VM when its proof is saved, then remove its resources during cleanup.
+```bash
+az group delete --name "$x11_rebuild_group"
+az group exists --name "$x11_rebuild_group"
+```
+
+For a published case commit, the normal permitted clone route in step 3 applies instead of the bundle.
 
 After the course, verify **every participant** saved their code and proof outside the VMs. Inventory the shared group through ARM directly: `az resource list` returned an empty result despite existing resources in this tenant. Check the selected subscription, then delete the group as a separate interactive action:
 
@@ -212,7 +238,7 @@ az rest --method get --url "https://management.azure.com/subscriptions/${x11_sub
 az group delete --name agentic-engineering-2026
 ```
 
-Read the name and confirm at the CLI prompt; do not use `--yes`. This removes its VMs, disks, IPs, NICs, VNets, and NSGs. Confirm `az group exists --name agentic-engineering-2026` returns `false`. Separately inventory/remove any optional per-person groups. Once no longer needed, remove the one local secret JSON and individual exported course keys; keep participants' saved work and public proof.
+Read the name and confirm at the CLI prompt; do not use `--yes`. This removes its VMs, disks, IPs, NICs, VNets, and NSGs. Confirm `az group exists --name agentic-engineering-2026` returns `false`. Separately inventory and remove any optional per-person groups and any leftover rebuild groups. Once no longer needed, remove the one local secret JSON and individual exported course keys; keep participants' saved work and public proof.
 
 ## Public preparation record
 

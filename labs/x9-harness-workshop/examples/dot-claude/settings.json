@@ -1,4 +1,5 @@
 {
+  "env": { "TEAM_TEST_CMD": "python3 -m unittest -q" },
   "hooks": {
     "PreToolUse": [
       {

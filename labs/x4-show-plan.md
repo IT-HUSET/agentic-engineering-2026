@@ -20,7 +20,7 @@ Pull X4 when one of these is true for your plan:
 
 ## Input
 
-Your team's `<feature-dir>/plan.json` and `prd.md` from C2. If your plan is not ready, your facilitator has a several-story `plan.json` to use.
+Your team's `<feature-dir>/plan.json` and `prd.md` from C2. If your plan is not ready, use the several-story plan you parked in F4, `.agent_temp/whole-prd-plan/plan.json`, for `visualize` and `--dry-run` only. Never publish live from the lab repo.
 
 For `tracker`, GitHub through `gh` is the supported path, so `gh auth status` must show you signed in, and the repo needs a GitHub remote. Publish to your team's case repo, nowhere else.
 
@@ -47,8 +47,8 @@ For `tracker`, GitHub through `gh` is the supported path, so `gh auth status` mu
    ```text
    /andthen:tracker publish <feature-dir>/plan.json --dry-run
    ```
-   It shows what each issue would gain or lose and writes nothing. Check: one parent issue carrying the PRD and a story checklist, and a child issue per story titled `S03 - <name>` with its scope, intent, expected outcomes, acceptance scenarios and dependencies. **No issue names a file or a commit**, because both are gone after the merge.
-6. **Publish to your team's case repo.**
+   It shows what each issue would gain or lose and writes nothing. Check: one parent issue carrying the PRD and a story checklist, and a child issue per story titled `shared-lists S03 - <name>` (plan directory name, story id, name) with its scope, intent, expected outcomes, acceptance scenarios and dependencies. **No issue names a file or a commit**, because both are gone after the merge.
+6. **Publish to your team's case repo.** Skip this step on the parked F4 plan.
    ```text
    /andthen:tracker publish <feature-dir>/plan.json
    ```

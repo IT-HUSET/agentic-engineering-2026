@@ -1,12 +1,22 @@
 {
   "permissions": {
-    "allow": ["Bash", "Read", "Edit", "Write", "Glob", "Grep", "Agent", "Task", "Skill", "TodoWrite"],
     "deny": ["Read(**/.env)", "Read(**/.env.*)"],
-    "ask": ["Bash(git push *)", "Bash(dangerouslyDisableSandbox:true)"]
+    "ask": ["Bash(git push *)", "Bash(dangerouslyDisableSandbox:true)"],
+    "disableBypassPermissionsMode": "disable"
   },
   "sandbox": {
     "enabled": true,
+    "autoAllowBashIfSandboxed": false,
     "network": { "allowedDomains": [], "strictAllowlist": true },
+    "credentials": {
+      "envVars": [
+        { "name": "GITHUB_TOKEN", "mode": "deny" },
+        { "name": "GH_TOKEN", "mode": "deny" },
+        { "name": "NPM_TOKEN", "mode": "deny" },
+        { "name": "ANTHROPIC_API_KEY", "mode": "deny" },
+        { "name": "OPENAI_API_KEY", "mode": "deny" }
+      ]
+    },
     "filesystem": {
       "allowWrite": ["<ABSOLUTE PATH TO THE REPO'S .git>", "<OUTPUT OF uv cache dir>"]
     }

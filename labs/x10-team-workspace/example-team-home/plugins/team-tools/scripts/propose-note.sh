@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
 # Reads a session note on stdin, runs gitleaks, pushes it on its own branch and opens a PR.
-# Requires TEAM_HOME (path to team-home), gitleaks, git and gh.
+# TEAM_HOME is the path to team-home and defaults to ~/team-home. Requires gitleaks, git and gh.
 set -euo pipefail
 
 slug=${1:?Give a kebab-case topic as the first argument}
-: "${TEAM_HOME:?Set TEAM_HOME to the path of team-home}"
+TEAM_HOME=${TEAM_HOME:-$HOME/team-home}
+[ -d "$TEAM_HOME/.git" ] || { echo "No git repo at $TEAM_HOME. Set TEAM_HOME to the path of team-home." >&2; exit 1; }
 command -v gitleaks >/dev/null || { echo "gitleaks is missing." >&2; exit 1; }
 
 note=$(cat)

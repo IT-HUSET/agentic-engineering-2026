@@ -19,7 +19,7 @@ Pull X7 when one of these is true in your repo:
 
 ## Input
 
-Your own suite and `plan.json`. If you have none of these problems yet, use the `todo-app/` suite (`uv run pytest`) and the authorization rule from F6: a recipient of a view-only list must not be able to change it.
+Your own suite and `plan.json`. If you have none of these problems yet, use the `todo-app/` suite (`uv run pytest`) and the authorization rule from F6: a recipient of a view-only list must not be able to change it. Or `git switch bug-hunt` in your own repo (created with **Include all branches**): four planted bugs, two with red tests, two that only show when the app runs.
 
 ## Output
 

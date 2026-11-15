@@ -29,6 +29,8 @@ Claude Code's own rule of thumb for what to build ([Extend Claude Code](https://
 | Something must happen every time, without anyone asking | A hook |
 | A second repo needs the same set | A plugin |
 
+Claude Code's trigger for a `CLAUDE.md` line is two misses. The Playbook (§14, "Where a learning goes") captures a learning on the third repetition and asks first whether a sensor, a workflow step, a skill or a doc could carry it.
+
 ## Input
 
 - One of your team's own repos and a branch to work on, with its rules, skills and hooks as they are. **Fallback:** the demo repo (below).
@@ -53,13 +55,13 @@ labs/x9-harness-workshop/examples/demo-repo.sh /tmp/x9/demo
 | `examples/dot-claude/hooks/sensor-compile.py` | Sensor (`PostToolUse`): compiles the Python file that was just changed | H5 |
 | `examples/dot-claude/hooks/gate-tests-green.py` | Gate (`Stop`): blocks the stop once when the tests are red | H5 |
 | `examples/dot-claude/settings.json` | Registers the three hooks | H5 |
-| `probes/isolation-check.sh <dir> <model>` | What an empty headless run loads, with and without your user configuration | H1 |
+| `probes/isolation-check.sh <dir> <model> <phrase>` | What an empty headless run loads, with and without your user configuration | H1 |
 | `probes/subagent-markers.sh <dir> <model>` | Three codewords and a subagent asked which it knows | H2 |
 | `traps/run-trap.sh <trap> <runs> <model> <out>` and `traps/trap-*/` | Three traps that run one task with and without a rule in `CLAUDE.md` | H6, optional |
 
 The examples are an answer key and a fallback. Build your own from something your team actually repeats. The directory is called `dot-claude`, not `.claude`, so Claude Code does not load the examples while you work in this repo. `demo-repo.sh` copies it to `.claude/`.
 
-The probes and traps run `claude -p` with `--setting-sources project --strict-mcp-config` and `--max-budget-usd 1` per run. The traps and `subagent-markers.sh` also run with a narrow `--allowedTools` list; `isolation-check.sh` does not. That flag drops your own deny rules along with the rest of your user configuration, so run them only against the demo repo or in a container.
+The probes and traps run `claude -p` in workspaces they create under the directory you pass. Pass one under `/tmp` or in a container, never inside a real repo or under a `CLAUDE.md`. Two of `isolation-check.sh`'s three arms, `subagent-markers.sh` and every trap use `--setting-sources project --strict-mcp-config`, which drops your user deny rules along with the rest of your user configuration, so they must stay in those scratch workspaces. The traps and `subagent-markers.sh` also run with a narrow `--allowedTools` list; `isolation-check.sh` does not. Each run has `--max-budget-usd 1` as a runaway cap against a client-side list-price estimate, not a bill. The scripts print that estimate as `est_list_usd`; your real limit is the plan's, shown by `/usage`.
 
 **Versions.** The Claude Code facts here were checked against its documentation on 2026-11-15 (version 2.1.325) and AndThen `v1.1.0`. The reference results were measured on 2026-11-13 and 2026-11-15 (dates per result) on Claude Code 2.1.323 with `claude-sonnet-5-5`, one run per row unless stated. Both tools change every week, so your results may differ. Not run when the reference results were measured: `/context`, `/doctor`, `/doctor prompt-audit`, `/skill-doctor`, `/tasks`, `/subtask`, `/advisor`, `opusplan`, skill-creator, `claude plugin eval` and everything in H7. Those were checked against the documentation only.
 
@@ -81,7 +83,7 @@ The probes and traps run `claude -p` with `--setting-sources project --strict-mc
 1. Everyone starts a fresh session and runs `/context`.
 2. Run `/doctor`. The report compares unused skills, MCP servers and plugins with what they cost in context, points out slow hooks, and suggests what in `CLAUDE.md` Claude could read from the code instead. Claude changes nothing without a yes. Answer no now and keep the list for H6.
 3. Run `/skill-doctor`: what each skill costs and how often it is used.
-4. Optional: `labs/x9-harness-workshop/probes/isolation-check.sh /tmp/x9/isolation <model>` loads an empty headless session three ways and prints the tokens each one held.
+4. Optional: `labs/x9-harness-workshop/probes/isolation-check.sh /tmp/x9/isolation <model> "<a phrase from your own ~/.claude/CLAUDE.md>"` loads an empty headless session three ways and prints the tokens each one held and whether your phrase reached the run.
 
 - **Keep:** a list of three things your team wants to remove or move.
 - **Check:** which line on your list do you pay for in every session without ever using it?
@@ -89,7 +91,7 @@ The probes and traps run `claude -p` with `--setting-sources project --strict-mc
 <details>
 <summary>Reference result</summary>
 
-Measured with `probes/isolation-check.sh` on 2026-11-13: an empty headless run loaded 43 711 tokens with the course owner's full user configuration and 31 002 with `--setting-sources project --strict-mcp-config`. Your number depends on your configuration. The point is the gap between the two.
+Measured with `probes/isolation-check.sh` on 2026-11-13, with a phrase from the course owner's own `~/.claude/CLAUDE.md`: an empty headless run loaded 43 711 tokens with the course owner's full user configuration and 31 002 with `--setting-sources project --strict-mcp-config`. Your number depends on your configuration. The point is the gap between the two.
 
 </details>
 
@@ -169,7 +171,9 @@ Claude Code takes the first one that exists: the model Claude names in the call 
 
 AndThen `v1.1.0` pins `oracle` at Fable and `high`, `implementer` at Sonnet and `high`, `reviewer` at Opus and `medium`, `worker` at Haiku and `high`.
 
-Step 4, measured once each on the demo repo (one function and two tests): both gave green tests. The whole run cost 0.05 dollars with `worker` and 0.14 with `implementer`.
+Step 4, measured once each on the demo repo (one function and two tests): both gave green tests, and `implementer` used about three times as much as `worker` (list-price estimate 0.14 against 0.05 dollars, not a bill). Compare your own turns, wall time and `/usage`.
+
+From AndThen 1.2.0 (tagged 2026-11-15, not released when this was written) `implementer` is pinned at Opus instead of Sonnet, so the same comparison then pits two different models. Rerun it.
 
 </details>
 
@@ -215,7 +219,7 @@ In the demo repo, the prompt "I have staged a change. Record it in the changelog
 <details>
 <summary>Pitfalls</summary>
 
-- If the frontmatter cannot be parsed, the skill loads without a description and is never chosen (`claude plugin validate .claude/skills`).
+- If the frontmatter cannot be parsed, the skill loads without a description and is unlikely to be chosen (`claude plugin validate .claude/skills`).
 - The skill's text is read in once and not read again, so write it as standing instructions, not one-off steps.
 - After a compaction only the skill's first 5 000 tokens remain, so the most important part goes first.
 
@@ -266,9 +270,9 @@ You can reproduce the script-level results without a model by piping a JSON even
 |---|---|
 | The sensor writes to stderr and exits 0 | Claude never sees it. Exit 2 |
 | The gate runs the whole suite after every reply, also after a plain question | `Stop` fires every time Claude finishes answering. Run only when the working tree has changed, as the example does |
-| Your team builds its own check before commit | A project skill named `verify` is run by Claude on its own before every commit (2.1.286 and later) |
+| Your team builds its own check before commit | A project skill (a plugin skill does not count) named `verify` or `simplify` is run by Claude on its own before each commit, except for changes to docs or tests (2.1.286 and later) |
 | The guard matches `git add -A` and the agent takes another route | A hook matches commands, not intent. Put the check on the result instead, in the gate |
-| A rule should only apply while a certain skill runs | Put the hook in the skill's frontmatter (`hooks:`). It applies from the invocation to the end of the session |
+| A rule should apply once a skill has been used | Put the hook in the skill's frontmatter (`hooks:`). It applies from the invocation to the end of the session, not only while the skill's steps run |
 | Your team builds a gate for something `/goal` already does | `/goal <condition>` is a built-in, session-bound gate where a model judges the condition after every turn |
 
 </details>
@@ -290,7 +294,7 @@ You can reproduce the script-level results without a model by piping a JSON even
    | How the answers should sound | An output style |
    | Something the agent does anyway | Nowhere |
 
-3. **See what three rules do.** Three rules from AndThen's template were run with and without the rule in a trap. Guess the outcome for each before you open the result. Optionally build a trap of your own for a rule your team disputes, on the same pattern (`labs/x9-harness-workshop/traps/`). A trap with two arms of five runs costs about half a dollar:
+3. **See what three rules do.** Three rules from AndThen's template were run with and without the rule in a trap. Guess the outcome for each before you open the result. Optionally build a trap of your own for a rule your team disputes, on the same pattern (`labs/x9-harness-workshop/traps/`). Two arms of five runs came to about half a dollar at list price (an estimate, not a bill):
 
    ```bash
    labs/x9-harness-workshop/traps/run-trap.sh labs/x9-harness-workshop/traps/trap-attribution 5 <model> /tmp/x9/attribution

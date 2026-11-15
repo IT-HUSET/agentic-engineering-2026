@@ -12,16 +12,16 @@
 
 Pull X5 when one of these is true for your plan:
 
-- **Parallel: two stories that do not depend on each other.** *Check:* open `<feature-dir>/plan.json`. Are there two or more pending stories that `dependsOn` does not connect? If every story chains behind the one before, `--worktree` buys nothing: run the plan plainly.
+- **Parallel: two stories that do not depend on each other.** *Check:* open `<feature-dir>/plan.json`. Are there two pending stories with no dependency path between them, directly or through a third story, so that both become ready together? If every story chains behind the one before, `--worktree` buys nothing: run the plan plainly.
 - **Unattended: you are ready to stop watching.** *Check:* you have read the FIS files, C3 is green, and you are willing to read afterwards what the run assumed.
 
 ## Input
 
-Your team's plan after C3: `plan.json` with the first story `done` and at least two stories left. If your plan has no independent stories, your facilitator has a prepared several-story plan with two independent stories to run on.
+Your team's plan after C3: `plan.json` with the first story `done` and at least two stories left. If your plan has no independent stories, use the workload from [Going further](#going-further) instead: build it with `setup.sh work`, run S01 and S02 one after the other (`/andthen:exec-plan <FIS>` each, in a fresh session), and continue at step 3 with S03–S05. S03 and S04 are independent once S02 is done, but they share files, so a merge conflict is a likely outcome. The Verify list covers a failed story.
 
 ## Output
 
-- A plan run: every story `done` with a `verified.summary`, one commit per story, and an aggregate report that ends in a `Scope:` line and a `Verification:` line.
+- A plan run: every story `done` with a `verified.summary`, at least one commit per story carrying its `Story-ID:` trailer, and an aggregate report that ends in a `Scope:` line and a `Verification:` line.
 - Under `--worktree`: one `story/<id>` branch per story merged with a `git merge --no-ff`.
 - A sandbox you have seen refuse a command, a destructive-command hook you have seen fire, and role agents that pin model and effort per task type.
 
@@ -29,7 +29,7 @@ Your team's plan after C3: `plan.json` with the first story `done` and at least 
 
 ### 1. Entry check
 
-1. List independent stories: for each pending story, write its `dependsOn`. Circle two with no edge between them.
+1. List independent stories: for each pending story, write its `dependsOn`. Circle two with no path between them, not even through a third story.
 2. For `--worktree`, check two preconditions. Tracked files must have no uncommitted changes (`git status`), and the plan bundle must be **committed**: a gitignored `docs/specs/` fails the run, because a worktree holds no copy of an untracked bundle.
 
 ### 2. Sequential baseline
@@ -59,14 +59,14 @@ Run this before you turn the sandbox on in step 4. The OS sandbox denies writes 
 
 ### 4. Draw the boundary before you go unattended
 
-An agent's shell commands run as you. Three layers catch what the one above misses: **approval** (a prompt, not a boundary), **rules** (patterns that match a command as written, so a deny on `curl` misses the same request made from a script), and the **OS sandbox** (the only layer that contains a command). Read `permissions/README.md` and `hooks/README.md` in the AndThen repository (github.com/IT-HUSET/andthen, tag `v1.0.0`, the version the course pins). Then, if you choose to (this is opt-in, touches your personal settings, and covers Claude Code and Codex only):
+An agent's shell commands run as you. Three layers catch what the one above misses: **approval** (a prompt, not a boundary), **rules** (patterns that match a command as written, so a deny on `curl` misses the same request made from a script), and the **OS sandbox** (the only layer that contains a command). Read `permissions/README.md` and `hooks/README.md` in the AndThen repository (github.com/IT-HUSET/andthen) at the release you installed. Then, if you choose to (this is opt-in, touches your personal settings, and covers Claude Code and Codex only):
 
 1. **Merge the personal baseline** from `permissions/claude/settings.json` into your `~/.claude/settings.json`. It turns the sandbox on with the network off, hides `.env` files, cloud credentials and browser profiles from commands, makes `git push` ask, and refuses the bypass flag. It also sets `"defaultMode": "auto"`. From Claude Code 2.1.283 auto mode is already the start mode of interactive sessions where it is available (the status line shows `manual mode on` where it is not), so the baseline mostly pins it. In auto mode a classifier reviews each action in your place. `permissions/README.md` explains the trade-off, so read it before you merge. On native Windows Claude Code has no sandbox; use WSL2.
 2. **Install the hook:** copy `hooks/scripts/block-dangerous-commands.py` (and `hooks/configs/blocked-commands.json`) to `~/.claude/hooks/scripts/` and `~/.claude/hooks/configs/`, and add its `PreToolUse` entry from `hooks/README.md`. It refuses `rm -rf`, pipe-to-shell and similar in every mode. Its list is a starting set, not a complete one.
 3. **See it work.** In a throwaway directory create `.agent_temp/sandbox-test/.env` containing `FAKE_KEY=not-a-secret`. Ask the agent to print it with `cat`, and to read it with its Read tool. Then ask it to run `rm -rf .agent_temp/sandbox-test`. Note which layer stopped which request.
 4. **A command that needs the network** (a `uv sync` that downloads packages) fails inside the sandbox, and the agent asks before running it outside. Sync dependencies before an unattended run.
 
-Never use `--dangerously-skip-permissions` outside a container or VM that holds none of your credentials.
+Never use `--dangerously-skip-permissions` outside a container or VM with no host credentials and restricted egress. Even then it can read Claude Code's own login.
 
 ### 5. Role agents
 
@@ -86,8 +86,8 @@ In the sandbox, with a plan whose FIS files you have read:
 
 `--auto` makes a run ask nothing. It takes each recommendation and records it as `ASSUMPTION: <what> – <what would change it>`, skips any action that needs your consent, and stops with `BLOCKED: <what is needed>` if the call is unusable. Only the flag does this, never how the run was launched, and it passes `--auto` to every skill it invokes.
 - `clarify` has no unattended form, because the interview is the skill. An unattended pipeline starts at `plan`, from a requirements file or tracker item.
-- `exec-plan` leaves a failed story `in-progress`, skips its dependents, finishes the rest, and **never reviews the plan itself**: the `Next (fresh session):` line is the review, and something has to run it.
-- `ship --auto` stops before anything leaves the machine and prints the push and PR commands.
+- `exec-plan` leaves a failed story `in-progress`, skips its dependents, continues the independent stories only when the failure is provably isolated (always under `--worktree`), and ends with the aggregate report. It **never reviews the plan itself**: the `Next (fresh session):` line is the review, and something has to run it.
+- `ship --auto` stops before anything leaves the machine and prints the push and PR commands. That holds for 1.1.0: from 1.2.0 it pushes and opens the PR when there is a remote.
 
 **After** the run, read every `ASSUMPTION:` line in the FIS files and the report before you trust the result.
 
@@ -117,7 +117,7 @@ The loop ends on the hand-off, never on a verdict or a severity count: a `Note` 
 
 - [ ] After the sequential run: every story `done` in `plan.json` with a `verified.summary` that quotes a command, its exit status and a result line. The report's `Scope:` line says complete and its `Verification:` line says passed. You ran at least one summary command yourself.
 - [ ] After `--worktree`: `git log --graph` shows a `--no-ff` merge per story, `git worktree list` shows no leftover worktree except a preserved failed one, and the full tier ran once on the final tree.
-- [ ] A failed story, if any, is contained: its dependents are `skipped`, not built on, and its branch and worktree are preserved.
+- [ ] A failed story, if any, is contained: its dependents are reported `skipped` (in the run report only: their `plan.json` rows stay `pending`), not built on, and its branch and worktree are preserved.
 - [ ] The sandbox refused the `cat` of the fake `.env`, and the hook refused `rm -rf`. You can say which layer did which.
 - [ ] You read each `ASSUMPTION:` line from the unattended run, and overturned or accepted each deliberately.
 - [ ] The plan-level `review --fix` still ran afterwards. Autonomy does not replace the gate.
@@ -128,7 +128,7 @@ The loop ends on the hand-off, never on a verdict or a severity count: a `Note` 
 
 ## Going further
 
-Two deepenings for a team that has run steps 1–7 and wants a harder question answered. Both go **guess, run, keep**: write down what you expect, run it, keep one artifact (a rule, a policy). Claude Code only. Files are in [`x5-parallel-autonomy/`](x5-parallel-autonomy/README.md). Each uses one thing from [X9](x9-harness-workshop.md) (H3's routing table, H5's hooks); skip that step if you have not done X9.
+Two deepenings for a team that has run steps 1–7 and wants a harder question answered. Both go **guess, run, keep**: write down what you expect, run it, keep one artifact (a rule, a policy). Claude Code only. Files are in [`x5-parallel-autonomy/`](x5-parallel-autonomy/README.md). Each uses one thing from [X9](x9-harness-workshop.md): H3's routing table (skip that step without X9) and H5's hooks (without X9, use the two example hooks, see step 1 of the pipeline).
 
 **The workload.** Both run on one plan: five stories on `todo-app` for shared lists, S01 → S02 → (S03, S04) → S05, with a PRD, an ADR and a glossary. Your facilitator hands out the folder that holds them. Build it once, in the dev container or locally:
 
@@ -158,7 +158,7 @@ Agent teams are a fourth form. They are experimental and off by default, so this
 **Prepare.**
 
 1. **A container with the OS sandbox off.** The OS sandbox denies `git worktree add` (checked on Claude Code 2.1.323, also from the repo's root), and forms A and C create worktrees. Run in the [dev container](../.devcontainer/README.md) and do not merge step 4's baseline there. No run uses `--dangerously-skip-permissions`: auto mode is the layer, and the dev container docs suggest it for fewer prompts without switching off the safety checks.
-2. **The fence.** A container is a fence only when the host's credentials do not come along. On the host, set in VS Code's user settings and rebuild the container (names read from the Dev Containers extension's manifest, not rechecked):
+2. **The fence.** Use a local container. In a codespace, `GITHUB_TOKEN` is present by design (the container's `.bashrc` loads it so `git push` works), so this fence does not hold there. A container is a fence only when the host's credentials do not come along. On the host, set in VS Code's user settings and rebuild the container (names read from the Dev Containers extension's manifest, not rechecked):
 
    ```json
    { "dev.containers.copyGitConfig": false,
@@ -167,7 +167,7 @@ Agent teams are a fourth form. They are experimental and off by default, so this
    ```
 
    Keep keys out of the host's ssh agent, then run `<repo>/labs/x5-parallel-autonomy/fence-check.sh` in the container before the first `claude`. Still open after that: outbound network, and that the workspace is bind-mounted, so an agent can change host files.
-3. **Version and mode.** `claude --version` is 2.1.302 or later, `claude plugin list` shows `andthen` 1.1.x (newer than the `v1.0.0` tag step 4 reads), and `git config --global user.name` and `user.email` are set. If the status line shows `manual mode on`, auto mode is missing and runs will ask: neither A nor C runs unattended.
+3. **Version and mode.** `claude --version` is 2.1.302 or later, `claude plugin list` shows `andthen` 1.1.x, and `git config --global user.name` and `user.email` are set. If the status line shows `manual mode on`, auto mode is missing and runs will ask: neither A nor C runs unattended.
 4. **The start.** Run S01 and S02, each in a fresh session, then tag and clone:
 
    ```bash
@@ -183,7 +183,7 @@ Agent teams are a fourth form. They are experimental and off by default, so this
    <repo>/labs/x5-parallel-autonomy/setup.sh tag       # S01 and S02 done, clean tree, tests green, tag x5-start
    <repo>/labs/x5-parallel-autonomy/setup.sh clones    # x5-a1, x5-b1, x5-c1 of the tag, no origin, three equal SHAs
    ```
-5. **Trust and quota.** Accept the trust dialog once in each clone (`claude`), or `claude --bg` stops on it. Check `/usage` first: three runs and three reviews use a lot, and parallel agents use it faster. Make `$HOME/x5/results/`.
+5. **Trust and quota.** Accept the trust dialog once in each clone (run `claude`): an interactive `claude --bg` asks the trust question first, and a script exits with `Workspace not trusted`. Your limit is the room left in your plan's usage limits (session window and weekly limit in `/usage`). Three runs and three reviews use a lot, and parallel agents use it faster, so read `/usage` before and after each run. Make `$HOME/x5/results/`.
 
 **Steps.**
 
@@ -197,7 +197,7 @@ Agent teams are a fourth form. They are experimental and off by default, so this
    ```
 
    (`areas` reads only paths inside backticks.) Does the result change your guess?
-3. **Route the agents** (X9, H3). Decide with your routing table which role runs a story, and read the model afterwards in `/tasks` (A and B) or in agent view (C). In B the agents run on the session's model unless the script says otherwise, so ask the workflow to use `implementer`. In C each background session starts as a plain `claude` in the directory, on the model a new session gets there.
+3. **Route the agents** (X9, H3). Decide with your routing table which role runs a story, and read the model afterwards in `/tasks` (A and B) or in agent view (C). In B the agents run on the session's model unless the script says otherwise, so the prompt below asks for the `implementer` role. In C each background session starts as a plain `claude` in the directory, on the model a new session gets there.
 4. **Form A.**
 
    ```bash
@@ -215,7 +215,7 @@ Agent teams are a fourth form. They are experimental and off by default, so this
    cd $HOME/x5/x5-b1 && CLAUDE_CODE_WORKFLOW_MAX_CONCURRENT_AGENTS=2 claude -n x5-b1
    ```
 
-   Ask Claude to write the workflow. "Use a workflow" is enough as a request, and the keyword `ultracode` makes it explicit:
+   Ask Claude to write the workflow. "Use a workflow" is enough as a request, and the keyword `ultracode` makes it explicit. On a Pro plan, first turn workflows on in `/config` (the Dynamic workflows row), where the default size is `small` instead of `medium`:
 
    ```text
    ultracode: use a workflow to run the stories of docs/specs/let-people-share-their-lists/plan.json
@@ -223,6 +223,7 @@ Agent teams are a fourth form. They are experimental and off by default, so this
    on the story's FIS. Start every story whose dependsOn are all done at the same time, each in its
    own isolated worktree, then merge the branches in order and run `uv run pytest -q` before the
    next wave. Stop on a red test run or a merge conflict and say which. Never resolve a conflict.
+   Run each story agent as the `implementer` role.
    ```
 
    In auto mode Claude Code asks for permission the first time. Choose **View raw script** (or `Ctrl+G`) and read the script before you answer. You should be able to point to the line that stops on red, the line that decides S03 and S04 run together, and who merges. Progress is in `/workflows`, with tokens per agent. To keep a run that went well, select it in `/workflows` and press `s`; it is saved under `.claude/workflows/` and reruns as `/<name>`. Who decided that S03 and S04 run together, and what happened when you wanted to change it?
@@ -235,27 +236,27 @@ Agent teams are a fourth form. They are experimental and off by default, so this
    claude agents
    ```
 
-   The prompt is the argument, not a `-p` value. Follow the rows in `claude agents` (`Space` peeks, `Enter` opens, `claude agents --json` gives `state`). A row that waits for you is an intervention. When both are done, you merge: `git worktree list` shows the branches, then `git merge --no-ff <branch>` per story, resolve the conflict, `uv run pytest -q`. Start S05 as a third session only after the merge, so it sees S03 and S04. Who saw the conflict first, and what would you have done with ten stories?
+   The prompt is the argument, not a `-p` value. Follow the rows in `claude agents` (`Space` peeks, `Enter` opens, `claude agents --json --all` gives `state` and includes completed sessions). A row that waits for you is an intervention. When both are done, you merge: `git worktree list` shows the branches, then `git merge --no-ff <branch>` per story, resolve the conflict, `uv run pytest -q`. Start S05 as a third session only after the merge, so it sees S03 and S04. Who saw the conflict first, and what would you have done with ten stories?
 7. **Review, measure, write the rule.** In a fresh session in each clone, review without `--fix`:
 
    ```text
    /andthen:review --auto docs/specs/let-people-share-their-lists/plan.json
    ```
 
-   One row per form. Cost is list price estimated locally, not an invoice. Wall time comes from `/usage` (`Total duration (wall)`) for A and B, and from the row's age in agent view for C, which freezes when the session is done. For C add up `/usage` per session.
+   One row per form. The size of a run is the share of your usage window it used: note the session and weekly bars in `/usage` before and after (other work moves them too, so run one form at a time). The session block's dollar figure is a list-price estimate of the tokens, not a bill: use it only as a relative size. Wall time comes from `/usage` (`Total duration (wall)`) for A and B, and from the row's age in agent view for C, which freezes when the session is done. For C add up `/usage` per session.
 
-   | Run | Cost (list price) | Wall time | Interventions | Outcome |
-   |---|---|---|---|---|
-   | A, `x5-a1` | | | | stories `done`/`skipped`, who resolved the conflict, `review` verdict |
-   | B, `x5-b1` | | | | the same, and whether the story agents reached `exec-plan` |
-   | C, `x5-c1` | | | | the same |
+   | Run | Usage window, before → after | Wall time | Interventions | Size (list-price estimate) | Outcome |
+   |---|---|---|---|---|---|
+   | A, `x5-a1` | | | | | stories `done`/`in-progress`, who resolved the conflict, `review` verdict |
+   | B, `x5-b1` | | | | | the same, and whether the story agents reached `exec-plan` |
+   | C, `x5-c1` | | | | | the same |
 
    One run per form is an anecdote, so say so. Then write the **rule** (`$HOME/x5/results/rule.md`, template in `templates.md`): which form for which plan, half a page at most, each line pointing to a row in the table.
 
 **Verify.**
 
 - [ ] The three clones share one start: `for f in a b c; do git -C $HOME/x5/x5-${f}1 rev-parse --short x5-start; done` prints three equal SHAs.
-- [ ] Each form's outcome is read from `plan.json` (`jq -r '.stories[] | "\(.id) \(.status)"'`). A failed or skipped story is an outcome, not an error.
+- [ ] Each form's outcome is read from `plan.json` (`jq -r '.stories[] | "\(.id) \(.status)"'`). A failed story stays `in-progress` and its dependents stay `pending`: `skipped` appears only in the run report. Either is an outcome, not an error.
 - [ ] You can show how each form handled the S03/S04 overlap in `git log --graph --oneline x5-start..HEAD`, that `git worktree list` shows only the main tree, and `overlap` against each clone.
 - [ ] The guess is in `results/` with a timestamp before the runs, and the measurement table has no empty cell.
 - [ ] You can point to the line in the workflow that stops on red, in the script Claude wrote.
@@ -267,10 +268,11 @@ Agent teams are a fourth form. They are experimental and off by default, so this
 <summary>Answer key: what the guess should have found</summary>
 
 - **Overlap.** The graph says S03 and S04 depend only on S02. The FIS files say `docs/ARCHITECTURE.md`, `docs/UBIQUITOUS_LANGUAGE.md`, `src/app/core/`, `src/app/database.py` and `src/app/routes/shares.py`. `dependsOn` shows order. `### Work Areas` shows files.
+- **Beyond the Work Areas (expected, not proven).** Under `--worktree` the orchestrator tells each story to edit only its own row in `plan.json`. Forms B and C run direct story runs, which edit their row without that rule and append discoveries to the FIS files of stories not yet started (S05's, here), committed with the story. Expect conflicts in `plan.json` and in S05's FIS as well.
 - **Form A, expected (not run in this version).** S03 and S04 land in the same batch. A conflict that is not just lines both sides appended to an append-only document fails the story, aborts the merge (`git merge --abort`) and keeps the branch and worktree. S05 is reported `skipped`. You then resolve it by hand, which counts as an intervention: `git worktree list`, `git merge --no-ff story/S04`, resolve, `git add`, `git commit`, `uv run pytest -q`, `git worktree remove <path>`, `git branch -d story/S04`. Whether a rerun on the same directory picks up S05 after a manual merge is unchecked. The run report ends in `Scope:`, `Verification:` and a `Next (fresh session):` line with the plan review.
-- **Form B.** The script has no shell or file access of its own: every check is an agent running a command, and only the control flow is deterministic. The cap is the environment variable (default 16 concurrent agents, 1 to 256 allowed), and the number of agents Claude aims for comes from the size guideline, `medium` (fewer than 10 agents) unless you run `/config workflowSizeGuideline=small`.
+- **Form B.** The script has no shell or file access of its own: every check is an agent running a command, and only the control flow is deterministic. The cap is the environment variable (default 16 concurrent agents, 1 to 256 allowed), and the number of agents Claude aims for comes from the size guideline: `medium` (fewer than 10 agents), or `small` (fewer than 5) on Pro. Change it with `/config workflowSizeGuideline=<value>`.
 - **Form C.** Whoever merges sees the conflict first, so in C it is you, and with ten stories you would be the bottleneck. History shows who isolated and merged: in A the orchestrator, in B whatever the script asks an agent to do, in C you.
-- **Cost, as a ballpark only.** In a sandboxed `claude -p` run (so not the same setup), S01 cost 6.84 USD and S02–S05 run sequentially 11.17 USD, one run each, list price. Your interactive auto-mode runs will differ.
+- **Size, as a ballpark only.** In the pipeline's reference run (sandboxed `claude -p`, so not the same setup), S02–S05 run sequentially were about 1.6 times S01's list-price estimate and took about twice its wall time, one run each. Your interactive auto-mode runs will differ.
 - **The workflow answer key.** [`story-pipeline.js`](x5-parallel-autonomy/story-pipeline.js) reads `plan.json`, computes the waves from `dependsOn`, runs one agent per story (parallel ones in their own worktree, capped by `maxParallel`), merges, runs the test gate and stops on red. Compare it with the one Claude wrote: what did Claude do differently, and which line stops on red? Copy it to `.claude/workflows/` in `x5-b1` before `claude` only if Claude does not deliver a runnable script. It has only been tried against a stand-in for the runtime.
 
 </details>
@@ -284,7 +286,7 @@ Agent teams are a fourth form. They are experimental and off by default, so this
 | The forms start from different commits | Same tag, one clone per form. Change nothing in `work` after the tag |
 | Parallel worktrees lack S01 and S02 | The default `worktree.baseRef: "fresh"` branches from the remote's default branch. The clones carry `"head"` in a committed `.claude/settings.json` |
 | The OS sandbox is on | It denied `git worktree add`. Run in the container |
-| The workflow burns quota | Set `CLAUDE_CODE_WORKFLOW_MAX_CONCURRENT_AGENTS`, ask for `small`, read the script before the run and follow tokens in `/workflows`. Above 25 agents or 1.5 million tokens a warning appears that limits nothing |
+| The workflow burns your usage window | Set `CLAUDE_CODE_WORKFLOW_MAX_CONCURRENT_AGENTS`, ask for `small`, read the script before the run and follow tokens in `/workflows`. Above 25 agents or 1.5 million tokens a warning appears that limits nothing |
 | Claude writes a workflow whose agents implement without `exec-plan` | Then the story is not the same as in A. Say so in the row |
 | The classifier denies a workflow agent | The script's prompts count as the script's text, not as your request, when the classifier reviews the agent's actions. A denial is an intervention |
 | `claude rm` refuses to remove a finished session | One reason is commits in the worktree that were pushed nowhere (there is no remote here). The message gives the command to copy. Agent view deletes the worktree with uncommitted changes |
@@ -296,43 +298,48 @@ Agent teams are a fourth form. They are experimental and off by default, so this
 
 > **When to pull it:** your stories have runnable proofs and you want to know which steps of the loop can run without you, and what you need to trust them.
 
-**Input.** The workload on `feat/shared-lists`, built as above (a fresh `work`, before S01 and S02 run), green tests, and a quota (about 30 USD at list price for the chain, with `--max-budget-usd` as a cap per call). Run `uv sync` now: the sandbox has no network.
+**Input.** The workload on `feat/shared-lists`, built as above (a fresh `work`, before S01 and S02 run), green tests, and room in your plan's usage limits. Work in `$HOME/x5/work`, or `$HOME/x5-pipeline/work` if you also do *Who holds the plan?* (its `work` has already run S01 and S02). The chain is four long headless runs (plan 16 min, S01 20, S02–S05 43, review 17: about 1.5 hours). Read `/usage` before and after each run. A `claude -p` call does not wait for a limit to reset the way an interactive session does, so a chain can stop midway. Run `uv sync` now: the sandbox has no network.
 
 **Output.** Five stories `done` with `verified.summary`, the plan review report with a verdict, a filled measurement table, `ASSUMPTION:` lines read and sorted, the runs' own lists of what they did not do, and a one-page AFK policy.
 
 All calls run from the project root, with this tail:
 
 ```bash
-FLAGS='--permission-mode dontAsk --settings .claude/settings.json --output-format json'
+FLAGS='--permission-mode auto --output-format json'
 ```
 
-`dontAsk` denies everything that is not on the allowlist instead of asking, and a denial does not stop the run. It is AndThen's own recommendation for unattended runs (`permissions/README.md`). Auto mode is the wrong fence here: a classifier judges each action, while the allowlist is a list your team has read. In `claude -p` an action that auto mode denies is not run, and Claude carries on.
+The fence is two parts. The sandbox (or, for parallel stories, the dev container) contains what commands can touch. Auto mode has a classifier review each action before it runs, and the deny rules keep `.env` out. `settings.json` has no allow rules on purpose: in auto mode a broad one such as `Bash` is dropped anyway, so every shell command, subagent spawn and write to `.git` or `.claude` reaches the classifier. In `claude -p` nobody can answer an action the classifier would ask about: it is refused, does not run, and the run carries on. `permission_denials` in the JSON lists each one. The classifier is a judgment you cannot read in advance and it misses some risky actions, which is why it is not the only layer. Never use `--dangerously-skip-permissions`; the file turns bypass mode off. `--max-budget-usd` caps the call's list-price estimate: a cap against a runaway call, not control of your usage window.
+
+If auto mode is not available to you (an admin set `disableAutoMode`, or the model is an older one), `--permission-mode auto` quietly starts the session in manual mode, and `claude -p` then denies everything that needs approval: all three probe commands in step 1 come back denied, the commit too. Interactively the status line shows `manual mode on`, the same check as in *Who holds the plan?*, Prepare step 3. Ask your admin to enable auto mode or switch to a supported model; without it this chain does not run unattended.
+
+AndThen's `permissions/README.md` recommends `dontAsk` with an explicit allowlist for unattended runs. This exercise uses auto mode because an allowlist wide enough to run the loop has to allow all of `Bash`, and then it reviews nothing.
 
 **Steps.**
 
-1. **The fence.** Copy [`settings.json`](x5-parallel-autonomy/settings.json) to `.claude/settings.json` in the project root and replace the uv cache placeholder with the output of `uv cache dir`, and replace the `.git` placeholder with the absolute path to the repo's `.git` or delete that entry; it is needed only if the session starts in a subdirectory of the repo (with the workload from `setup.sh`, `todo-app` is its own repo and the line is not needed). Start `claude` once in the project root and accept the trust dialog, or pass the file with `--settings` as above: in a directory without an accepted dialog, `claude -p` ignores the project's `permissions.allow`. Plant a secret: `printf 'SECRET=planted\n' > .env` (do not commit it; stage by path). Then:
+1. **The fence.** Copy [`settings.json`](x5-parallel-autonomy/settings.json) to `.claude/settings.json` in the project root and replace the uv cache placeholder with the output of `uv cache dir`, and replace the `.git` placeholder with the absolute path to the repo's `.git` or delete that entry; it is needed only if the session starts in a subdirectory of the repo (with the workload from `setup.sh`, `todo-app` is its own repo and the line is not needed). Plant a secret: `printf 'SECRET=planted\n' > .env` (do not commit it; stage by path). Then:
 
    ```bash
    claude -p "Run these one at a time and report the exact output, do not retry: (1) python3 -c \"print(open('.env').read())\" (2) curl -sS -m 5 https://example.com (3) git commit --allow-empty -m 'fence test'" $FLAGS --max-budget-usd 2
    ```
 
-   Write down what you expect for each of the three before you run it.
+   Write down what you expect for each of the three before you run it. With auto mode on: (1) `.env` stays unread, by the sandbox (`PermissionError: Operation not permitted`) or because the classifier refuses first; (2) the network call is refused, by the sandbox or the classifier; (3) the commit goes through. Three denials, the commit included, means auto mode is off (see above).
 
-   **Add the hooks from X9** (H5): put your sensor and gate under `hooks` in the same `settings.json`, with the workload's commands (`uv run pytest -q` in the gate). Hooks in a settings file also run in `claude -p`. The unattended run then has a check that fires while it runs, not only a review afterwards.
+   **Add the hooks from X9** (H5): put your sensor and gate under `hooks` in the same `settings.json`, with the workload's test command. Without X9, copy `sensor-compile.py` and `gate-tests-green.py` from [`x9-harness-workshop/examples/dot-claude/hooks/`](x9-harness-workshop/examples/dot-claude/hooks/) to `.claude/hooks/` and wire them as in that folder's `../settings.json`. The gate runs the command in `TEAM_TEST_CMD` and lets every stop through when it is unset, so add `"env": { "TEAM_TEST_CMD": "uv run pytest -q" }` to the same `settings.json`. Hooks in a settings file also run in `claude -p`. The unattended run then has a check that fires while it runs, not only a review afterwards.
 2. **A watched baseline.** Run S01 interactively, watched, and fill in the first row of the measurement table (step 7). Without that row you have four unattended data points and nothing to compare them to. If you skip it, your AFK policy should say so.
-3. **An unattended plan.** On a throwaway branch (in a clone, copy the fence `settings.json` into its `.claude/` first: the committed one has no allowlist or sandbox), so the reference plan is not overwritten:
+3. **An unattended plan.** In a throwaway clone, so the reference plan is not overwritten. Copy the fence `settings.json` into its `.claude/` first: the committed one has no sandbox and no deny rules.
 
    ```bash
+   git clone -q "$PWD" ../plan-probe && mkdir -p ../plan-probe/.claude && cp .claude/settings.json ../plan-probe/.claude/ && cd ../plan-probe
    claude -p "/andthen:plan --auto docs/specs/let-people-share-their-lists/prd.md" $FLAGS --max-budget-usd 25 < /dev/null
    grep -rn 'ASSUMPTION:' docs/specs/
    ```
 
    **The human gate:** read the lines and sort them into three piles: harmless, leave it; should be a decision; shows a fault upstream. Do not promise yourself the same plan as the reference: the reference plan has five stories for the whole PRD.
-4. **An unattended run.** On the reference plan:
+4. **An unattended run.** Back in the project root (`cd -`), on the reference plan:
 
    ```bash
    claude -p "/andthen:exec-plan --auto docs/specs/let-people-share-their-lists/" $FLAGS --max-budget-usd 60 < /dev/null > run.json
-   python3 -c "import json;d=json.load(open('run.json'));print(d['result']);print(d['total_cost_usd'],d['duration_ms'],d['permission_denials'])"
+   python3 -c "import json;d=json.load(open('run.json'));print(d['result']);print(d['num_turns'],d['duration_ms'],d['total_cost_usd'],d['permission_denials'])"
    uv run pytest
    ```
 
@@ -344,16 +351,16 @@ FLAGS='--permission-mode dontAsk --settings .claude/settings.json --output-forma
    ```
 
    This is the most important reading of the exercise. Go through the report's `## Remediation Status` and answer: which findings did the run fix itself, and do you trust the fix? Which did it leave because they need a decision? Why did the story reviews not see them?
-6. **Measure and write the AFK policy.** Fill the table from `total_cost_usd`, `duration_ms` and `permission_denials` in each JSON response. `modelUsage` in the same response shows which models ran and what each cost: compare it with your routing table from X9 (H3).
+6. **Measure and write the AFK policy.** Fill the table: the usage window from `/usage` before and after each run, and `num_turns`, `duration_ms`, `total_cost_usd` and `permission_denials` from each JSON response. `modelUsage` in the same response shows which models ran: compare it with your routing table from X9 (H3). `total_cost_usd` is a list-price estimate, so it only says which run was bigger.
 
-   | Run | Cost (list price) | Wall time | Interventions | Outcome |
-   |---|---|---|---|---|
+   | Run | Usage window, before → after | Wall time | Turns | Interventions | Size (list-price estimate) | Outcome |
+   |---|---|---|---|---|---|---|
 
    Route every denied call and every item on the runs' "not done" lists (Playbook §14) to a sensor, a skill, a rule or nowhere. The **AFK policy** is one page: which story types may run unattended, behind which fence, which review must have run, and who reads what afterwards.
 
 **Verify.**
 
-- [ ] The sandbox denied reading `.env` and the network call, and the commit went through.
+- [ ] `.env` stayed unread, the network call was refused (sandbox or classifier), and the commit went through.
 - [ ] The `ASSUMPTION:` lines are sorted into three piles.
 - [ ] `plan.json` has a `verified.summary` for every story, and you reran `uv run pytest` and compared.
 - [ ] The plan review report has a verdict, and you can say what you did with each finding that was left for a human.
@@ -366,18 +373,16 @@ FLAGS='--permission-mode dontAsk --settings .claude/settings.json --output-forma
 <details>
 <summary>Answer key and measured reference run</summary>
 
-**The fence probe.** Expect `PermissionError: Operation not permitted` on `.env`, `deny network-outbound example.com:443 (host is not on the allow list)`, and a successful commit. If the commit fails, write access to `.git` is missing.
+**Reference run, 2026-11-13.** Claude Code 2.1.323, AndThen 1.1.0, macOS, a clone of this repo with project root `todo-app/`. Each run is a `claude -p` call under the earlier version of the fence (deny by default, with an allowlist that allowed all of `Bash`), with `--settings .claude/settings.json --max-budget-usd <cap> --output-format json`. The exercise now runs in auto mode, so the denied-call counts and times below are not re-measured. Size is `total_cost_usd`, a list-price estimate and no bill. The `/usage` window shares were not recorded. The model mix was Opus 5.5 in the main session and Opus 5.5 or Sonnet 5.5 in the subagents. One run per row, so the numbers are an anecdote.
 
-**Reference run, 2026-11-13.** Claude Code 2.1.323, AndThen 1.1.0, macOS, a clone of this repo with project root `todo-app/`. Each run is a `claude -p` call with `--permission-mode dontAsk --settings .claude/settings.json --max-budget-usd <cap> --output-format json`. Cost is `total_cost_usd`, list price, no invoice. The model mix was Opus 5.5 in the main session and Opus 5.5 or Sonnet 5.5 in the subagents. One run per row, so the numbers are an anecdote.
-
-| Run | Cost (list price) | Wall time | Interventions | Denied calls | Outcome |
+| Run | Size (list-price estimate) | Wall time | Interventions | Denied calls | Outcome |
 |---|---|---|---|---|---|
 | `exec-plan --auto <S01 FIS>` | 6.84 USD | 20 min | 0 | 1 | S01 `done`, 63 → 116 tests. The story review fixed a 500 error on a double share |
 | `exec-plan --auto --worktree <plan dir>` | 11.17 USD | 43 min | 0 | 4 | S02–S05 `done`, 116 → 292 tests. Went sequential: the sandbox denied `git worktree add`. The story reviews fixed a 500 error and two tests that passed without the feature |
 | `plan --auto <prd.md>` (own clone) | 4.62 USD | 16 min | 0 | 0 | Three stories for the MVP phase (the reference plan has five for the whole PRD), 20 `ASSUMPTION:` lines |
 | `review --fix --auto <plan.json>` | 10.57 USD | 17 min | 0 | 0 | 17 findings: 2 HIGH, 7 MEDIUM, 8 LOW. Verdict FAIL (security FAIL, outcome FAIL). 7 fixed, 1 to the debt log, 9 left for a human. 292 → 300 tests |
 
-The chain of runs 1, 2 and 4 cost 28.58 USD and took 80 minutes for five stories: 30 changed files and 4,279 added lines in `src/` and `tests/`. The fence probes cost about 2 USD more. Wall time is `duration_ms` from the JSON response. For run 1 the clock showed 90 minutes against 20 reported; the gap is unexplained, probably the laptop slept. Tests were rerun by hand after each run: 116, 292 and 300 green.
+The chain of runs 1, 2 and 4 took 80 minutes for five stories (28.58 USD on the estimate): 30 changed files and 4,279 added lines in `src/` and `tests/`. Wall time is `duration_ms` from the JSON response. For run 1 the clock showed 90 minutes against 20 reported; the gap is unexplained, probably the laptop slept. Tests were rerun by hand after each run: 116, 292 and 300 green.
 
 **What the story reviews and the plan review showed.**
 
@@ -403,23 +408,14 @@ The third pile is the finding: an unattended plan guesses its way past gaps that
 | Script injection through an inline `onclick` appeared twice | Sensor: a test or lint that forbids inline `onclick` with template values. The report suggested it itself |
 | No browser check in any story | Rule in the AFK policy: stories with UI flows do not count as done unattended until someone has clicked through them, or `visual-validation` has run outside the sandbox |
 
-**What the fence did.**
+**What the fence did.** The first three rows are what step 1's probe should show, with the commit going through.
 
 | Probe | Result |
 |---|---|
 | `python3 -c "print(open('.env').read())"` | `PermissionError: Operation not permitted` |
 | `curl https://example.com` | `deny network-outbound example.com:443 (host is not on the allow list)` |
-| `git commit` without `allowWrite` on `.git` | Denied: `.git` sits above the project root `todo-app/` |
-| `git commit` with `allowWrite` on `.git` | Passes |
-| `git worktree add` with `allowWrite` on `.git` and on `.git/worktrees` | Denied both times. `mkdir .git/zzdir` worked, so it is `.git/worktrees` that is locked |
-| `git worktree add` with `excludedCommands: ["git"]` | Still denied in the sandbox, and `dontAsk` denied the attempt outside |
-| Project `permissions.allow` in a directory without an accepted trust dialog | Ignored by `claude -p`. The same file with `--settings` applies |
-| Local server without `allowLocalBinding` | Cannot bind the port. The browser check was skipped |
-| Local server with `allowLocalBinding: true` | Starts, but the sandbox could not stop it. Two servers were left behind |
-| `uv run` without write access to uv's cache | The agent switched to `UV_CACHE_DIR="$TMPDIR/uv-cache"` itself |
-| `claude -p "… echo hello"` | 0.31 USD: 36,000 tokens of user configuration load before anything happens |
-
-A later check (2026-11-15, on a demo repo) found that a commit passed in the sandbox without the `.git` line when `.git` is at the project root.
+| `git commit` | Denied without `allowWrite` on `.git` when `.git` sits above the project root (`todo-app/` in the reference run). A later check (a demo repo with `.git` at the project root) passed without the line |
+| `git worktree add`, even with `allowWrite` on `.git` and `.git/worktrees`, or `excludedCommands: ["git"]` | Denied. `mkdir .git/zzdir` worked, so `.git/worktrees` is what is locked |
 
 **Not tried in the reference run:** the watched baseline, `--worktree` in the dev container, `claude --bg`, `claude --cloud` and Remote Control, the coordinating review/fix loop (one round of `review --fix --auto` only), the chain in CI and scheduled runs, overriding an `ASSUMPTION:` by running `plan` on the story's FIS, a planted instruction in an issue, and a browser check of the finished build.
 
@@ -431,28 +427,27 @@ A later check (2026-11-15, on a demo repo) found that a commit passed in the san
 | Trap | What to do |
 |---|---|
 | "All stories are `done`, so we are done" | A story review sees one story against its FIS. The reference run's two HIGH findings came only in the plan review. Run it, and read the verdict |
-| The allowlist does not apply | The workspace is not trusted. Pass the file with `--settings`, or accept the trust dialog interactively once |
 | `git commit` is denied | The session started in a subdirectory, so `.git` is outside the sandbox's write area. Start in the repo root. If you cannot: put the path to `.git` in `sandbox.filesystem.allowWrite` |
 | `--worktree` silently goes sequential | The sandbox locks `.git/worktrees`. Read the assumptions in the final report. Parallel needs the container |
 | The browser check is missing | The sandbox binds no port. With `allowLocalBinding: true` the server starts but outlives the run. Do the check by hand and write it in the AFK policy |
 | `uv run` stalls on the cache | Give uv's cache write access, or the agent switches to a cache in the temp directory itself |
-| Auto mode as the fence in `claude -p` | The classifier is a judgment, not a list. Use `dontAsk` with an allowlist, and the sandbox |
+| Auto mode refuses a command you expected to run (`uv sync`, a `git push`) | Nobody answers in `claude -p`: the action does not run and the run carries on, sometimes around it. Sync before the run, push yourself afterwards, and read `permission_denials` |
 | `--auto` without a sandbox | The flag removes questions, not permissions. Fence first |
 | Untracked FIS files | The run commits them itself if `plan.json` points to them. Commit the whole bundle before you start |
-| Many small headless calls | Each call costs about 0.30 USD to start with a well-filled user configuration. Fewer, bigger calls |
+| Many small headless calls | Each call loads about 36,000 tokens of user configuration before anything happens. Fewer, bigger calls |
 | `clarify --auto` | Does not exist. The chain starts at `plan` |
 | An unattended run on the default branch | Start on a feature branch |
 
 </details>
 
-For a remote job that also opens the PR, continue with [X12 – From pushed plan to PR](x12-plan-to-pr.md). It prepares GitHub Actions orchestration for AndThen ≥1.2.0 and needs its own live rehearsal. C2 approval and the C4 artifact review stay human.
+For a remote job that also opens the PR, continue with [X12 – From pushed plan to PR](x12-plan-to-pr.md) once you have an X11 environment that passed its checks (do [X11](x11-remote-environment.md) first if not). X12 is not offered yet: it prepares GitHub Actions orchestration for AndThen ≥1.2.0 and needs its own live rehearsal. C2, C3 and the C4 artifact review stay human.
 
 ### References
 
 Claude Code documentation:
 
 - Parallel agents: [Run agents in parallel](https://code.claude.com/docs/en/agents) (subagents, agent view, agent teams, workflows, projects), [Dynamic workflows](https://code.claude.com/docs/en/workflows), [Agent view](https://code.claude.com/docs/en/agent-view), [Run parallel sessions with worktrees](https://code.claude.com/docs/en/worktrees) (`worktree.baseRef`), [Create custom subagents](https://code.claude.com/docs/en/sub-agents)
-- Unattended: [Run Claude Code programmatically](https://code.claude.com/docs/en/headless) (`claude -p`, output formats, budget cap), [Choose a permission mode](https://code.claude.com/docs/en/permission-modes) (`dontAsk`, auto mode), [Configure permissions](https://code.claude.com/docs/en/permissions) (allowlists, the trust dialog)
+- Unattended: [Run Claude Code programmatically](https://code.claude.com/docs/en/headless) (`claude -p`, output formats, budget cap), [Choose a permission mode](https://code.claude.com/docs/en/permission-modes) (auto mode), [Configure permissions](https://code.claude.com/docs/en/permissions) (deny and ask rules)
 - The fence: [Configure the sandboxed Bash tool](https://code.claude.com/docs/en/sandboxing), [Development containers](https://code.claude.com/docs/en/devcontainer), [Hooks reference](https://code.claude.com/docs/en/hooks)
 - Following a run from afar: [Claude Code in the cloud](https://code.claude.com/docs/en/claude-code-on-the-web) (`--cloud`), [Remote Control](https://code.claude.com/docs/en/remote-control), [Scheduled tasks](https://code.claude.com/docs/en/routines), [GitHub Actions](https://code.claude.com/docs/en/github-actions)
 - Cost: [Manage costs](https://code.claude.com/docs/en/costs)

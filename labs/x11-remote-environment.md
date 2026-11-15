@@ -15,20 +15,20 @@ Pull X11 when one of these is true for you:
 - **A useful run depends on your laptop staying connected.**
 - **Nobody can say what the agent can reach:** which host files and credentials it sees.
 
-**Status:** all four individual course machines have built the full container and passed all 63 app tests each; they are now deallocated. Earlier, two isolated rehearsal VMs also passed rebuild, boundary, app-tunnel and deterministic reconnect checks. Personal sign-ins, full `check.py` GREEN and a model-driven task remain participant checks after handoff. Hetzner has not been provision-tested. All resources are temporary and are removed after the course. For the Seoul course, there is no automatic daily stop: the facilitator keeps VMs running while jobs need them and manually deallocates only after work is saved and no jobs are active.
+**Status:** four individual VMs are built, tested and deallocated ([preparation record](x11-remote-environment/README.md#public-preparation-record)). There is no automatic daily stop. Hetzner is untested.
 
 ## Input
 
 - A repo and branch you may run in the chosen cloud. Start with the course repo if your own stack is not ready.
 - The repo's `.devcontainer/`, including `devcontainer.json`, `Dockerfile` and `setup.sh`; copy the course folder to a case repo and adapt its dependency step if needed.
-- Your individually assigned temporary course SSH key from the facilitator and your row in [participant access](x11-remote-environment/access.md). On the main path you need no Azure account, RBAC role or Entra invitation: the facilitator deploys one VM per participant in the shared `agentic-engineering-2026` course resource group. SSH is restricted to an approved public source address: initially the facilitator's network, then the venue's network for the course.
-- Each participant's own agent sign-in, approved project-scoped git access and enough model quota. Infrastructure billing does not pay for model usage.
+- An SSH key (preferably one you generate, of which the facilitator receives only the public half) and your row in [participant access](x11-remote-environment/access.md). On the main path you need no Azure account, RBAC role or Entra invitation: the facilitator deploys one VM per participant in the shared `agentic-engineering-2026` course resource group. SSH is restricted to an approved public source address: initially the facilitator's network, then the venue's network for the course.
+- Your own Claude sign-in (IT-HUSET team seat or your own plan, D11) and a fine-grained GitHub token for the one course repo. Azure pays only for the VMs; model usage counts against your plan limits.
 - A small agent task with a concrete result and a real test command. For example, one already-approved story from your case, or a documentation correction plus the unchanged `todo-app` tests.
 - The [preparation kit](x11-remote-environment/README.md), including `azure.bicep` and `cloud-init.yaml`.
 
 ## Output
 
-Keep the environment configuration and a short runbook in your repo. Keep the following proof in your log outside the agent workspace: repo commit, host/container/tool versions, test result, disconnect result, actual boundary checks, second-machine result, cost owner and cleanup confirmation. Do not save access tokens or private keys in either place.
+Keep the environment configuration and a short runbook in your repo. Keep the following proof in your log outside the agent workspace: repo commit, host/container/tool versions, test result, disconnect result (copied out of the repo after the check, step 5), actual boundary checks, second-machine result, cost owner and cleanup confirmation. Do not save access tokens or private keys in either place.
 
 ## Steps
 
@@ -50,11 +50,9 @@ You can administer your own VM and Docker through its `course` account, outside 
 
 </details>
 
-### 2. Provision and wait
+### 2. Connect
 
-Your facilitator has completed [preparation kit steps 1–3](x11-remote-environment/README.md#1-prepare-the-one-local-access-file), including deployment and container prebuild. Review the versioned Bicep template and public preparation record to inspect how your environment was created. The same kit covers the Hetzner alternative.
-
-Before the course, the facilitator prepares four individual access sets and `x11-p01`–`x11-p04` environments using the [preparation kit](x11-remote-environment/README.md). Receive only your own temporary key through the approved personal channel and use the public [connection table and instructions](x11-remote-environment/access.md). Save the key in your own `.ssh` directory; protect its permissions and optionally add a passphrase with `ssh-keygen -p`. Connect with your own private key, without SSH-agent forwarding, and verify the host fingerprint. Run `sudo cloud-init status --wait` on the VM, check its exit status and resolve any bootstrap error. Reconnect after the human account is added to the Docker group. Do not log in to Azure from the VM or paste cloud-management credentials into an agent session.
+Your facilitator has provisioned and prebuilt your VM ([kit steps 1–3](x11-remote-environment/README.md#1-prepare-the-one-local-access-file); the Bicep template and preparation record show how). Follow [participant access §1–2](x11-remote-environment/access.md#1-your-ssh-key): get your key in place, verify the host fingerprint and connect without agent forwarding. Do not log in to Azure from the VM or paste cloud-management credentials into an agent session.
 
 ### 3. Start the same development environment
 
@@ -74,13 +72,14 @@ Continue below with the mount inspection and your personal sign-ins. Do not clon
 <details>
 <summary>Building from scratch or on the rebuild VM</summary>
 
+On a new VM, first run `sudo cloud-init status --wait`, check its exit status and resolve any bootstrap error. Reconnect after your account is added to the Docker group.
+
 **VM host:** clone the permitted repo into a new folder. Replace the example URL and commit with your own; the second VM must use the same recorded commit. For a private repo, use the prearranged project-scoped clone route and remove any temporary host credential afterwards. Never put a token in the URL.
 
 ```bash
 git clone https://github.com/<owner>/<repo>.git course-repo
 cd course-repo
-git switch --detach <recorded-commit>
-git switch -c x11-remote
+git switch -c x11-course <recorded-commit>
 
 docker version
 node --version
@@ -106,13 +105,13 @@ Enter the container, then keep all following agent commands there:
 devcontainer exec --workspace-folder "$PWD" bash
 ```
 
-**Container:** sign in as yourself to your chosen agent inside your own container. For Claude Code use `claude auth login`. Configure the approved project-scoped GitHub credential here, without putting it in shell history, a tracked file, a Dockerfile or cloud-init. Verify `gh auth status`, the chosen agent's sign-in and AndThen installation. Then run:
+**Container:** sign in as yourself to your chosen agent inside your own container. For Claude Code use `claude auth login`. Sign in to GitHub with a **fine-grained token for the one course repo** (Contents and Pull requests read/write), as in [access.md §3](x11-remote-environment/access.md#3-sign-in-inside-your-own-container), not a plain `gh auth login`, which grants `repo`, `read:org` and `gist` over all your repositories. Keep the token out of shell history, tracked files, a Dockerfile and cloud-init. Verify `gh auth status`, the agent's sign-in and the AndThen installation. Then run:
 
 ```bash
 uv run check.py
 ```
 
-A case repo uses its own setup check and real build/test commands. In the course repo, `check.py` must end `GREEN`; repair missing tools or authentication first. Before changing files, create your own work branch, for example `git switch -c x11-work`, if the prepared checkout is still detached at the recorded course commit.
+A case repo uses its own setup check and real build/test commands. In the course repo, `check.py` must end `GREEN`; repair missing tools or authentication first. Before changing files, create your work branch from the prepared `x11-course` checkout: `git switch -c x11-work`.
 
 <details>
 <summary>Do we need another image?</summary>
@@ -156,7 +155,10 @@ test ! -e /opt/x11-host-only.txt && echo 'host marker is not mounted'
 test ! -S /var/run/docker.sock && echo 'Docker socket is not mounted'
 test -z "${SSH_AUTH_SOCK:-}" && echo 'no forwarded SSH agent'
 test ! -d "$HOME/.azure" && echo 'no Azure CLI credential directory'
+gh auth status
 ```
+
+`gh auth status` must show your fine-grained `github_pat_` token with none of the `repo`, `read:org` or `gist` scopes. Also try `gh api repos/<owner>/<a-private-repo-you-did-not-grant> --jq .name`: it must fail.
 
 Record exit status and output. Also have the facilitator show that the VM has no managed identity and that the NSG permits SSH only from the approved `/32`. Attempt SSH from a second, unapproved source network: it should fail. Keep existing access open while testing; repair the rule rather than widening it to all addresses.
 
@@ -191,7 +193,7 @@ For a case repo, replace `uv run check.py` with its real deterministic build/tes
 devcontainer exec --workspace-folder "$PWD" tmux attach -t x11-proof
 ```
 
-**Container:** show `.lab-output/x11/check.log` and `cat .lab-output/x11/check.exit`. Expect the completed checks and exit `0`, with the completion timestamp after you disconnected. If it finished before disconnect, repeat the probe. Preserve both files in your external proof log.
+**Container:** show `.lab-output/x11/check.log` and `cat .lab-output/x11/check.exit`. Expect the completed checks and exit `0`, with the completion timestamp after you disconnected. If it finished before disconnect, repeat the probe. The files sit in the mounted repo, at `~/course-repo/.lab-output/x11/` on the VM host. After the check, `scp` them to your own computer for your proof log, and do not commit them.
 
 Then start your bounded agent task in a separate tmux session:
 
@@ -205,7 +207,7 @@ Show the task's result and run its real checks. If the agent was waiting for inp
 
 ### 6. Rebuild on a second VM
 
-Save and push the work you need to retain. The facilitator follows the [rebuild instructions](x11-remote-environment/README.md#5-rebuild-proof-and-final-cleanup) without deleting the first machine. Provision a second VM, transfer the prepared source bundle (or clone a published case commit) as the kit describes, then repeat steps 3–4 with fresh participant sign-ins. Do not copy a disk, credential cache or Docker volume from the first VM.
+Save and push the work you need to retain. The facilitator rebuilds one participant at a time, following the [rebuild instructions](x11-remote-environment/README.md#5-rebuild-proof-and-final-cleanup): your turn gets `x11-pNN-rebuild`, deployed with your public key, and it is deleted before the next participant's starts. Transfer the source bundle (or clone a published case commit) with your own key as the kit describes, then repeat steps 3–4 with fresh sign-ins. Do not copy a disk, credential cache or Docker volume from the first VM.
 
 Compare the test results. Any missing manual instruction belongs in your runbook or setup configuration. If your case needs changes beyond the supplied skeleton, use the normal `plan → exec-plan → review --fix` loop to make those changes and rerun this proof.
 
@@ -218,16 +220,16 @@ A fresh host plus the recorded repo/configuration and explicit sign-ins produces
 
 ### 7. Close the resources
 
-Have the facilitator [deallocate and clean up](x11-remote-environment/README.md#4-operate-during-the-course) after verifying work and proof are saved elsewhere and no jobs are active. Azure disk and public-IP costs can remain after deallocation. During the course, the facilitator deallocates only your own VMs. After all participants have saved their artifacts, the cleanup owner deletes the shared `agentic-engineering-2026` course group and confirms it is gone. Do not delete that group while another participant is still using it. For Hetzner, remove the servers and separately retained resources under its own billing rules.
+Save code and proof outside the VMs and tell the facilitator that no job is active. Deallocation, group deletion and the Hetzner equivalent are in the kit's [operate](x11-remote-environment/README.md#4-operate-during-the-course) and [cleanup](x11-remote-environment/README.md#5-rebuild-proof-and-final-cleanup) sections.
 
 ## Verify
 
 - [ ] The repo and runbook name both layers and reuse the complete `.devcontainer/` configuration.
 - [ ] Real build/tests and the setup check pass inside the agent container.
-- [ ] The host marker, Docker socket and forwarded SSH agent are unavailable inside it; cloud-management credentials and VM identity are absent.
+- [ ] The host marker, Docker socket and forwarded SSH agent are unavailable inside it; cloud-management credentials and VM identity are absent, and `gh auth status` shows a one-repo token.
 - [ ] SSH works from the approved network and fails from an unapproved one. Outbound network access is described accurately.
 - [ ] The deterministic check completes after disconnect with a retained log and exit `0`; the bounded agent task also survives closing SSH, and its returned result is checked.
-- [ ] A second VM reaches the same functional checks without copying hidden state from the first.
+- [ ] Your own rebuild VM (`x11-pNN-rebuild`) reaches the same functional checks without copying hidden state from the first.
 - [ ] Your row in the public access table and own SSH key reach only your assigned VM, and your model sign-in is inside your own container.
 - [ ] Work is saved outside the machines, billing ownership is known, and the facilitator confirms removal of the shared course resources after the course.
 

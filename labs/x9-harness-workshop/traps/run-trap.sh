@@ -36,7 +36,7 @@ for arm in $arms; do
     else
       verdict="$state"
     fi
-    cost="$(python3 -c 'import json,sys; d=json.load(open(sys.argv[1])); print(round(d.get("total_cost_usd"),3), d.get("num_turns"))' "$out/$arm-$i/result.json" 2>/dev/null || echo "? ?")"
-    echo "$arm $i $verdict | cost/turns: $cost"
+    usage="$(python3 -c 'import json,sys; d=json.load(open(sys.argv[1])); print(round(d.get("total_cost_usd"),3), d.get("num_turns"))' "$out/$arm-$i/result.json" 2>/dev/null || echo "? ?")"
+    echo "$arm $i $verdict | est_list_usd/turns: $usage"
   done
 done
