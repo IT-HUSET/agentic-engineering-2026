@@ -1,16 +1,19 @@
 # X5 – Parallelize, run unattended
 
-> **Skills:** `exec-plan --worktree`, `exec-plan --auto`, the four role agents from `init`, and AndThen's `permissions/` and `hooks/` examples
-> **Pull this when:** after C3 your team chooses to run stories in parallel, or without you watching. This one is your choice: under the course's current recommendation it is pulled, not assigned.
+**What you do:** run your plan with less of you in it, in three steps where each earns the next. First **sequential** (one fresh subagent per story), then **parallel** (`--worktree`), then **unattended** (`--auto`) inside a sandbox, with a coordinating review loop on top.
 
-The order matters, and each step earns the next: **sequential** (one fresh subagent per story), then **parallel** (`--worktree`), then **unattended** (`--auto`) inside a sandbox, with a coordinating loop on top. Teams that have run all of it can go on to [Going further](#going-further).
+**Why it matters:** a plan with independent stories waits on you for no reason, and a run nobody watches is only safe behind a fence you have seen hold. You find out where that line goes for your own case.
 
-## Trigger
+**What you have at the end:** every story `done` with its proof, one merged branch per story under `--worktree`, a sandbox you have seen refuse a command, and the run's assumptions read by you. Teams that have done all of it can go on to [Going further](#going-further).
 
-The entry condition is a fact in your plan, not a feeling:
+> **Skills:** `exec-plan --worktree`, `exec-plan --auto`, the four role agents from `init`, and AndThen's `permissions/` and `hooks/` examples · Your choice: this exercise is pulled after C3, never assigned.
 
-- **Parallel:** open `<feature-dir>/plan.json`. Are there **two or more pending stories where neither depends on the other** (`dependsOn` does not connect them)? If every story chains behind the previous one, `--worktree` buys nothing: run the plan plainly.
-- **Unattended:** you have FIS files you have read, a green C3, and you are willing to read what the run assumed after the fact.
+## When to pull it
+
+Pull X5 when one of these is true for your plan:
+
+- **Parallel: two stories that do not depend on each other.** *Check:* open `<feature-dir>/plan.json`. Are there two or more pending stories that `dependsOn` does not connect? If every story chains behind the one before, `--worktree` buys nothing: run the plan plainly.
+- **Unattended: you are ready to stop watching.** *Check:* you have read the FIS files, C3 is green, and you are willing to read afterwards what the run assumed.
 
 ## Input
 
@@ -138,7 +141,7 @@ Outside the container, add `REPO=<path to this repo>`. To do both deepenings, bu
 
 ### Who holds the plan?
 
-> **Pull this when:** your plan has independent stories and you cannot say whether the framework, a script or you should run them.
+> **When to pull it:** your plan has independent stories and you cannot say whether the framework, a script or you should run them.
 
 **Input.** The workload at tag `x5-start` (S01 and S02 `done`), cloned three times. S03 and S04 are independent in `dependsOn`. S05 depends on both.
 
@@ -291,7 +294,7 @@ Agent teams are a fourth form. They are experimental and off by default, so this
 
 ### A pipeline with no one in the chair
 
-> **Pull this when:** your stories have runnable proofs and you want to know which steps of the loop can run without you, and what you need to trust them.
+> **When to pull it:** your stories have runnable proofs and you want to know which steps of the loop can run without you, and what you need to trust them.
 
 **Input.** The workload on `feat/shared-lists`, built as above (a fresh `work`, before S01 and S02 run), green tests, and a quota (about 30 USD at list price for the chain, with `--max-budget-usd` as a cap per call). Run `uv sync` now: the sandbox has no network.
 

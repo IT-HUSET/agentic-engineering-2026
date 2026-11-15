@@ -1,18 +1,22 @@
 # X1 – Decide and model
 
-> **Skills:** `decide`, `domain --mode glossary`, `spike`
-> **Pull this when:** your PRD or plan shows a design fork, or two names for one thing. You apply what the Day 1 talks covered; this exercise does not re-teach the theory.
+**What you do:** settle a technical choice that will be hard to undo, record it as an ADR, and agree on one name for each concept in your case. When only running code can answer the question, you run a short spike instead.
 
-## Trigger
+**Why it matters:** a choice made silently inside one story binds every story after it. Two names for one thing make the agent build two things.
 
-Pull X1 when you can point at one of these in your own artifacts:
+**What you have at the end:** one ADR per real decision, a glossary that the PRD, the FIS files and the code agree with, and a spike verdict for any question only code could answer.
 
-- `clarify` printed `decide` as its `Next (fresh session):` line, or the PRD's *Decisions Log*, *Constraints & Assumptions* or *Open Questions* hold a technical fork that binds beyond one story or is costly to reverse (a storage shape, a queue, a boundary).
-- Two or more names for the same concept across the PRD, the FIS files and the code (`member`, `collaborator`, `recipient`), or one word used for two things.
-- A plan story whose FIS has a *Preflight* item the skill recommended an ADR for.
-- A question only running code can answer ("does this hold under load?", "does the library do what we need?").
+> **Skills:** `decide`, `domain --mode glossary`, `spike` · You apply what the Day 1 talks covered. This exercise does not re-teach the theory.
 
-No fork, no new vocabulary: skip this and go to `plan`.
+## When to pull it
+
+Pull X1 when one of these is true for your case:
+
+- **You face a choice that is costly to reverse,** such as a storage shape, a queue or a boundary between modules. *Check:* `clarify` printed `decide` as its `Next (fresh session):` line, or the PRD's *Decisions Log*, *Constraints & Assumptions* or *Open Questions* name the fork. A FIS *Preflight* item that recommends an ADR counts too.
+- **The same thing has two names,** or one word means two things (`member`, `collaborator`, `recipient`). *Check:* search the PRD, the FIS files and the code for the terms.
+- **Only running code can answer.** "Does this hold under load?" "Does the library do what we need?"
+
+**Skip it** when there is no fork and no new vocabulary. Go straight to `plan`.
 
 ## Input
 

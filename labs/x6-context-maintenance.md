@@ -1,16 +1,21 @@
 # X6 – Context, brownfield, maintenance
 
-> **Skills:** `describe --model`, `init` (depth), `handoff`, `simplify-code`, and the `Learnings` and `Decisions` documents
-> **Pull this when:** your case is a repo you did not write, or context decays between days. Playbook background: §10 and §14.
+**What you do:** make your repo easy for a fresh session to find its way around. You map the code, give decisions and lessons a lasting home, hand work over between sessions, and clean up after a finished story.
 
-## Trigger
+**Why it matters:** an agent knows only what it can find. A decision that lives in a closed chat, or an Index that points at nothing, means every new session starts from zero and repeats old mistakes.
 
-Pull X6 when you can point to one of these:
+**What you have at the end:** an Index that routes to real files, `docs/ARCHITECTURE.md` and an architecture model, discovered requirements a person has confirmed, `docs/LEARNINGS.md` and `docs/DECISIONS.md` in use, a handoff a fresh session resumed from, and one story's code cleaned up with its behavior unchanged.
 
-- **Brownfield.** Your case started from existing code, and there is no `docs/ARCHITECTURE.md`, no `docs/models/architecture-model.json`, or the Index in your `CLAUDE.md` points at nothing real. The agent keeps asking where things are.
-- **Context rot between days.** A fresh session the next day did not know a decision or a convention you settled yesterday, or it repeats a mistake you already fixed.
-- **Duplication at reflection.** After a story, the diff contains a helper that already existed, or two stories solved the same thing two ways.
-- **Knowledge in a dead chat.** A trap or decision exists only in the transcript of a session you closed.
+> **Skills:** `describe --model`, `init` (depth), `handoff`, `simplify-code`, and the `Learnings` and `Decisions` documents · Playbook background: §10 and §14.
+
+## When to pull it
+
+Pull X6 when one of these is true for your case:
+
+- **The agent keeps asking where things are.** Your case started from existing code. *Check:* there is no `docs/ARCHITECTURE.md` or `docs/models/architecture-model.json`, or the Index in your `CLAUDE.md` points at nothing real.
+- **Yesterday's decisions are gone today.** A fresh session the next day did not know a decision or convention you settled, or it repeated a mistake you already fixed.
+- **The same thing is solved twice.** *Check:* after a story, the diff adds a helper that already existed, or two stories solved one thing two ways.
+- **Knowledge sits in a closed chat.** A trap or a decision exists only in the transcript of a session you closed.
 
 ## Input
 

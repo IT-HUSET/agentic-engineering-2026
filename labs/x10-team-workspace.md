@@ -1,21 +1,22 @@
 # X10 – Team workspace
 
-> **Skills:** `clarify`, `decide`, `plan`, `exec-plan`, `review`, `ship`, `init`, and Claude Code's plugin marketplace, hooks and `AGENTS.md`
-> **Pull this when:** your team works across several repos and asks "what do our agents need to know that no single repo carries?", and you have a skill and hooks (from [X9](x9-harness-workshop.md)) that more than one repo needs.
+**What you do:** give your team's shared know-how one home in git: a `team-home` repo with the rules that apply to every repo, a catalog of your repos, and a plugin marketplace that carries the team's skills and hooks. You build it with the loop, in two stories, and then test a fresh session with and without it.
 
-Today the rules, the repo list and your skill live in one person's repo or in one person's `~/.claude`. This exercise gives them a shared home in git: a `team-home` repo with the rules, a catalog of your repos and a plugin marketplace, so that a fresh session finds the right repo, runs the right tests and has the team's skill and hooks without anyone pasting them around. It follows the loop, once, on `team-home` itself: two stories, then a test with and without it.
+**Why it matters:** today the rules, the repo list and your skill live in one person's repo or one person's `~/.claude`. A fresh session cannot find the other repo, runs the wrong tests and misses the team's hooks, so someone pastes them around.
 
-Claude Code only. A team on Codex or Copilot CLI can keep `AGENTS.md` and the catalog, but the plugin format here is not checked for their hosts.
+**What you have at the end:** `team-home` with an `AGENTS.md`, a catalog file per repo and a plugin installed in one of your repos, two ADRs for the choices that are hard to undo, and a measured answer to "does it help?" from three questions asked with and without it.
 
-## Trigger
+> **Skills:** `clarify`, `decide`, `plan`, `exec-plan`, `review`, `ship`, `init`, and Claude Code's plugin marketplace, hooks and `AGENTS.md` · Builds on the skill and hooks from [X9](x9-harness-workshop.md). Claude Code only: a team on Codex or Copilot CLI can keep `AGENTS.md` and the catalog, but the plugin format here is not checked for their hosts.
 
-Pull X10 when you can point to one of these:
+## When to pull it
+
+Pull X10 when one of these is true for your team:
 
 - **The same question, repo after repo.** A fresh session asks where the other repo is, how its tests run, or which rule applies, and the answer is in no single repo.
 - **A skill or hook that one repo has and the others lack.** You wrote it in X9 (or elsewhere), and a teammate in another repo does not get it.
 - **A rule in someone's head.** "Never `git add -A`" or "no personal ID numbers in logs" holds in one repo's `CLAUDE.md` and nowhere else.
 
-Not yet if the team has one repo: that repo's own `AGENTS.md` is the place.
+**Skip it** if the team has one repo. That repo's own `AGENTS.md` is the place.
 
 ## Input
 
@@ -236,6 +237,17 @@ The files for these are already in [`x10-team-workspace/example-team-home/`](x10
 - **The session flow.** [`session-note/SKILL.md`](x10-team-workspace/example-team-home/plugins/team-tools/skills/session-note/SKILL.md) and [`propose-note.sh`](x10-team-workspace/example-team-home/plugins/team-tools/scripts/propose-note.sh): the skill and the script put a note on a branch and open a PR, and a human approves it. A `SessionEnd` hook is not enough: it cannot ask Claude for anything and has 1.5 seconds by default.
 - **A larger measurement.** [`measure/`](x10-team-workspace/measure/): twelve `claude -p` runs and a readout (see the [README](x10-team-workspace/README.md#measure) there for prerequisites). Also a check that the catalog matches the repos, `claude plugin eval` cases for the team's plugin, and `describe --model` across several repos. A catalog that is not checked lies after a week.
 - **Your case repo.** Add it to the catalog and install the team's plugin there. Treat your friction log as a test of `team-home`: whatever the agent had to ask about is missing from the catalog.
+
+### Ideas for your own team-home
+
+None of these is part of the exercise. They are examples of what else a team workspace can hold once the pointers, the catalog and one plugin work. Pick one your team actually misses, and build its smallest version first.
+
+| Idea | Smallest version | Watch out for |
+|------|------------------|---------------|
+| **More team skills** | One skill for a prompt someone on the team has pasted three times: a release checklist, an incident write-up, a new-repo setup. Add it to the plugin you already have | Every installed skill's name and description load in every session. Remove the ones nobody calls (`claude plugin details` shows the cost) |
+| **A knowledge base ("LLM wiki")** | Short, human-edited pages in `wiki/`, one topic each, with one pointer line in `AGENTS.md` so the agent reads a page only when it needs it. New pages arrive through the session flow above: the agent proposes, a person approves the PR | A wiki the agent writes on its own and that loads in every session. Generated context files rarely raise solve rates but add more than 20 % to cost (Gloaguen et al., [arXiv 2602.11988](https://arxiv.org/abs/2602.11988)). Keep pages for what differs from the defaults |
+| **Onboarding** | A skill, for example `/team-tools:onboard`, that walks a new colleague through the catalog, the team rules and how to run each repo's tests. Step 5's three questions are already an onboarding test for an agent: ask a new colleague the same ones | Onboarding pages that drift from the repos. Point the skill at the catalog instead of copying from it, and let the catalog check catch the drift |
+| **How the team and projects are doing** | Numbers you already have: PR lead time and size from `gh`, review findings per plan from AndThen's reports, the length of the friction log. Read them at the retro | Measuring people instead of the flow, and counting volume. The playbook (§15): measure DORA outcomes (throughput, lead time, change-failure rate, time to restore, rework) once you have deploy and incident data, and never "% of code AI-generated" or self-reported productivity. A short DevEx question at the retro (feedback loops, cognitive load, flow) beats a dashboard nobody opens |
 
 ## Sizing check
 

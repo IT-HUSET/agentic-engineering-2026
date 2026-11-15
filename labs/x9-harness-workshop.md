@@ -1,20 +1,25 @@
 # X9 – Harness workshop
 
-> **Skills:** subagent definitions, skills, hooks, `CLAUDE.md` and settings in Claude Code. AndThen is the object of study: its role agents, rules template, `hooks/` and skill guidelines
-> **Pull this when:** your team already runs Claude Code and AndThen daily and the foundation taught you nothing new. You use the harness every day but have not built its parts yourselves. Claude Code only.
+**What you do:** build the parts of your agent harness yourselves: a subagent, a skill and three hooks, after measuring what a session loads before you type. Every step has the same shape, **guess, run, keep**: write your guess down, run the step, keep what held up. The measured answer sits in a collapsed section below each step. Open it after you have run the step, not before.
 
-Every exercise has the same shape: **guess, run, keep**. Write the guess down before you run anything. The measured answer sits in a collapsed section below each exercise. Open it after you have run the step, not before. The point is to find out what you cannot predict about your own harness.
+**Why it matters:** you use Claude Code and AndThen every day, but the harness decides what the agent sees, who does the work and what is enforced. Building the parts yourselves is how you find out what you cannot predict about it.
 
-## Trigger
+**What you have at the end:** three things your team wants to remove or move, your own subagent and skill, and three hooks (a sensor, a guard and a gate), all committed. H6–H7 continue with a pull request against your team's harness.
 
-Pull X9 when you can point to one of these:
+> **Skills:** subagent definitions, skills, hooks, `CLAUDE.md` and settings in Claude Code. AndThen is the object of study: its role agents, rules template, `hooks/` and skill guidelines · Claude Code only.
+
+## When to pull it
+
+Pull X9 when one of these is true for your team:
 
 - **Cost you cannot see.** You do not know what a fresh session in your repo loads before you type, or which skills nobody calls.
 - **Delegation by habit.** You hand work to subagents but have never written one, and you could not say which model runs it.
 - **The same prompt a third time.** Someone on the team keeps pasting the same instructions or workflow.
 - **A rule the agent breaks anyway.** `CLAUDE.md` says it, and it still happens.
 
-H6–H7 are the continuation. Claude Code's own rule of thumb for what to build ([Extend Claude Code](https://code.claude.com/docs/en/features-overview)) is also the sizing check for this exercise:
+**Skip it** if Claude Code or AndThen is still new to you. The foundation is the better place to start.
+
+Claude Code's own rule of thumb for what to build ([Extend Claude Code](https://code.claude.com/docs/en/features-overview)) is also the sizing check for this exercise:
 
 | When this happens | Add |
 |---|---|

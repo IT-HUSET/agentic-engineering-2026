@@ -1,16 +1,21 @@
 # X7 – Trust the tests
 
-> **Skills:** `triage`, `testing` (`--mode prove-it`, `--mode strategy`)
-> **Pull this when:** the suite cannot be trusted, a bug has an unknown cause, or a story went `done` on weak proof. Playbook background: §11.
+**What you do:** find out which of your tests actually protect the behavior they claim to, fix a bug by proving it with a failing test first, and, if it helps, write down your testing strategy.
 
-## Trigger
+**Why it matters:** every `done` in AndThen rests on a check that ran. If that test would still pass with the behavior removed, the `done` means nothing, and neither does a suite you rerun until it goes green.
 
-Pull X7 when one of these is a fact in your repo or artifacts:
+**What you have at the end:** your story proofs graded *protects the behavior* or *does not*, a bug reproduced by a failing test and then fixed at its cause, and optionally `docs/TESTING-STRATEGY.md`.
 
-- **An unreliable suite.** Tests that fail on a rerun with no change, a suite red on the default branch, or a team habit of "rerun it".
+> **Skills:** `triage`, `testing` (`--mode prove-it`, `--mode strategy`) · Playbook background: §11.
+
+## When to pull it
+
+Pull X7 when one of these is true in your repo:
+
+- **The suite cannot be trusted.** Tests fail on a rerun with no change, the default branch is red, or "just rerun it" is a habit.
 - **A bug whose cause you do not know.** A failing check, a regression, or a symptom you cannot reproduce on demand.
-- **Weak evidence.** A `verified.summary` in `plan.json` that records only an exit code, a scenario whose test would still pass with the behavior removed, or a `done` story you cannot explain a proof for.
-- **No testing strategy.** Nothing in `docs/TESTING-STRATEGY.md` says which levels you use or what must be green before merge.
+- **A `done` on weak proof.** *Check:* a `verified.summary` in `plan.json` that records only an exit code, a scenario whose test would still pass with the behavior removed, or a `done` story whose proof you cannot explain.
+- **No testing strategy.** *Check:* nothing in `docs/TESTING-STRATEGY.md` says which test levels you use or what must be green before a merge.
 
 ## Input
 

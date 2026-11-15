@@ -1,18 +1,23 @@
 # X3 – Strategic design
 
-> **Skills:** `domain --mode event-storming`, `domain --mode subdomains,contexts`, `visualize`
-> **Pull this when:** your work spans several subdomains, or nobody can say where one module ends and the next begins. This exercise applies strategic DDD. It does not teach the theory from scratch.
+**What you do:** map your case's domain. You run an event storm, split the domain into subdomains and bounded contexts, and record who owns what in a Domain Map.
 
-## Trigger
+**Why it matters:** when nobody can say which module owns a rule, stories collide over the same files and one word drifts to mean two things. The map gives each rule one home.
 
-Pull X3 when you can show one of these in your artifacts:
+**What you have at the end:** an event-storm board, `docs/DOMAIN-MAP.md` with subdomains, contexts and how they integrate, and a page that draws it. Or a written decision that your case does not need one, which is a valid result.
 
-- The PRD or `plan.json` covers several features that touch different parts of the business (for shared lists: sharing, invites, permissions, assignment, notifications).
-- Two stories in `plan.json` fight over the same files, or a story's FIS cannot name which module owns a rule.
-- The same word means two things in different parts of the system (`docs/UBIQUITOUS_LANGUAGE.md` has rows in **Overloaded Terms**).
-- There is no `docs/DOMAIN-MAP.md` and the project is domain-heavy rather than a CRUD tool.
+> **Skills:** `domain --mode event-storming`, `domain --mode subdomains,contexts`, `visualize` · This exercise applies strategic DDD. It does not teach the theory from scratch.
 
-**The first question is always: does this deserve a Domain Map?** A library or a CRUD tool skips it. The Domain Map is never required, and deciding whether to model is part of the exercise.
+## When to pull it
+
+Pull X3 when one of these is true for your case:
+
+- **Your case spans several parts of the business.** For shared lists: sharing, invites, permissions, assignment and notifications. *Check:* the PRD or `plan.json` covers features like these.
+- **Stories fight over the same files,** or a FIS cannot say which module owns a rule. *Check:* the stories in `plan.json` and the work areas in each FIS.
+- **One word means two things** in different parts of the system. *Check:* rows under **Overloaded Terms** in `docs/UBIQUITOUS_LANGUAGE.md`.
+- **The project is domain-heavy and has no map.** *Check:* there is no `docs/DOMAIN-MAP.md`, and the case is more than a CRUD tool.
+
+**Skip it** for a library or a CRUD tool. The Domain Map is never required, and deciding whether to model is part of the exercise.
 
 ## Input
 

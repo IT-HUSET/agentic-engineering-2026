@@ -1,18 +1,22 @@
 # X2 – UI/UX
 
+**What you do:** design the screens your case needs before you build them, first as research and then as grayscale wireframes, and check built screens against that design.
+
+**Why it matters:** an agent that builds a screen with no design invents one, and afterwards nobody can say whether it is right. A wireframe is cheap to change. A built screen is not.
+
+**What you have at the end:** wireframes for every screen and state the plan builds, and for a built screen, visual-validation findings ranked P1 to P3. A design system and mockups only if the surface is broad.
+
 > **Skills:** `ui-ux-design`, `visual-validation`
-> **Pull this when:** your case has a screen that does not exist yet, or a screen you must check against a design.
 
-## Trigger
+## When to pull it
 
-Pull X2 when the fact is in your artifacts:
+Pull X2 when one of these is true for your case:
 
-- The PRD or a FIS describes a user-facing surface: a new page, dialog, form or list, in `templates/` or the equivalent for your stack.
-- `clarify` asked "does design run before planning?" and your answer is recorded as a row in the PRD's *Decisions Log*, or its `Next (fresh session):` line named `ui-ux-design`. That line asks for the design-system mode first when the project has none. For one or two screens that is over-sizing: edit the pasted line to a wireframes request (step 4).
-- `docs/wireframes/<feature>/` has no wireframes for a screen the plan builds.
-- A built screen needs checking against a wireframe or design reference.
+- **Your plan builds a screen that does not exist yet:** a page, dialog, form or list. *Check:* the PRD or a FIS describes it, and `docs/wireframes/<feature>/` has nothing for it.
+- **`clarify` pointed you here.** *Check:* its `Next (fresh session):` line named `ui-ux-design`, or the PRD's *Decisions Log* records that design runs before planning. If that line asks for a design system first and you have only one or two screens, ask for wireframes instead (step 4).
+- **A built screen needs checking** against a wireframe or a design reference.
 
-**The gate comes first: does this work have a UI surface?** An API, a script or a logic change earns nothing here. Designing screens that do not exist is the design version of writing an ADR for a typo.
+**Skip it** when the work has no UI surface: an API, a script or a logic change. Designing screens that do not exist is the design version of writing an ADR for a typo.
 
 ## Input
 

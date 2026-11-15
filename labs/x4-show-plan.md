@@ -1,17 +1,22 @@
 # X4 – Show and publish the plan
 
+**What you do:** turn your plan into something a person outside your session can read, a one-page drawing of the stories and how they depend on each other. If your team uses a tracker, you also publish the stories there as issues.
+
+**Why it matters:** `plan.json` and a stack of FIS files are written for agents, not for reviewers. An approval at C2 from someone who could not read the plan is a rubber stamp.
+
+**What you have at the end:** `plan.html` with the stories' dependencies and status, a dry-run preview of what would be published, and then the issues in your case repo.
+
 > **Skills:** `visualize`, `tracker publish`
-> **Pull this when:** someone outside your session has to read the plan, or the plan has to land in a tracker.
 
-## Trigger
+## When to pull it
 
-Pull X4 when you can say one of these about your plan:
+Pull X4 when one of these is true for your plan:
 
-- A reviewer, product owner or teammate will approve the plan at C2 without having been in your session, and `plan.json` plus a stack of FIS files is a poor thing to hand them.
-- Your team tracks work in GitHub issues (or another tracker) and wants the stories there.
-- Your team's convention says requirements live in the tracker (`Record: tracker`), or you already keep a `docs/ISSUE-TRACKER.md`.
+- **Someone who was not in your session approves it** at C2: a reviewer, a product owner or a teammate.
+- **Your team tracks work in GitHub issues** (or another tracker) and wants the stories there.
+- **Your convention puts requirements in the tracker.** *Check:* `Record: tracker` in your conventions, or a `docs/ISSUE-TRACKER.md`.
 
-A single-story plan that only you read needs neither.
+**Skip it** for a single-story plan that only you read.
 
 ## Input
 

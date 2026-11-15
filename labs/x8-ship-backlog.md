@@ -1,16 +1,21 @@
 # X8 – Ship in depth, backlog in
 
-> **Skills:** `ship` (in depth), `tracker triage`
-> **Pull this when:** your case repo's issue tracker feeds your requirements, or you need to understand and control what `ship` lands. Playbook background: §6 and §15.
+**What you do:** take control of both ends of the loop. At the start, you feed `clarify` from your issue tracker instead of a blank page. At the end, you learn exactly what `ship` writes, keeps and publishes.
 
-## Trigger
+**Why it matters:** `ship` decides what the team remembers (the Learnings) and what a reviewer sees (the PR text). If you cannot explain what it did, you cannot trust it. A backlog nobody triages is requirements nobody reads.
 
-Pull X8 when one of these is true of your case:
+**What you have at the end:** a PR whose text carries the intent, outcomes, proof and door type, Learnings landed from the FIS observations, if needed a PR opened early with the plan kept on the branch, and issues you have triaged, with an agent brief on the ones that are ready.
 
-- **Backlog in.** The repo has untriaged issues and the next feature should come from them, not from a blank page. The tracker is input to `clarify`.
-- **Learnings landing.** You need to explain, to a teammate or to yourself, what `ship` wrote into `docs/LEARNINGS.md` and what it only recommended.
-- **A PR before the plan is done.** The plan has pending stories, but you want a pull request now (the per-story PR case on a team).
-- **Specs vs history.** Someone asks where the FIS files went, and whether a squash merge loses the intent.
+> **Skills:** `ship` (in depth), `tracker triage` · Playbook background: §6 and §15.
+
+## When to pull it
+
+Pull X8 when one of these is true for your case:
+
+- **Your next feature is in the issue tracker.** The repo has untriaged issues, and the next feature should come from them rather than from a blank page.
+- **You cannot explain what `ship` landed.** What it wrote into `docs/LEARNINGS.md`, and what it only recommended.
+- **You want a PR before the plan is done.** The plan has pending stories, but you need a pull request now, as with per-story PRs on a team.
+- **Someone asks where the specs went.** Where the FIS files went, and whether a squash merge loses the intent.
 
 ## Input
 
