@@ -1,0 +1,16 @@
+{
+  "repository": "<owner>/<course-case-repo>",
+  "base": "main",
+  "branch_prefix": "feat/",
+  "plugin_dir": "/opt/andthen",
+  "settings": "/opt/x12-control/labs/x12-plan-to-pr/settings.example.json",
+  "state_dir": "/x12-state",
+  "publish_enabled": false,
+  "max_fix_rounds": 3,
+  "timeout_seconds": 7200,
+  "max_budget_usd": 40,
+  "stage_budget_usd": 10,
+  "checks": [
+    ["uv", "run", "pytest", "-q"]
+  ]
+}

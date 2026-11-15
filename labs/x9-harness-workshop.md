@@ -390,5 +390,6 @@ After H5, look at the guesses that were wrong. Each one points to a continuation
 - **H6–H7 here** if the open question is where each rule belongs, or what you do by hand that the tool already does. It needs nothing beyond H1–H5.
 - **X10 Team workspace** if the open question is what your team's agents need to know that no single repo carries.
 - **X5, Going further** if the open question is which steps of the loop can run without you, or when parallel agents pay off, and who holds the plan.
+- **[X11 Remote agent environment](x11-remote-environment.md)** if the open question is how a run can survive closing your laptop and how a colleague can rebuild its environment. Azure access, quota and a rehearsed pilot must be prepared before choosing it; Hetzner is the alternative.
 
 If you cannot decide, take the one most of your wrong guesses point to. If you guessed everything right, you are ahead of the workshop: write down what you still cannot answer about your harness, and pick the continuation from that.

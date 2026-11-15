@@ -445,6 +445,8 @@ A later check (2026-11-15, on a demo repo) found that a commit passed in the san
 
 </details>
 
+For a remote job that also opens the PR, continue with [X12 – From pushed plan to PR](x12-plan-to-pr.md). It prepares GitHub Actions orchestration for AndThen ≥1.2.0 and needs its own live rehearsal. C2 approval and the C4 artifact review stay human.
+
 ### References
 
 Claude Code documentation:

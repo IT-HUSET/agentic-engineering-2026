@@ -44,7 +44,7 @@ The [`todo-app/`](todo-app/) directory is the lab's brownfield base – an exist
 
 - **Foundation (Day 1).** The loop for one feature, once, on `todo-app/`: [`labs/foundation.md`](labs/foundation.md).
 - **Case work.** The same loop on a case, with the amount of structure you choose written down and a gate at each artifact.
-- **Exercise catalog.** Optional deepening (X1–X10): at the end of Day 3 if there is time, or earlier when your case calls for one. X9 and X10 are for teams that already run Claude Code and AndThen daily.
+- **Exercise catalog.** Optional deepening (X1–X12): at the end of Day 3 if there is time, or earlier when your case calls for one. X9, X10 and X12 are for teams that already run Claude Code and AndThen daily. X11 is individual. [X11](labs/x11-remote-environment.md) builds your own remote VM and container on Azure, with Hetzner as an alternative. The facilitator prepares individual access keys and environments before the course. [X12](labs/x12-plan-to-pr.md) prepares the automated plan-to-PR flow for AndThen ≥1.2.0; publication and the remote chain still require a live rehearsal.
 
 ## The one idea
 

@@ -1,2 +1,4 @@
 .DS_Store
 .agent_temp/
+
+.lab-output/

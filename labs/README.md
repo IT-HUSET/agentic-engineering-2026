@@ -42,7 +42,7 @@ Day 1 ends with the case start: your team creates its case repo and repeats F1 t
 
 ## 3. Exercise catalog
 
-Optional deepening. Do them at the end of Day 3 if there is time, or earlier when your case needs one or you are curious. Nothing is assigned; your facilitator may point you to one when its trigger shows up in your own artifacts. Each exercise has a **Trigger**, **Input**, **Output**, **Steps**, **Verify** and **Sizing check**.
+Optional deepening. Do them at the end of Day 3 if there is time, or earlier when your case needs one or you are curious. Nothing is assigned; your facilitator may point you to one when its trigger shows up in your own artifacts. Each exercise opens with what you do, why it matters and what you have at the end, then **When to pull it**, with the signs to look for in your own artifacts. After that come **Input**, **Output**, **Steps**, **Verify** and **Sizing check**.
 
 | Exercise | Skills | Pull it when |
 |----------|--------|--------------|
@@ -56,5 +56,7 @@ Optional deepening. Do them at the end of Day 3 if there is time, or earlier whe
 | [X8 – Ship in depth, backlog in](x8-ship-backlog.md) | `ship`, `tracker triage` | Your tracker is input to `clarify`, or you need to explain what `ship` landed |
 | [X9 – Harness workshop](x9-harness-workshop.md) | Claude Code: `/context`, subagents, model routing, skills, hooks; AndThen's role agents and rules template | You already run Claude Code and AndThen daily, but cannot predict what your harness loads, routes or enforces. Claude Code only |
 | [X10 – Team workspace](x10-team-workspace.md) | `AGENTS.md`/`CLAUDE.md` pointers, a plugin marketplace for your team | Your team works across several repos, and the agent lacks what no single repo carries |
+| [X11 – Remote agent environment](x11-remote-environment.md) | Individual Azure VM and container, reconnect and rebuild checks; Hetzner alternative | Your runs depend on your laptop staying connected, or you cannot explain the agent's host and credential access |
+| [X12 – From pushed plan to PR](x12-plan-to-pr.md) | GitHub Actions on X11, `exec-plan --auto`, bounded review/fix loop, `ship --auto` | You already run plans unattended but carry the remote steps between sessions by hand. Preparation for AndThen ≥1.2.0; live rehearsal required |
 
 X9, X10, X12 and X5's *Going further* are written for teams that already use Claude Code and AndThen every day. X11 is individual: the facilitator prepares your individual key and environment before the course. Work on your own VM and container. X12 prepares automated PR creation; C2 approval and the C4 review remain human gates. Answer keys, tips and reference results sit in collapsed sections: make your guess before you open one. Scripts and examples live next to each lab, in `labs/<exercise>/`.

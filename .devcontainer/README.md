@@ -120,3 +120,7 @@ A codespace stops after its idle timeout, which is why the command above sets th
   ```bash
   gh codespace stop -c <codespace>
   ```
+
+## Remote VM (X11)
+
+[X11 – Remote agent environment](../labs/x11-remote-environment.md) is individual: each participant runs this same complete dev-container configuration in their own container on their own Azure Linux VM, with Hetzner as an alternative. The facilitator prepares your individual key and environment before the course using the access runbook. The VM is a Docker host; it does not need a separate copy of the development tools. The [preparation kit](../labs/x11-remote-environment/README.md) provides the Azure template, host bootstrap and rehearsal checklist.

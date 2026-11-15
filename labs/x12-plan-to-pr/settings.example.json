@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "defaultMode": "dontAsk",
+    "allow": ["Read", "Edit", "Write", "Glob", "Grep", "Agent", "Task", "Skill", "TodoWrite", "Bash"],
+    "deny": ["Read(**/.env)", "Read(**/.env.*)", "Bash(git push --force*)", "Bash(git push -f*)", "Bash(git reset --hard*)", "Bash(git clean *)"]
+  },
+  "sandbox": { "enabled": false }
+}
