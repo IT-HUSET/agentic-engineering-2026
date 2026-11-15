@@ -260,4 +260,4 @@ Claude Code documentation:
 - Instructions: [How Claude remembers your project](https://code.claude.com/docs/en/memory) (`AGENTS.md`, `@` imports, `--add-dir`)
 - Permissions and the trust dialog: [Configure permissions](https://code.claude.com/docs/en/permissions)
 
-Also: [The Home Repo Pattern](https://www.aihero.dev/the-home-repo-pattern), [AGENTS.md](https://agents.md), and AndThen's [`plugin/README.md`](https://github.com/IT-HUSET/andthen/blob/main/plugin/README.md).
+Also: [The Home Repo Pattern](https://www.aihero.dev/the-home-repo-pattern) and AndThen's [`plugin/README.md`](https://github.com/IT-HUSET/andthen/blob/main/plugin/README.md).
