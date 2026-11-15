@@ -1,0 +1,14 @@
+{
+  "hooks": {
+    "InstructionsLoaded": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -c '{session_id,file_path,memory_type,load_reason}' >> \"$HOME/x10/loaded.jsonl\""
+          }
+        ]
+      }
+    ]
+  }
+}

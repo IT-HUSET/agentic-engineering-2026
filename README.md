@@ -44,7 +44,7 @@ The [`todo-app/`](todo-app/) directory is the lab's brownfield base – an exist
 
 - **Foundation (Day 1).** The loop for one feature, once, on `todo-app/`: [`labs/foundation.md`](labs/foundation.md).
 - **Case work.** The same loop on a case, with the amount of structure you choose written down and a gate at each artifact.
-- **Exercise catalog.** Optional deepening (X1–X8): at the end of Day 3 if there is time, or earlier when your case calls for one.
+- **Exercise catalog.** Optional deepening (X1–X10): at the end of Day 3 if there is time, or earlier when your case calls for one. X9 and X10 are for teams that already run Claude Code and AndThen daily.
 
 ## The one idea
 

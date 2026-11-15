@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": ["Bash", "Read", "Edit", "Write", "Glob", "Grep", "Agent", "Task", "Skill", "TodoWrite"],
+    "deny": ["Read(**/.env)", "Read(**/.env.*)"],
+    "ask": ["Bash(git push *)", "Bash(dangerouslyDisableSandbox:true)"]
+  },
+  "sandbox": {
+    "enabled": true,
+    "network": { "allowedDomains": [], "strictAllowlist": true },
+    "filesystem": {
+      "allowWrite": ["<ABSOLUTE PATH TO THE REPO'S .git>", "<OUTPUT OF uv cache dir>"]
+    }
+  }
+}

@@ -50,7 +50,11 @@ Optional deepening. Do them at the end of Day 3 if there is time, or earlier whe
 | [X2 – UI/UX](x2-ui-ux.md) | `ui-ux-design`, `visual-validation` | The case has a UI surface with no wireframes |
 | [X3 – Strategic design](x3-strategic-design.md) | `domain --mode event-storming`, `domain --mode subdomains,contexts`, `visualize` | Several subdomains, or no one can say where a module ends. First ask whether it deserves a Domain Map |
 | [X4 – Show and publish the plan](x4-show-plan.md) | `visualize`, `tracker publish` | Someone outside your session must read the plan, or it should go to a tracker |
-| [X5 – Parallelize, run unattended](x5-parallel-autonomy.md) | `exec-plan --worktree`, `exec-plan --auto`, role agents, `permissions/`, `hooks/` | After C3 you choose parallel or unattended runs. Entry check: two stories with no `dependsOn` edge between them |
+| [X5 – Parallelize, run unattended](x5-parallel-autonomy.md) | `exec-plan --worktree`, `exec-plan --auto`, role agents, `permissions/`, `hooks/` | After C3 you choose parallel or unattended runs. Entry check: two stories with no `dependsOn` edge between them. [Going further](x5-parallel-autonomy.md#going-further): who holds a parallel plan, and a pipeline with no one at the keyboard |
 | [X6 – Context, brownfield, maintenance](x6-context-maintenance.md) | `describe --model`, `init`, `handoff`, `simplify-code` | Your own or an inherited repo, context rot between days, duplication after reflection |
 | [X7 – Trust the tests](x7-trust-tests.md) | `triage`, `testing` | An unreliable suite, a bug with an unknown cause, or a story done on weak proof |
 | [X8 – Ship in depth, backlog in](x8-ship-backlog.md) | `ship`, `tracker triage` | Your tracker is input to `clarify`, or you need to explain what `ship` landed |
+| [X9 – Harness workshop](x9-harness-workshop.md) | Claude Code: `/context`, subagents, model routing, skills, hooks; AndThen's role agents and rules template | You already run Claude Code and AndThen daily, but cannot predict what your harness loads, routes or enforces. Claude Code only |
+| [X10 – Team workspace](x10-team-workspace.md) | `AGENTS.md`/`CLAUDE.md` pointers, a plugin marketplace for your team | Your team works across several repos, and the agent lacks what no single repo carries |
+
+X9, X10 and X5's *Going further* are written for teams that already use Claude Code and AndThen every day. Answer keys, tips and reference results sit in collapsed sections: make your guess before you open one. Scripts and examples live next to each lab, in `labs/<exercise>/`.

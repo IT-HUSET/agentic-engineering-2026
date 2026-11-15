@@ -1,0 +1,10 @@
+{
+  "extraKnownMarketplaces": {
+    "betala-team": {
+      "source": { "source": "github", "repo": "betala/team-home" }
+    }
+  },
+  "enabledPlugins": {
+    "team-tools@betala-team": true
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "betala-team",
+  "description": "Team Betala's skills and hooks",
+  "owner": {
+    "name": "Team Betala"
+  },
+  "plugins": [
+    {
+      "name": "team-tools",
+      "source": "./plugins/team-tools",
+      "description": "Catalog entry, catalog check and session note"
+    }
+  ]
+}
