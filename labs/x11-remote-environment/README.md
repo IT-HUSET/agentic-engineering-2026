@@ -2,7 +2,7 @@
 
 X11 is individual. The first advanced group has four people: `p01`–`p04`, with VMs `x11-p01`–`x11-p04` in the shared temporary resource group `agentic-engineering-2026`. There is no automatic daily shutdown. The facilitator starts the VMs before the course, keeps them running while jobs need them, and manually deallocates them only after work is saved and no jobs are active. All course resources are removed after the course.
 
-Everything needed to operate or use the environments is in this folder: this runbook, [participant access](access.md), `azure.bicep`, `cloud-init.yaml` and `prepare-course.py`. The only durable local secret file is ignored `.agent_temp/x11-access.json`; it contains only each ID's IP and private key. Never commit it, copy it to a VM or attach it to a model prompt.
+Everything needed to operate or use the environments is in this folder: this runbook, [participant access](access.md), `azure.bicep`, `cloud-init.yaml` and `prepare-course.py`. Participants use plain SSH with one temporary course password. There are no private-key files, access bundles or local secret JSON files to manage. Password hint: **The teacher's favorite country**. Never commit the password or put it in a model prompt.
 
 ## Two layers, one development-tool definition
 
@@ -22,41 +22,21 @@ Reuse the full dev-container configuration. A Dockerfile-only build omits Featur
 - Use the facilitator's current public IPv4 for preparation, then update SSH access to the venue's source address. Do not open SSH to every address. Use an approved private network instead if policy requires it.
 - Agree the cost owner and budget notifications. A budget alert is not a spending cap. Azure pays only for the VMs; model usage comes from each participant's Claude plan (IT-HUSET team seat or own plan, D11).
 
-## 1. Prepare the one local access file
+## 1. Set the temporary course password
 
-Run from the participant repo root. The helper needs Python (`uv`) and local OpenSSH `ssh-keygen`; it makes no network or cloud call:
-
-```bash
-uv run labs/x11-remote-environment/prepare-course.py create
-```
-
-This creates four distinct temporary ED25519 keys in `.agent_temp/x11-access.json`, with this shape:
-
-```json
-{"p01": {"ip": null, "privateKey": "<private key, never publish>"}}
-```
-
-Only `ip` and `privateKey` are stored per ID. The file is owner-only (`600` on POSIX; a user-only ACL on Windows). Intermediate key files are generated in a protected transient directory and removed on success or failure. An existing destination is never overwritten. `create --count N --output-file .agent_temp/another-access.json` supports a separate rehearsal; the first group uses the default four-person file.
-
-The course-only keys are generated **without a passphrase** to allow preparation. Protect this file, hand each key only to its assigned person through the approved personal channel, and never share one key between people. Recipients may add a passphrase with `ssh-keygen -p`. Do not centrally sign into participants' model or GitHub accounts.
-
-**Participant-supplied key (preferred).** `prepare-course.py` has no command for a supplied public key: `create` generates every key, and each record in the access file must hold an OpenSSH private key. For a participant who sends a `.pub` file, pass that file's contents as `sshPublicKey` in step 2 instead of the generated one. For an already deployed VM, replace the key and keep file ownership:
+For the four **existing** course VMs, run this from the participant repo root after signing into Azure. It prompts once, hashes locally with OpenSSL SHA-512 crypt, then invokes the versioned `password-access.sh` through Azure Run Command:
 
 ```bash
-az vm run-command invoke --resource-group "$x11_group" --name "$x11_vm" --command-id RunShellScript --scripts "printf '%s\n' '<participant-public-key>' > /home/course/.ssh/authorized_keys; ls -l /home/course/.ssh/authorized_keys"
+uv run labs/x11-remote-environment/prepare-course.py set-password --subscription 'IT-Huset MPN Gold'
 ```
 
-Hand out no generated key for that ID, and record its IP in the public table. The generated key is then no longer authorised.
+The default group is `agentic-engineering-2026`, and default VMs are `x11-p01`–`x11-p04`. For one replacement use `--resource-group <rebuild-group> --vms x11-p01-rebuild`. Use `--openssl /path/to/openssl` if your default OpenSSL lacks `passwd -6`; on the facilitator's Mac, `/opt/homebrew/bin/openssl` supports it. The helper stores no password/hash files and never prints the password, salted hash or raw Azure command/output. Errors identify the failed stage without echoing restricted output. It reports `PASSWORD_ACCESS_READY` or an error for each VM.
 
-The helper also supports:
+Only a URL-safe base64 encoding of the salted hash is passed to Azure management; this avoids dollar-sign expansion in the Run Command shell. The script decodes and validates the hash before use. Treat Azure Run Command records as restricted administrative data. The root script applies password-only authentication for `course`, disables root login/password authentication, validates `sshd -t` and effective settings, then reloads SSH. It owns one marked final configuration block and preserves unrelated SSH configuration. No NSG or global authentication rule is loosened. A failed SSH configuration check restores the previous configuration; only `PASSWORD_ACCESS_READY` confirms application.
 
-```bash
-uv run labs/x11-remote-environment/prepare-course.py public-key p01
-uv run labs/x11-remote-environment/prepare-course.py set-ip p01 <p01-public-ipv4>
-uv run labs/x11-remote-environment/prepare-course.py export p01
-```
+The selected temporary password is entered interactively. Its only published hint is **The teacher's favorite country**. Do not pre-login anyone's Claude or GitHub account. Participants use their row in [access.md](access.md), enter the course password and sign into their own services inside the container.
 
-`public-key` prints only the selected public key. `set-ip` updates only that person's IP in the same JSON. `export` writes only that person's key to a **new** `~/.ssh/agentic-engineering-2026-p01`, never overwriting a file or symlink. Use it for individual handoff, then remove the facilitator's exported handoff copy when no longer needed. Never give anyone the four-person JSON. No parameter files, cards, manifests or additional temp documentation are required.
+**New VMs:** Azure requires a strong bootstrap password during provisioning. Step 2 generates one; after cloud-init completes, run this helper for the new VM to apply the course password. Do not redeploy existing VMs merely to change their authentication.
 
 ## 2. Preview and deploy a person
 
@@ -82,23 +62,29 @@ Record the resolved image version and repo commit in the public preparation reco
 ```bash
 x11_participant='p01'
 x11_vm="x11-${x11_participant}"
-x11_public_key=$(uv run labs/x11-remote-environment/prepare-course.py public-key "$x11_participant")   # or the contents of the participant's own .pub file
-az deployment group what-if --resource-group "$x11_group" --template-file labs/x11-remote-environment/azure.bicep --parameters vmName="$x11_vm" vmSize="$x11_size" sshSourceIpv4="$x11_source_ip" sshPublicKey="$x11_public_key" imageVersion="$x11_image_version"
+x11_bootstrap_password=$(openssl rand -base64 24)
+az deployment group what-if --resource-group "$x11_group" --template-file labs/x11-remote-environment/azure.bicep --parameters vmName="$x11_vm" vmSize="$x11_size" sshSourceIpv4="$x11_source_ip" adminPassword="$x11_bootstrap_password" imageVersion="$x11_image_version"
 ```
 
 Review the preview. This separate command creates chargeable resources:
 
 ```bash
-az deployment group create --name "$x11_vm" --resource-group "$x11_group" --template-file labs/x11-remote-environment/azure.bicep --parameters vmName="$x11_vm" vmSize="$x11_size" sshSourceIpv4="$x11_source_ip" sshPublicKey="$x11_public_key" imageVersion="$x11_image_version"
+az deployment group create --name "$x11_vm" --resource-group "$x11_group" --template-file labs/x11-remote-environment/azure.bicep --parameters vmName="$x11_vm" vmSize="$x11_size" sshSourceIpv4="$x11_source_ip" adminPassword="$x11_bootstrap_password" imageVersion="$x11_image_version"
 ```
 
-There is no VM managed identity, Azure login, password, personal model token or private key in the deployment. Read its IP:
+Use this template only for a **new** VM. `adminPassword` is a secure Bicep parameter containing the strong generated bootstrap password, never the memorable course password. Clear the local variable after deployment:
+
+```bash
+unset x11_bootstrap_password
+```
+
+There is no VM managed identity, Azure login or personal model token in the deployment. Read its IP:
 
 ```bash
 az deployment group show --name "$x11_vm" --resource-group "$x11_group" --query properties.outputs.publicIpAddress.value --output tsv
 ```
 
-Save that IP with `prepare-course.py set-ip p01 <ip>` and in the public [connection table](access.md#connection-table). Never paste private-key data into the public table.
+Record that IP in the public [connection table](access.md#connection-table). After bootstrap, apply the course password with step 1. Do not write passwords into this table.
 
 ## 3. Prebuild and verify before handoff
 
@@ -110,7 +96,7 @@ az vm run-command invoke --resource-group "$x11_group" --name "$x11_vm" --comman
 
 Check the script result, and publish the trusted ED25519 host fingerprint/public host key in `access.md` for that VM. Run Command executes as an elevated user; participants do not receive this management permission. If bootstrap fails, inspect the cloud-final journal and cloud-init output through management. Do not put credentials in those logs.
 
-Then run the following **on each VM as `course`**, through an approved facilitator SSH key or the Azure management channel using `su - course -c '<commands>'`. Use a permitted repo URL, without a token, and a recorded **published** commit. The current private local export was transferred as a git bundle by the facilitator; its tag is not available from upstream:
+Then run the following **on each VM as `course`**, through a course-password SSH session or the Azure management channel using `su - course -c '<commands>'`. Use a permitted repo URL, without a token, and a recorded **published** commit. The current private local export was transferred as a git bundle by the facilitator; its tag is not available from upstream:
 
 ```bash
 git clone https://github.com/<owner>/<repo>.git course-repo
@@ -130,7 +116,7 @@ docker inspect <container-id> --format '{{.HostConfig.RestartPolicy.Name}} {{.Ho
 
 Expect `unless-stopped`, `false`, the workspace and declared Claude volume. No host SSH/cloud credentials or Docker socket may be mounted. Run the lab's boundary probes before handoff. Do not log into a personal agent or GitHub account during prebuild. The current app has 63 tests; `check.py` cannot be fully GREEN until the recipient signs in.
 
-If the repo directory already exists, inspect its commit and container instead of cloning over it. Finish the public table and preparation record below. Give each person only their own exported key through the approved personal channel and link [access.md](access.md). The private key and all public instructions travel separately.
+If the repo directory already exists, inspect its commit and container instead of cloning over it. Finish the public table and preparation record below. Give each person their ID and the link to [access.md](access.md). They paste one plain SSH command, enter the shared course password, then perform their own Claude/GitHub sign-ins.
 
 ## 4. Operate during the course
 
@@ -178,7 +164,7 @@ Test SSH from the venue before closing the old connection. Do not replace `/32` 
 
 ## 5. Rebuild proof and final cleanup
 
-The rebuild is a **per-participant sequence**, because the regional quota holds four participant VMs plus one rebuild VM. For each participant in turn: deploy `x11-pNN-rebuild` with the same repo commit, exact Ubuntu image version and **that participant's public key**, changing only `vmName`. The participant transfers the source and repeats the checks with their own key. When their proof is saved, delete the rebuild before the next participant's starts. Keep the first machine throughout. Do not copy disks, Docker volumes or credential caches.
+The rebuild is a **per-participant sequence**, because the regional quota holds four participant VMs plus one rebuild VM. For each participant in turn: deploy `x11-pNN-rebuild` with the same repo commit and exact Ubuntu image version, a distinct `vmName` and a new strong bootstrap password. After bootstrap, apply the shared course password with step 1. The participant transfers the source and repeats the checks using plain SSH/SCP password prompts. When their proof is saved, delete the rebuild before the next participant's starts. Keep the first machine throughout. Do not copy disks, Docker volumes or credential caches.
 
 Put each rebuild in its own temporary group, so one deletion removes all of it:
 
@@ -187,25 +173,25 @@ x11_participant='p01'
 x11_vm="x11-${x11_participant}-rebuild"
 x11_rebuild_group="agentic-engineering-2026-${x11_participant}-rebuild"
 az group create --name "$x11_rebuild_group" --location "$x11_location" --tags course=agentic-engineering-2026 lifecycle=temporary
-x11_public_key=$(uv run labs/x11-remote-environment/prepare-course.py public-key "$x11_participant")   # or the participant's own .pub contents
-az deployment group what-if --resource-group "$x11_rebuild_group" --template-file labs/x11-remote-environment/azure.bicep --parameters vmName="$x11_vm" vmSize="$x11_size" sshSourceIpv4="$x11_source_ip" sshPublicKey="$x11_public_key" imageVersion="$x11_image_version"
+x11_bootstrap_password=$(openssl rand -base64 24)
+az deployment group what-if --resource-group "$x11_rebuild_group" --template-file labs/x11-remote-environment/azure.bicep --parameters vmName="$x11_vm" vmSize="$x11_size" sshSourceIpv4="$x11_source_ip" adminPassword="$x11_bootstrap_password" imageVersion="$x11_image_version"
 ```
 
-After reviewing the preview, run the same command as `az deployment group create --name "$x11_vm" …`. Wait for `cloud-init status --wait` and verify the replacement's host fingerprint through Azure management, as in step 3, before the first SSH connection.
+After reviewing the preview, run the same command as `az deployment group create --name "$x11_vm" …`, then `unset x11_bootstrap_password`. Wait for `cloud-init status --wait` and verify the replacement's host fingerprint through Azure management, as in step 3. Apply the course password with `prepare-course.py set-password --subscription 'IT-Huset MPN Gold' --resource-group "$x11_rebuild_group" --vms "$x11_vm"` before the first SSH connection.
 
 The current prepared export is private and **not published upstream**, so transfer its git history without copying the container or credentials. On the original VM host:
 
 ```bash
 cd /home/course/course-repo
-git bundle create /home/course/x11-source.bundle x11-course-20261115
+git bundle create /home/course/x11-source.bundle x11-course-20261116
 git bundle verify /home/course/x11-source.bundle
 ```
 
-The participant, on their own computer, with their own key (authorised on both VMs) and the two public IPs; both placeholders must be replaced:
+The participant, on their own computer, uses the two public IPs and enters the course password at each SCP prompt. Replace both IP placeholders:
 
 ```bash
-scp -i "$x11_private_key" -o ForwardAgent=no course@<original-public-ip>:/home/course/x11-source.bundle ./x11-source.bundle
-scp -i "$x11_private_key" -o ForwardAgent=no ./x11-source.bundle course@<replacement-public-ip>:/home/course/x11-source.bundle
+scp -o StrictHostKeyChecking=accept-new -o ForwardAgent=no course@<original-public-ip>:/home/course/x11-source.bundle ./x11-source.bundle
+scp -o StrictHostKeyChecking=accept-new -o ForwardAgent=no ./x11-source.bundle course@<replacement-public-ip>:/home/course/x11-source.bundle
 ```
 
 On the replacement VM host as `course`, with no existing `course-repo` directory:
@@ -213,7 +199,7 @@ On the replacement VM host as `course`, with no existing `course-repo` directory
 ```bash
 git clone /home/course/x11-source.bundle /home/course/course-repo
 cd /home/course/course-repo
-git switch -c x11-course x11-course-20261115
+git switch -c x11-course x11-course-20261116
 git remote remove origin
 devcontainer up --workspace-folder "$PWD"
 ```
@@ -238,20 +224,20 @@ az rest --method get --url "https://management.azure.com/subscriptions/${x11_sub
 az group delete --name agentic-engineering-2026
 ```
 
-Read the name and confirm at the CLI prompt; do not use `--yes`. This removes its VMs, disks, IPs, NICs, VNets, and NSGs. Confirm `az group exists --name agentic-engineering-2026` returns `false`. Separately inventory and remove any optional per-person groups and any leftover rebuild groups. Once no longer needed, remove the one local secret JSON and individual exported course keys; keep participants' saved work and public proof.
+Read the name and confirm at the CLI prompt; do not use `--yes`. This removes its VMs, disks, IPs, NICs, VNets, and NSGs. Confirm `az group exists --name agentic-engineering-2026` returns `false`. Separately inventory and remove any optional per-person groups and any leftover rebuild groups. Once no longer needed, end use of the temporary course password; keep participants' saved work and public proof.
 
 ## Public preparation record
 
 - Host baseline: Ubuntu 24.04 x64, `Standard_D2s_v6`, Sweden Central.
 - Runtime policy: no automatic daily stop; manual deallocation after saved work and no active jobs.
 - Resolved Ubuntu image version: `24.04.202610250` (`Canonical:ubuntu-24_04-lts:server`).
-- Course source: `https://github.com/IT-HUSET/agentic-engineering-2026` (private). App/devcontainer baseline: `f0f3b76d12b9276668700784e05db3ebbaf94400`. The prepared local export includes X11 and is tagged `x11-course-20261115`; run `git rev-parse x11-course-20261115` on the VM for its exact commit. This export is not a published upstream commit and the prepared clone has no `origin`.
+- Course source: `https://github.com/IT-HUSET/agentic-engineering-2026` (private). App/devcontainer baseline: `f0f3b76d12b9276668700784e05db3ebbaf94400`. The prepared local export includes X11 and is tagged `x11-course-20261116`; run `git rev-parse x11-course-20261116` on the VM for its exact commit. This export is not a published upstream commit and the prepared clone has no `origin`.
 - Current four-VM tests: all 63 app tests pass on each machine. Personal sign-ins, full `check.py` GREEN and a model-driven task are participant checks after handoff.
 - Pilot infrastructure checks passed: separate rebuild VM, container boundary probes, unapproved SSH-source rejection, HTTP 200 through the tunnel and deterministic tmux completion after SSH disconnect. Hetzner has not been provision-tested.
 
 ## Hetzner alternative
 
-Use an organisation-owned project and Ubuntu 24.04 **x86** VMs, one per person. Attach only each person's matching public key, restrict SSH by Cloud Firewall, and supply `cloud-init.yaml` as user data. Create a non-root sudo account for that person, then apply the same full dev-container/prebuild/reconnect/rebuild checks. The Azure Bicep file does not apply. Keep these VMs running while jobs need them; stop or delete them manually only after work is saved and no jobs are active. Powering off a rented server is not a promise that billing stops. Delete servers and retained disks/IPs after saving work.
+Use an organisation-owned project and Ubuntu 24.04 **x86** VMs, one per person. Restrict SSH by Cloud Firewall and supply `cloud-init.yaml` as user data. Create a non-root sudo `course` account per VM, then run `password-access.sh` as root with the URL-safe base64 encoding (without padding) of the locally generated SHA-512 crypt hash, matching the Azure helper's argument format and apply the same full dev-container/prebuild/reconnect/rebuild checks. The Azure Bicep file does not apply. Keep these VMs running while jobs need them; stop or delete them manually only after work is saved and no jobs are active. Powering off a rented server is not a promise that billing stops. Delete servers and retained disks/IPs after saving work.
 
 ## Sources
 

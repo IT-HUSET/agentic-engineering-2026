@@ -21,14 +21,14 @@ Pull X11 when one of these is true for you:
 
 - A repo and branch you may run in the chosen cloud. Start with the course repo if your own stack is not ready.
 - The repo's `.devcontainer/`, including `devcontainer.json`, `Dockerfile` and `setup.sh`; copy the course folder to a case repo and adapt its dependency step if needed.
-- An SSH key (preferably one you generate, of which the facilitator receives only the public half) and your row in [participant access](x11-remote-environment/access.md). On the main path you need no Azure account, RBAC role or Entra invitation: the facilitator deploys one VM per participant in the shared `agentic-engineering-2026` course resource group. SSH is restricted to an approved public source address: initially the facilitator's network, then the venue's network for the course.
+- Your assigned ID, the temporary course password and your row in [participant access](x11-remote-environment/access.md). On the main path you need no Azure account, RBAC role or Entra invitation: the facilitator deploys one VM per participant in the shared `agentic-engineering-2026` course resource group. SSH is restricted to an approved public source address: initially the facilitator's network, then the venue's network for the course.
 - Your own Claude sign-in (IT-HUSET team seat or your own plan, D11) and a fine-grained GitHub token for the one course repo. Azure pays only for the VMs; model usage counts against your plan limits.
 - A small agent task with a concrete result and a real test command. For example, one already-approved story from your case, or a documentation correction plus the unchanged `todo-app` tests.
 - The [preparation kit](x11-remote-environment/README.md), including `azure.bicep` and `cloud-init.yaml`.
 
 ## Output
 
-Keep the environment configuration and a short runbook in your repo. Keep the following proof in your log outside the agent workspace: repo commit, host/container/tool versions, test result, disconnect result (copied out of the repo after the check, step 5), actual boundary checks, second-machine result, cost owner and cleanup confirmation. Do not save access tokens or private keys in either place.
+Keep the environment configuration and a short runbook in your repo. Keep the following proof in your log outside the agent workspace: repo commit, host/container/tool versions, test result, disconnect result (copied out of the repo after the check, step 5), actual boundary checks, second-machine result, cost owner and cleanup confirmation. Do not save access tokens or the course password in either place.
 
 ## Steps
 
@@ -46,17 +46,17 @@ Write down whether the agent should be able to read `/opt/x11-host-only.txt` on 
 
 The host marker and `/var/run/docker.sock` are not mounted into the container. There is no Azure CLI login or VM managed identity. The agent can still read everything mounted into its container, including its own authenticated tools, and this template does not restrict outbound traffic. The NSG restricts incoming connections; it is not an egress policy. A successful host-file probe does not prove protection against every container escape.
 
-You can administer your own VM and Docker through its `course` account, outside the agent container. The identical username on another participant's VM is a separate account. Each participant gets an individual VM, container, SSH key and model sign-in. Multiple sessions on your own VM are allowed; coordinate their branches/worktrees and files if they edit concurrently.
+You can administer your own VM and Docker through its `course` account, outside the agent container. The identical username on another participant's VM is a separate account. Each participant gets an individual VM, container and model sign-in. The four temporary VMs share one course password. Multiple sessions on your own VM are allowed; coordinate their branches/worktrees and files if they edit concurrently.
 
 </details>
 
 ### 2. Connect
 
-Your facilitator has provisioned and prebuilt your VM ([kit steps 1–3](x11-remote-environment/README.md#1-prepare-the-one-local-access-file); the Bicep template and preparation record show how). Follow [participant access §1–2](x11-remote-environment/access.md#1-your-ssh-key): get your key in place, verify the host fingerprint and connect without agent forwarding. Do not log in to Azure from the VM or paste cloud-management credentials into an agent session.
+Your facilitator has provisioned and prebuilt your VM ([kit steps 1–3](x11-remote-environment/README.md#1-set-the-temporary-course-password); the Bicep template and preparation record show how). Follow [participant access §1–2](x11-remote-environment/access.md#1-open-powershell-or-terminal): paste your plain SSH command in PowerShell or Terminal and enter the course password. Password hint: **The teacher's favorite country**. Do not log in to Azure from the VM or paste cloud-management credentials into an agent session.
 
 ### 3. Start the same development environment
 
-**Prepared environment:** the facilitator has already cloned and built your environment. **VM host:** enter the prepared repo path in the access instructions, check the recorded commit and inspect the existing container:
+**Prepared environment:** the access guide opens the container directly. For the host checks in this exercise, use its collapsed “Open the VM host” instructions to start a separate host connection. **VM host:** enter the prepared repo path, check the recorded commit and inspect the existing container:
 
 ```bash
 cd ~/course-repo
@@ -136,10 +136,10 @@ uv run uvicorn app.main:app --host 0.0.0.0 --port 8000
 docker inspect <container-id> --format '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}'
 ```
 
-**Your own computer:** copy that address into the forwarding target below. Use the key and VM IP from the preparation kit:
+**Your own computer:** copy that address into the forwarding target below. The example uses p01; use your own VM IP from the access guide:
 
 ```bash
-ssh -i "$x11_private_key" -o ForwardAgent=no -N -L '127.0.0.1:8000:<container-private-ip>:8000' "course@$x11_ip"
+ssh -o StrictHostKeyChecking=accept-new -o ForwardAgent=no -N -L "127.0.0.1:8000:<container-private-ip>:8000" course@135.225.54.185
 ```
 
 Open `http://localhost:8000` locally. Leave the tunnel open while using the app. No public app port or Docker port publication is needed. After a rebuild, resolve the new container address again. The app command is for `todo-app`; a case uses its own server and port.
@@ -207,7 +207,7 @@ Show the task's result and run its real checks. If the agent was waiting for inp
 
 ### 6. Rebuild on a second VM
 
-Save and push the work you need to retain. The facilitator rebuilds one participant at a time, following the [rebuild instructions](x11-remote-environment/README.md#5-rebuild-proof-and-final-cleanup): your turn gets `x11-pNN-rebuild`, deployed with your public key, and it is deleted before the next participant's starts. Transfer the source bundle (or clone a published case commit) with your own key as the kit describes, then repeat steps 3–4 with fresh sign-ins. Do not copy a disk, credential cache or Docker volume from the first VM.
+Save and push the work you need to retain. The facilitator rebuilds one participant at a time, following the [rebuild instructions](x11-remote-environment/README.md#5-rebuild-proof-and-final-cleanup): your turn gets `x11-pNN-rebuild`, configured with the course password after bootstrap, and it is deleted before the next participant's starts. Transfer the source bundle (or clone a published case commit) with the plain SCP password prompts in the kit, then repeat steps 3–4 with fresh sign-ins. Do not copy a disk, credential cache or Docker volume from the first VM.
 
 Compare the test results. Any missing manual instruction belongs in your runbook or setup configuration. If your case needs changes beyond the supplied skeleton, use the normal `plan → exec-plan → review --fix` loop to make those changes and rerun this proof.
 
@@ -230,7 +230,7 @@ Save code and proof outside the VMs and tell the facilitator that no job is acti
 - [ ] SSH works from the approved network and fails from an unapproved one. Outbound network access is described accurately.
 - [ ] The deterministic check completes after disconnect with a retained log and exit `0`; the bounded agent task also survives closing SSH, and its returned result is checked.
 - [ ] Your own rebuild VM (`x11-pNN-rebuild`) reaches the same functional checks without copying hidden state from the first.
-- [ ] Your row in the public access table and own SSH key reach only your assigned VM, and your model sign-in is inside your own container.
+- [ ] You use your assigned VM and its plain SSH password prompt; your model sign-in is inside your own container.
 - [ ] Work is saved outside the machines, billing ownership is known, and the facilitator confirms removal of the shared course resources after the course.
 
 ## Sizing check

@@ -1,169 +1,101 @@
 #!/usr/bin/env python3
-"""Keep X11 IPs and temporary SSH keys in one local, owner-only JSON file."""
+"""Set the temporary course password through Azure management, without local secret files."""
 
 import argparse
-import csv
-import ipaddress
+import base64
+import getpass
 import json
-import os
 from pathlib import Path
 import re
-import shutil
 import subprocess
 import sys
-import tempfile
 
-REPO_ROOT = Path(__file__).resolve().parents[2]
-TEMP_ROOT = REPO_ROOT / '.agent_temp'
-DEFAULT_FILE = TEMP_ROOT / 'x11-access.json'
+SCRIPT = Path(__file__).with_name('password-access.sh')
+HASH_PATTERN = re.compile(r'\$6\$(?:rounds=[0-9]+\$)?[./A-Za-z0-9]{1,16}\$[./A-Za-z0-9]{86}')
 
 
-def owner_only(path, directory=False):
-    path.chmod(0o700 if directory else 0o600)
-    if os.name == 'nt':
-        identity = subprocess.run(
-            ['whoami', '/user', '/fo', 'csv', '/nh'],
-            check=True, capture_output=True, text=True,
-        ).stdout.strip()
-        sid = next(csv.reader([identity]))[1]
-        grant = f'*{sid}:(OI)(CI)F' if directory else f'*{sid}:F'
-        subprocess.run(
-            ['icacls', str(path), '/inheritance:r', '/grant:r', grant],
-            check=True, stdout=subprocess.DEVNULL,
-        )
+def verification_error(values):
+    messages = '\n'.join(value.get('message', '') for value in values)
+    failures = (
+        ('Syntax error', 'remote shell syntax error'),
+        ('Illegal option', 'remote shell rejected a script option'),
+        ('Expected one encoded SHA-512 crypt hash.', 'Run Command did not supply the encoded hash argument'),
+        ('Invalid encoded password hash.', 'Run Command supplied an invalid encoded hash'),
+        ('Expected one SHA-512 crypt hash.', 'Run Command did not supply the expected hash argument'),
+        ('Run as root through Azure Run Command.', 'remote script was not elevated'),
+        ('Existing X11 block is malformed', 'existing X11 SSH block is malformed or not final'),
+        ('prior SSH configuration restored', 'SSH configuration validation or reload failed; prior configuration restored'),
+    )
+    for marker, explanation in failures:
+        if marker in messages:
+            return explanation
+    if any(value.get('code', '').lower().endswith('/failed') for value in values):
+        return 'Azure extension reported failure'
+    if not re.search(r'(?m)^PASSWORD_ACCESS_READY\s*$', messages):
+        return 'remote script did not confirm password access'
+    return None
 
 
-def local_file(path):
-    if TEMP_ROOT.is_symlink() or not TEMP_ROOT.resolve().is_relative_to(REPO_ROOT):
-        raise ValueError('the repo .agent_temp must not be a symlink or escape the repository')
-    path = path.absolute()
-    if not path.resolve().is_relative_to(TEMP_ROOT.resolve()) or path == TEMP_ROOT:
-        raise ValueError('the access file must be inside this repo\'s .agent_temp')
-    for candidate in (path, *path.parents):
-        if candidate == TEMP_ROOT.parent:
-            break
-        if candidate.is_symlink():
-            raise ValueError('the access path must not contain symbolic links')
-    return path
-
-
-def write_new(path, content):
-    descriptor = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+def set_password(subscription, resource_group, vms, openssl='openssl'):
+    password = getpass.getpass('Temporary course password: ')
+    if not password or '\n' in password or '\r' in password:
+        print('ERROR: enter one nonempty password line.', file=sys.stderr)
+        return 1
     try:
-        owner_only(path)
-        with os.fdopen(descriptor, 'w', encoding='utf-8') as handle:
-            descriptor = None
-            handle.write(content)
-    except BaseException:
-        if descriptor is not None:
-            os.close(descriptor)
-        path.unlink()
-        raise
-
-
-def read_access(path):
-    data = json.loads(path.read_text(encoding='utf-8'))
-    if not isinstance(data, dict) or not data:
-        raise ValueError('the access file must map participant IDs to ip/privateKey records')
-    for participant, record in data.items():
-        if not re.fullmatch(r'p[0-9]{2}', participant) or not isinstance(record, dict) or set(record) != {'ip', 'privateKey'}:
-            raise ValueError('the access file must contain only pNN records with ip and privateKey')
-        if record['ip'] is not None:
-            ipaddress.IPv4Address(record['ip'])
-        if not isinstance(record['privateKey'], str) or not record['privateKey'].startswith('-----BEGIN OPENSSH PRIVATE KEY-----'):
-            raise ValueError(f'{participant} does not contain an OpenSSH private key')
-    return data
-
-
-def public_key(private_key):
-    with tempfile.TemporaryDirectory(prefix='x11-key-', dir=TEMP_ROOT) as staging:
-        folder = Path(staging)
-        owner_only(folder, directory=True)
-        key = folder / 'key'
-        write_new(key, private_key)
-        return subprocess.run(
-            ['ssh-keygen', '-y', '-f', str(key)],
-            check=True, capture_output=True, text=True,
+        hashed = subprocess.run(
+            [openssl, 'passwd', '-6', '-stdin'], input=password + '\n',
+            capture_output=True, text=True, check=True,
         ).stdout.strip()
+    except (OSError, subprocess.CalledProcessError):
+        print('ERROR: OpenSSL SHA-512 password hashing failed; use OpenSSL with passwd -6.', file=sys.stderr)
+        return 1
+    del password
+    if not HASH_PATTERN.fullmatch(hashed):
+        print('ERROR: OpenSSL did not return a SHA-512 crypt hash.', file=sys.stderr)
+        return 1
+    encoded_hash = base64.urlsafe_b64encode(hashed.encode('ascii')).decode('ascii').rstrip('=')
+    failed = False
+    for vm in vms:
+        command = [
+            'az', 'vm', 'run-command', 'invoke', '--subscription', subscription,
+            '--resource-group', resource_group, '--name', vm,
+            '--command-id', 'RunShellScript', '--scripts', '@' + str(SCRIPT.resolve()),
+            '--parameters', 'passwordHashEncoded=' + encoded_hash, '--output', 'json',
+        ]
+        try:
+            result = subprocess.run(command, capture_output=True, text=True, check=True)
+            values = json.loads(result.stdout).get('value', [])
+            error = verification_error(values)
+        except subprocess.CalledProcessError as failure:
+            error = f'Azure CLI returned exit {failure.returncode}; check Azure authentication and VM agent state'
+        except OSError:
+            error = 'Azure CLI could not start'
+        except (ValueError, TypeError, AttributeError):
+            error = 'Azure CLI returned an unexpected response'
+        print(f'{vm}: ' + ('PASSWORD_ACCESS_READY' if error is None else 'ERROR: ' + error))
+        failed = failed or error is not None
+    return int(failed)
 
 
-def participant_id(value):
-    if not re.fullmatch(r'p[0-9]{2}', value) or value == 'p00':
-        raise argparse.ArgumentTypeError('use a participant ID from p01 to p99')
+def vm_name(value):
+    if not re.fullmatch(r'x11-p[0-9]{2}(?:-rebuild)?', value):
+        raise argparse.ArgumentTypeError('use a course VM name such as x11-p01 or x11-p01-rebuild')
     return value
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     commands = parser.add_subparsers(dest='command', required=True)
-    create = commands.add_parser('create', help='create one new access file; no cloud operations')
-    create.add_argument('--count', type=int, default=4)
-    create.add_argument('--output-file', type=Path, default=DEFAULT_FILE)
-    for name in ('export', 'public-key', 'set-ip'):
-        command = commands.add_parser(name)
-        command.add_argument('participant', type=participant_id)
-        command.add_argument('--input-file', type=Path, default=DEFAULT_FILE)
-        if name == 'set-ip':
-            command.add_argument('ip', type=ipaddress.IPv4Address)
+    password = commands.add_parser('set-password', help='prompt once and configure password-only course SSH')
+    password.add_argument('--subscription', required=True)
+    password.add_argument('--resource-group', default='agentic-engineering-2026')
+    password.add_argument('--vms', nargs='+', type=vm_name, default=[f'x11-p{number:02d}' for number in range(1, 5)])
+    password.add_argument('--openssl', default='openssl', help='OpenSSL executable supporting passwd -6')
     args = parser.parse_args()
-    if shutil.which('ssh-keygen') is None:
-        parser.error('OpenSSH ssh-keygen is required')
-    path = local_file(args.output_file if args.command == 'create' else args.input_file)
-    TEMP_ROOT.mkdir(exist_ok=True)
-    if args.command == 'create':
-        if not 1 <= args.count <= 99:
-            parser.error('--count must be between 1 and 99')
-        if path.exists():
-            parser.error('the output file already exists; nothing overwritten')
-        if not path.parent.is_dir():
-            parser.error('the output parent directory must already exist')
-        data = {}
-        with tempfile.TemporaryDirectory(prefix='x11-keys-', dir=TEMP_ROOT) as staging:
-            folder = Path(staging)
-            owner_only(folder, directory=True)
-            for number in range(1, args.count + 1):
-                participant = f'p{number:02d}'
-                key = folder / participant
-                subprocess.run(
-                    ['ssh-keygen', '-q', '-t', 'ed25519', '-N', '', '-f', str(key), '-C', f'agentic-engineering-2026-{participant}'],
-                    check=True, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, text=True,
-                )
-                data[participant] = {'ip': None, 'privateKey': key.read_text(encoding='utf-8')}
-            write_new(path, json.dumps(data, indent=2) + '\n')
-        print(f'Prepared {args.count} distinct keys in {path}. No cloud resources created; private keys were not printed.')
-        return
-    data = read_access(path)
-    if args.participant not in data:
-        parser.error('the selected participant is absent from this access file')
-    if args.command == 'export':
-        directory = Path.home() / '.ssh'
-        if directory.is_symlink():
-            parser.error('the local .ssh directory must not be a symbolic link')
-        directory.mkdir(mode=0o700, exist_ok=True)
-        destination = directory / f'agentic-engineering-2026-{args.participant}'
-        if destination.exists() or destination.is_symlink():
-            parser.error('the selected key path already exists; nothing overwritten')
-        write_new(destination, data[args.participant]['privateKey'])
-        print(f'Exported only {args.participant} to {destination}. Keep it private and hand it only to that participant.')
-    elif args.command == 'public-key':
-        print(public_key(data[args.participant]['privateKey']))
-    else:
-        data[args.participant]['ip'] = str(args.ip)
-        descriptor, temporary = tempfile.mkstemp(prefix='x11-access-', dir=TEMP_ROOT)
-        os.close(descriptor)
-        temporary = Path(temporary)
-        try:
-            owner_only(temporary)
-            temporary.write_text(json.dumps(data, indent=2) + '\n', encoding='utf-8')
-            temporary.replace(path)
-        finally:
-            temporary.unlink(missing_ok=True)
-        print(f'Updated {args.participant} IP in {path}; no other persistent file created.')
+    if not SCRIPT.is_file():
+        parser.error('the versioned password-access.sh script is missing')
+    return set_password(args.subscription, args.resource_group, args.vms, args.openssl)
 
 
 if __name__ == '__main__':
-    try:
-        main()
-    except (OSError, ValueError, subprocess.CalledProcessError) as error:
-        print(f'Preparation stopped: {error}', file=sys.stderr)
-        sys.exit(1)
+    sys.exit(main())

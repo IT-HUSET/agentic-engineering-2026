@@ -15,8 +15,9 @@ param vmSize string = 'Standard_D2s_v6'
 @maxLength(15)
 param sshSourceIpv4 string
 
-@description('Public SSH key only. Never provide the private key.')
-param sshPublicKey string
+@secure()
+@description('Strong generated bootstrap password for NEW VM provisioning. Set the temporary course password after bootstrap.')
+param adminPassword string
 
 param adminUsername string = 'course'
 
@@ -131,18 +132,11 @@ resource vm 'Microsoft.Compute/virtualMachines@2024-07-01' = {
     osProfile: {
       computerName: vmName
       adminUsername: adminUsername
+      adminPassword: adminPassword
       customData: base64(loadTextContent('cloud-init.yaml'))
       linuxConfiguration: {
-        disablePasswordAuthentication: true
+        disablePasswordAuthentication: false
         provisionVMAgent: true
-        ssh: {
-          publicKeys: [
-            {
-              path: '/home/${adminUsername}/.ssh/authorized_keys'
-              keyData: sshPublicKey
-            }
-          ]
-        }
       }
     }
     securityProfile: {

@@ -1,12 +1,12 @@
 # Your X11 remote environment
 
-Each participant has their own VM, container, SSH key and Claude/GitHub sign-ins. The facilitator prepares everything except your personal sign-ins. You need no Azure account, Azure CLI or Entra invitation. Never use another participant's key or VM.
+Each participant has their own VM, container and Claude/GitHub sign-ins. The facilitator prepares the environment. You need only Windows PowerShell or macOS Terminal with SSH; no Azure account, Azure CLI or Entra invitation is needed.
 
-There is no automatic daily shutdown. The facilitator starts the VMs before the course and leaves them running while jobs need them. Manual deallocation happens only after you have saved your work and confirmed that no jobs are active. Files survive a stop; running tmux/agent jobs do not. All course resources are removed after everyone has saved their work.
+There is no automatic daily shutdown. The facilitator leaves VMs running while jobs need them and manually deallocates only after work is saved and no jobs are active. Files survive a stop; tmux/agent jobs do not. All course resources are removed after everyone has saved their work.
 
 ## Connection table
 
-Verified through Azure management on 2026-11-15. The facilitator rechecks this table after any VM replacement. Public IPs, SSH host fingerprints and public host keys may be recorded here; **private keys and tokens never belong here**.
+Verified through Azure management on 2026-11-15. The facilitator rechecks this table after any VM replacement. Public IPs, SSH host fingerprints and public host keys may be recorded here; **passwords and tokens never belong here**.
 
 | Your ID | VM | Public IP | Trusted ED25519 host fingerprint |
 |---|---|---|---|
@@ -17,60 +17,45 @@ Verified through Azure management on 2026-11-15. The facilitator rechecks this t
 
 - Linux username: `course` on your own VM.
 - Prepared repo path: `/home/course/course-repo`.
-- SSH key filename: `agentic-engineering-2026-p01` for p01, and correspondingly for the other IDs.
 - Prepared checkout: branch `x11-course`. Work on your own branch, `x11-work`.
 - Prepared source URL/commit: see the [public preparation record](README.md#public-preparation-record).
 
-## 1. Your SSH key
+## 1. Open PowerShell or Terminal
 
-**Preferred: your own key.** Generate it on your computer, with a passphrase, and send the facilitator only the public file (`.pub`). The private key never leaves your computer. Use your own ID in the filename:
+The four temporary VMs use the same course password. Password hint: **The teacher's favorite country**. Ask the teacher if you need it. Enter it only at the SSH password prompt; nothing appears while you type. Do not put the password in a command or an agent prompt.
 
-```bash
-ssh-keygen -t ed25519 -f ~/.ssh/agentic-engineering-2026-p01
-```
+## 2. Paste your connection command
 
-The facilitator installs your public key as the only authorized key on your VM.
+Copy **your own row** into Windows PowerShell or macOS Terminal. It opens your prepared container directly and asks for the course password:
 
-**Fallback: a generated key.** If you cannot generate one, the facilitator sends your individual temporary private key through the approved personal channel. Do not send it to the group, commit it, put it on the VM or paste it into an agent prompt. Keep it in your own `.ssh` directory under the filename above. It has no passphrase at first; add one locally with `ssh-keygen -p -f <your-key-path>`.
+| Your ID | Command |
+|---|---|
+| p01 | `ssh -t -o StrictHostKeyChecking=accept-new -o ForwardAgent=no course@135.225.54.185 devcontainer exec --workspace-folder /home/course/course-repo bash` |
+| p02 | `ssh -t -o StrictHostKeyChecking=accept-new -o ForwardAgent=no course@135.116.85.42 devcontainer exec --workspace-folder /home/course/course-repo bash` |
+| p03 | `ssh -t -o StrictHostKeyChecking=accept-new -o ForwardAgent=no course@135.225.54.218 devcontainer exec --workspace-folder /home/course/course-repo bash` |
+| p04 | `ssh -t -o StrictHostKeyChecking=accept-new -o ForwardAgent=no course@57.174.209.89 devcontainer exec --workspace-folder /home/course/course-repo bash` |
 
-On macOS/Linux/WSL, restrict a received key to your account:
+You arrive **inside your own container**. Continue with personal sign-ins below. Type `exit` to disconnect; reconnect with the same command. Do not clone over the prepared repo or recreate its container blindly. `accept-new` accepts a new host, but stops if a previously known host changes. Ask the facilitator about any changed-host warning.
 
-```bash
-chmod 600 ~/.ssh/agentic-engineering-2026-p01
-```
+<details>
+<summary>Open the VM host for host checks or troubleshooting</summary>
 
-On Windows, store it in your own user-only `$HOME\.ssh` directory. If OpenSSH reports that key permissions are too open, ask the facilitator to check its Windows file ACL. Do not work around the error by using someone else's key.
-
-## 2. Connect from your own computer
-
-Replace p01 and the IP with **your own row**. Compare the first SSH prompt's ED25519 fingerprint with the trusted table before accepting it. Do not disable host-key checks or enable agent forwarding.
-
-macOS/Linux/WSL:
+For p01, omit the trailing container command. Use your own VM IP:
 
 ```bash
-x11_private_key="$HOME/.ssh/agentic-engineering-2026-p01"
-x11_ip='<your-public-ip>'
-ssh -i "$x11_private_key" -o ForwardAgent=no "course@$x11_ip"
+ssh -o StrictHostKeyChecking=accept-new -o ForwardAgent=no course@135.225.54.185
 ```
 
-Windows PowerShell:
-
-```powershell
-$x11_private_key = "$HOME\.ssh\agentic-engineering-2026-p01"
-$x11_ip = '<your-public-ip>'
-ssh -i $x11_private_key -o ForwardAgent=no "course@$x11_ip"
-```
-
-You are now on the **VM host**. Check the prepared repo and running container, then enter it:
+Enter the course password, then inspect the prepared workspace and enter its container when needed:
 
 ```bash
 cd /home/course/course-repo
 git rev-parse HEAD
 docker ps
-devcontainer exec --workspace-folder "$PWD" bash
+devcontainer exec --workspace-folder /home/course/course-repo bash
 ```
 
-The checkout is on `x11-course`. Do not clone over the prepared repo or recreate its container blindly. Use [troubleshooting](#troubleshooting) if the container is stopped.
+</details>
 
 ## 3. Sign in inside your own container
 
@@ -113,7 +98,7 @@ If a work branch already exists, inspect it and continue there instead of rerunn
 | Symptom | Action |
 |---|---|
 | SSH times out | Ask the facilitator to check VM power state and the venue's current public source IP against the NSG. There is no automatic daily stop. Do not widen access to the whole internet. |
-| `Permission denied (publickey)` | Check your assigned ID, key path, VM IP and username `course`. Do not use another person's key. |
+| Password rejected or `Permission denied` | Check your own VM IP and username `course`, then ask the teacher to confirm the temporary course password. |
 | Host fingerprint differs | Stop and ask the facilitator to verify through Azure management. A changed machine needs a new trusted fingerprint; never just suppress the warning. |
 | Container is stopped after VM start | On the VM host run `docker ps -a`, identify your repo's container and run `docker start <container-id>`. Then retry `devcontainer exec`. The facilitator configures `unless-stopped`; a container explicitly stopped by a person needs an explicit start. |
 | Container is missing or repo commit differs | Ask the facilitator to check the prepared environment. Do not recreate it until any existing work is saved. |
@@ -121,4 +106,4 @@ If a work branch already exists, inspect it and continue there instead of rerunn
 | A job disappeared after shutdown | VM shutdown/reboot ends processes. tmux survives a client disconnect, not a VM stop. Resume from saved code and logs. |
 | Cannot push | Check `gh auth status`, that the token covers this repo with Contents write, `git remote -v` and your git identity inside the container. |
 
-Save code and proof outside the VM before final cleanup. Remove the temporary local course key when it is no longer needed.
+Save code and proof outside the VM before final cleanup.
